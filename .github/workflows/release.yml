@@ -1,0 +1,88 @@
+name: Build and Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Release version, for example 1.0.0.0
+        required: true
+        default: 1.0.0.0
+  push:
+    tags:
+      - v*
+
+permissions:
+  contents: write
+
+env:
+  ACR_AUTHOR: 菌子人
+  ACR_DESCRIPTION: Luli Reaper PR ACR
+  ACR_JOB: RPR
+  ACR_CONTENT_SCOPE: Unspecified
+  ACR_API_VERSION: "15"
+
+jobs:
+  release:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Resolve version
+        id: version
+        shell: pwsh
+        run: |
+          $version = "${{ github.event.inputs.version }}"
+          if ([string]::IsNullOrWhiteSpace($version)) { $version = "${{ github.ref_name }}" }
+          if ($version.StartsWith("v")) { $version = $version.Substring(1) }
+          $parsed = $null
+          if (-not [Version]::TryParse($version, [ref]$parsed)) { throw "Invalid version: $version" }
+          "version=$version" >> $env:GITHUB_OUTPUT
+          "tag=v$version" >> $env:GITHUB_OUTPUT
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Check references
+        id: references
+        shell: pwsh
+        run: |
+          $required = @("Dalamud.dll", "Dalamud.Bindings.ImGui.dll", "FFXIVClientStructs.dll", "InteropGenerator.Runtime.dll", "Lumina.dll", "Lumina.Excel.dll", "ECommons.dll", "PromeRotation.dll")
+          $missing = $required | Where-Object { -not (Test-Path "lib/$_") }
+          if ($missing.Count -gt 0) { throw "Missing lib references: $($missing -join ', ')" }
+          $version = [Reflection.AssemblyName]::GetAssemblyName((Resolve-Path "lib/PromeRotation.dll")).Version.ToString()
+          "prome_version=$version" >> $env:GITHUB_OUTPUT
+
+      - name: Sync metadata version
+        shell: pwsh
+        run: |
+          $path = "ReaperRotation.cs"
+          $version = "${{ steps.version.outputs.version }}"
+          $text = Get-Content -Raw -Encoding UTF8 $path
+          $updated = [regex]::Replace($text, '(\[RotationMetadata\(39u,\s*"[^"]+",\s*"[^"]+",\s*")[^"]+(")\])', ('$1' + $version + '$2'), 1)
+          if ($updated -eq $text) { throw "RotationMetadata was not found" }
+          Set-Content -Encoding UTF8 -Path $path -Value $updated
+
+      - name: Build
+        shell: pwsh
+        run: dotnet build Luli.csproj --configuration Release -p:OutputPath="${{ runner.temp }}\publish\" -p:BaseOutputPath="${{ runner.temp }}\publish\" -p:AppendTargetFrameworkToOutputPath=false -p:DalamudReferenceRoot="${{ github.workspace }}\lib" -p:PromeRotationReferenceRoot="${{ github.workspace }}\lib"
+
+      - name: Package
+        shell: pwsh
+        run: |
+          $dist = "${{ runner.temp }}\dist"
+          New-Item -ItemType Directory -Force $dist | Out-Null
+          Compress-Archive -Path "${{ runner.temp }}\publish\LuliReaperPR.dll", "${{ runner.temp }}\publish\LuliReaperPR.deps.json" -DestinationPath "$dist\latest.zip" -Force
+          $sha = (Get-FileHash -Algorithm SHA256 "$dist\latest.zip").Hash.ToLowerInvariant()
+          [ordered]@{ author = "${{ env.ACR_AUTHOR }}"; version = "${{ steps.version.outputs.version }}"; description = "${{ env.ACR_DESCRIPTION }}"; supportedJobs = @([ordered]@{ job = "${{ env.ACR_JOB }}"; contentScope = "${{ env.ACR_CONTENT_SCOPE }}" }); apiVersion = [int]"${{ env.ACR_API_VERSION }}"; referencePromeVersion = "${{ steps.references.outputs.prome_version }}"; downloadUrl = "https://raw.githubusercontent.com/${{ github.repository }}/release/latest.zip"; sourceRepositoryUrl = "https://github.com/${{ github.repository }}"; sha256 = $sha } | ConvertTo-Json -Depth 8 | Set-Content -Encoding UTF8 "$dist\repo.json"
+
+      - name: Publish release
+        uses: softprops/action-gh-release@v2
+        with:
+          token: ${{ github.token }}
+          tag_name: ${{ steps.version.outputs.tag }}
+          files: |
+            ${{ runner.temp }}\dist\latest.zip
+            ${{ runner.temp }}\dist\repo.json

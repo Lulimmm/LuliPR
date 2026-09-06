@@ -1,0 +1,63 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <LangVersion>latest</LangVersion>
+        <TargetFramework>net10.0-windows</TargetFramework>
+        <AssemblyName>LuliReaperPR</AssemblyName>
+        <RootNamespace>Reaper</RootNamespace>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
+		<EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+		<DalamudReferenceRoot Condition="'$(DalamudReferenceRoot)' == ''">$(APPDATA)\XIVLauncherCN\addon\Hooks\dev</DalamudReferenceRoot>
+		<PromeRotationInstalledRoot Condition="'$(PromeRotationInstalledRoot)' == ''">$(APPDATA)\XIVLauncherCN\installedPlugins\PromeRotation</PromeRotationInstalledRoot>
+		<PromeRotationDirs>$([System.IO.Directory]::GetDirectories('$(PromeRotationInstalledRoot)'))</PromeRotationDirs>
+		<PromeRotationReferenceRoot Condition="'$(PromeRotationReferenceRoot)' == ''">$([System.Text.RegularExpressions.Regex]::Match('$(PromeRotationDirs)', '[^;]+$').Value)</PromeRotationReferenceRoot>
+		<OutputPath Condition="'$(OutputPath)' == ''">$(APPDATA)\XIVLauncherCN\pluginConfigs\PromeRotation\ACR\菌子人\</OutputPath>
+		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <NoWarn>CS1998;1701;1702;CS0414;CS8601;CS8602;CS8604;CS8603;IDE1006;IDE0300;MSB3270;MSB324;CS0649;CA2211;CS8509;CS8625;MSB3305;CS8618;CS8600;CS8605;CS8620;CS0436;CS0169;CS0105;CS1591</NoWarn>
+        <WarningsAsErrors>CS4014</WarningsAsErrors>
+        <BaseOutputPath Condition="'$(BaseOutputPath)' == ''">$(OutputPath)</BaseOutputPath>
+    </PropertyGroup>
+
+    
+    <ItemGroup>
+      <!-- PR implementation. The AEAssist tree is reference-only and is never compiled. -->
+      <Compile Include="**\*.cs" Exclude="bin\**\*;obj\**\*" />
+    </ItemGroup>
+
+    
+    <ItemGroup>
+      <Reference Include="Dalamud">
+        <HintPath>$(DalamudReferenceRoot)\Dalamud.dll</HintPath>
+        <Private>false</Private>
+      </Reference>
+      <Reference Include="Dalamud.Bindings.ImGui"><HintPath>$(DalamudReferenceRoot)\Dalamud.Bindings.ImGui.dll</HintPath><Private>false</Private></Reference>
+      <Reference Include="ECommons"><HintPath>$(PromeRotationReferenceRoot)\ECommons.dll</HintPath><Private>false</Private></Reference>
+      <Reference Include="Lumina"><HintPath>$(DalamudReferenceRoot)\Lumina.dll</HintPath><Private>false</Private></Reference>
+      <Reference Include="Lumina.Excel"><HintPath>$(DalamudReferenceRoot)\Lumina.Excel.dll</HintPath><Private>false</Private></Reference>
+      <Reference Include="PromeRotation"><HintPath>$(PromeRotationReferenceRoot)\PromeRotation.dll</HintPath><Private>false</Private></Reference>
+      <Reference Include="FFXIVClientStructs"><HintPath>$(DalamudReferenceRoot)\FFXIVClientStructs.dll</HintPath><Private>false</Private></Reference>
+      <Reference Include="InteropGenerator.Runtime"><HintPath>$(DalamudReferenceRoot)\InteropGenerator.Runtime.dll</HintPath><Private>false</Private></Reference>
+    </ItemGroup>
+
+    <Target Name="SyncReferenceDllsToLib" BeforeTargets="BeforeBuild" Condition="'$(GITHUB_ACTIONS)' != 'true'">
+      <MakeDir Directories="$(MSBuildProjectDirectory)\lib" />
+      <ItemGroup>
+        <ReferenceDllsForCi Include="$(DalamudReferenceRoot)\Dalamud.dll" />
+        <ReferenceDllsForCi Include="$(DalamudReferenceRoot)\Dalamud.Bindings.ImGui.dll" />
+        <ReferenceDllsForCi Include="$(DalamudReferenceRoot)\FFXIVClientStructs.dll" />
+        <ReferenceDllsForCi Include="$(DalamudReferenceRoot)\InteropGenerator.Runtime.dll" />
+        <ReferenceDllsForCi Include="$(DalamudReferenceRoot)\Lumina.dll" />
+        <ReferenceDllsForCi Include="$(DalamudReferenceRoot)\Lumina.Excel.dll" />
+        <ReferenceDllsForCi Include="$(PromeRotationReferenceRoot)\ECommons.dll" />
+        <ReferenceDllsForCi Include="$(PromeRotationReferenceRoot)\PromeRotation.dll" />
+      </ItemGroup>
+      <Copy SourceFiles="@(ReferenceDllsForCi)" DestinationFolder="$(MSBuildProjectDirectory)\lib" SkipUnchangedFiles="true" Condition="Exists('%(ReferenceDllsForCi.Identity)')" />
+    </Target>
+
+</Project>
