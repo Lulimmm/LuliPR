@@ -1,7 +1,7 @@
 {
-  "author": "菌子人",
+  "author": "\u83CC\u5B50\u4EBA",
   "version": "1.0.0.0",
-  "description": "Luli Reaper PR ACR",
+  "description": "",
   "supportedJobs": [
     {
       "job": "RPR",
@@ -10,7 +10,8 @@
   ],
   "apiVersion": 15,
   "referencePromeVersion": "1.5.9.8",
-  "downloadUrl": "https://github.com/Lulimmm/LuliPR/releases/latest/download/latest.zip",
-  "sourceRepositoryUrl": "https://github.com/Lulimmm/LuliPR",
-  "sha256": ""
+  "downloadUrl": "https://github.com/Lulimmm/LuliPR/releases/latest/download/repo.json",
+  "sourceRepositoryUrl": "",
+  "sponsorUrl": "",
+  "sha256": "cf69251d2b364222c303587cadb448176127973f1d5acf5a2e05e1a8cc0dc230"
 }
