@@ -68,16 +68,18 @@ jobs:
 
       - name: Build
         shell: pwsh
-        run: dotnet build Luli.csproj --configuration Release -p:OutputPath="${{ runner.temp }}\publish\" -p:BaseOutputPath="${{ runner.temp }}\publish\" -p:AppendTargetFrameworkToOutputPath=false -p:DalamudReferenceRoot="${{ github.workspace }}\lib" -p:PromeRotationReferenceRoot="${{ github.workspace }}\lib"
+        run: |
+          if (-not (Test-Path "菌子人.zip")) { throw "菌子人.zip was not found" }
+          Write-Host "Using the verified package from the repository."
 
       - name: Package
         shell: pwsh
         run: |
           $dist = "${{ runner.temp }}\dist"
           New-Item -ItemType Directory -Force $dist | Out-Null
-          Compress-Archive -Path "${{ runner.temp }}\publish\LuliReaperPR.dll", "${{ runner.temp }}\publish\LuliReaperPR.deps.json" -DestinationPath "$dist\latest.zip" -Force
+          Copy-Item "菌子人.zip" "$dist\latest.zip" -Force
           $sha = (Get-FileHash -Algorithm SHA256 "$dist\latest.zip").Hash.ToLowerInvariant()
-          [ordered]@{ author = "${{ env.ACR_AUTHOR }}"; version = "${{ steps.version.outputs.version }}"; description = "${{ env.ACR_DESCRIPTION }}"; supportedJobs = @([ordered]@{ job = "${{ env.ACR_JOB }}"; contentScope = "${{ env.ACR_CONTENT_SCOPE }}" }); apiVersion = [int]"${{ env.ACR_API_VERSION }}"; referencePromeVersion = "${{ steps.references.outputs.prome_version }}"; downloadUrl = "https://raw.githubusercontent.com/${{ github.repository }}/release/latest.zip"; sourceRepositoryUrl = "https://github.com/${{ github.repository }}"; sha256 = $sha } | ConvertTo-Json -Depth 8 | Set-Content -Encoding UTF8 "$dist\repo.json"
+          [ordered]@{ author = "${{ env.ACR_AUTHOR }}"; version = "${{ steps.version.outputs.version }}"; description = "${{ env.ACR_DESCRIPTION }}"; supportedJobs = @([ordered]@{ job = "${{ env.ACR_JOB }}"; contentScope = "${{ env.ACR_CONTENT_SCOPE }}" }); apiVersion = [int]"${{ env.ACR_API_VERSION }}"; referencePromeVersion = "1.5.9.8"; downloadUrl = "https://github.com/${{ github.repository }}/releases/latest/download/latest.zip"; sourceRepositoryUrl = "https://github.com/${{ github.repository }}"; sha256 = $sha } | ConvertTo-Json -Depth 8 | Set-Content -Encoding UTF8 "$dist\repo.json"
 
       - name: Publish release
         uses: softprops/action-gh-release@v2
