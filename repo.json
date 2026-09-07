@@ -1,7 +1,7 @@
 {
   "author": "Cino",
-  "version": "1.0.0.0",
-  "description": "割草 bACR，AEAssist 战斗逻辑已迁移至 PromeRotation PR，功能完整性待验证",
+  "version": "1.0.0.6",
+  "description": "割草 bACR",
   "supportedJobs": [
     {
       "job": "RPR",
@@ -13,5 +13,5 @@
   "downloadUrl": "https://github.com/Lulimmm/LuliPR/releases/latest/download/repo.json",
   "sourceRepositoryUrl": "",
   "sponsorUrl": "",
-  "sha256": "27cbd0ca1094070990d1cd6cfca1c8ca419a10652c9551c0627661b7fe1cf242"
+  "sha256": "a3595c4931dfce0fa5504a8ef78b8d7359273fafa5004c0796503c8fcb414cd0"
 }

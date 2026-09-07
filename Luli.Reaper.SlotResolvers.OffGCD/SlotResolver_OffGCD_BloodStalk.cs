@@ -27,6 +27,7 @@ public sealed class BloodStalkOgcd : Ogcd
         if (R.Qt("死亡之影") && !R.TargetHas(2586u, 3.5f)) return No;
         if (!R.Weave) return No;
         if (!R.Near()) return No;
+        if (!R.Ready(R.BloodStalk)) return No;
         if (JobGaugeHelper.RPR.灵魂值 < 50) return No;
         if (R.Has(3858u)) return No;
         if (R.Has(2587u)) return No;
