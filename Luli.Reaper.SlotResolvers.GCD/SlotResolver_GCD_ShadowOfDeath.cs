@@ -23,9 +23,12 @@ public sealed class ShadowOfDeathGcd : Gcd
 {
     public override CheckResult Check()
     {
-        if (!R.Qt("死亡之影") || !R.Ready(R.ShadowOfDeath) || !R.Near() || R.Has(2587u) || R.Has(3858u) || R.TargetHas(2586u, 40)) return No;
+        if (!R.Qt("死亡之影")) return No;
+        if (R.Has(2587u) || R.Has(3858u)) return No;
+        if (!R.Near()) return No;
+        if (R.TargetHas(2586u, 40)) return No;
         var cd = R.Cd(R.ArcaneCircle);
-        if (R.Qt("三附体") && cd is >= 12.5f and <= 15) return Ok;
+        if (R.Qt("三附体") && cd is >= 10f and <= 15f) return R.Ready(R.ShadowOfDeath) ? Ok : No;
         if (cd >= 10 && !R.TargetHas(2586u, ActionHelper.GetGcdTotal() + ActionHelper.GetGcdRemain() + .2f)) return Ok;
         if (cd < 10 && !R.Qt("三附体") && !R.TargetHas(2586u, 20)) return Ok;
         if (EngageManager.GetBattleTime() < 5 && R.Charges(R.SoulScythe) >= 2) return No;

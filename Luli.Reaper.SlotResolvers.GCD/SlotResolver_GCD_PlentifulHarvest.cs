@@ -21,6 +21,16 @@ namespace Reaper.PR;
 
 public sealed class PlentifulHarvestGcd : Gcd
 {
-    public override CheckResult Check() => R.Qt("大丰收") && R.Ready(R.PlentifulHarvest) && R.Targetable && R.Distance <= 15 && R.Has(2592u) && !R.Has(2593u) && !R.Has(2972u) && !R.Has(2587u) && !R.Has(3858u) ? Ok : No;
+    public override CheckResult Check()
+    {
+        if (!R.Qt("大丰收")) return No;
+        if (Core.Me.Level >= 70 && (R.Has(3858u) || R.Has(2587u))) return No;
+        if (R.Has(2593u)) return No;
+        if (R.Distance > 15f) return No;
+        if (R.Has(2593u)) return No;
+        if (R.Has(2972u)) return No;
+        if (!R.Has(2592u)) return No;
+        return R.Ready(R.PlentifulHarvest) ? Ok : No;
+    }
     public override PAction GetAction() => R.A(R.PlentifulHarvest);
 }

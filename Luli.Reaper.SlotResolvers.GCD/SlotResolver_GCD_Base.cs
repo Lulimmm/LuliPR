@@ -21,7 +21,15 @@ namespace Reaper.PR;
 
 public sealed class BaseGcd : Gcd
 {
-    public override CheckResult Check() => R.Qt("基础连") && R.Ready(R.Slice) && R.Near() && !R.Has(2587u) && !R.Has(3858u) && !R.Recently(R.BloodStalk, 1500) && !R.Recently(R.Gluttony, 1500) ? Ok : No;
+    public override CheckResult Check()
+    {
+        if (!R.Qt("基础连")) return No;
+        if (!R.Near()) return No;
+        if (R.Has(3858u) || R.Has(2587u)) return No;
+        if (R.Recently(R.BloodStalk, 1500) || R.Recently(R.Gluttony, 1500)) return No;
+        if (R.Has(2593u)) return No;
+        return R.Ready(R.Slice) ? Ok : No;
+    }
     public override PAction GetAction()
     {
         var id = ActionHelper.GetComboLeftTime() <= 0 ? R.Slice : ActionHelper.GetLastComboID() == R.Slice ? R.WaxingSlice : ActionHelper.GetLastComboID() == R.WaxingSlice ? R.InfernalSlice : R.Slice;

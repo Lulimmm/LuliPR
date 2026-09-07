@@ -23,7 +23,7 @@ public sealed class SoulSliceGcd : Gcd
 {
     public override CheckResult Check()
     {
-        if (!R.Qt("灵魂切割") || !R.Ready(R.SoulSlice) || R.Charges(R.SoulSlice) < 1 || !R.Near() || R.Has(2587u) || R.Has(3858u) || R.InShroud || JobGaugeHelper.RPR.灵魂值 > 50) return No;
+        if (!R.Qt("灵魂切割") || !R.Ready(R.SoulSlice) || R.Charges(R.SoulSlice) < 1 || !R.Near() || R.Has(2587u) || R.Has(3858u) || JobGaugeHelper.RPR.灵魂值 > 50) return No;
         // AE allows the basic Soul Slice path directly through level 77. The
         // opener, combo, and recharge-window rules below are level 78+ logic.
         if (Core.Me.Level <= 77) return Ok;

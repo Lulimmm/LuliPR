@@ -23,13 +23,16 @@ public sealed class EnshroudGcd : Gcd
 {
     public override CheckResult Check()
     {
-        if (!R.InEnshroud || !R.InShroud || R.Has(2587u) || R.Has(3858u) || R.Has(3860u)) return No;
+        if (!R.InEnshroud) return No;
+        if (!R.Has(2593u)) return No;
+        if (R.Has(2587u) || R.Has(3858u)) return No;
+        if (R.Has(3860u)) return No;
         if (JobGaugeHelper.RPR.夜游魂 < 2 && ActionHelper.IsUnlocked(R.Communio))
         {
             if (MoveManager.IsLocalPlayerMoving) return No;
             return Ok;
         }
-        return R.Near() && R.Targetable ? Ok : No;
+        return R.Near() ? Ok : No;
     }
     public override PAction GetAction()
     {
@@ -45,6 +48,8 @@ public sealed class EnshroudGcd : Gcd
         if (!R.TargetHas(2586u, 1.5f)) return R.A(R.ShadowOfDeath);
         if (R.Has(2590u)) return R.A(R.VoidReaping);
         if (R.Has(2591u)) return R.A(R.CrossReaping);
+        if (R.Cd(R.ArcaneCircle) is <= 4f and >= 1.3f && R.Qt("双附体") && !R.TargetHas(2586u, 20)) return R.A(R.ShadowOfDeath);
+        if (R.Cd(R.ArcaneCircle) < 1.3f && R.Qt("双附体") && R.TargetHas(2586u, 20)) return R.A(R.VoidReaping);
         return R.A(R.VoidReaping);
     }
 }

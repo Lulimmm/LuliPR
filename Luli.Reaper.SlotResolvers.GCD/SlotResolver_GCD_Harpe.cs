@@ -23,8 +23,14 @@ public sealed class HarpeGcd : Gcd
 {
     public override CheckResult Check()
     {
-        if (!R.Qt("勾刃") || !R.Ready(R.Harpe) || !R.Targetable || R.Near() || R.Distance > 25 || R.Has(2587u) || R.Has(3858u) || R.InShroud || MoveManager.IsLocalPlayerMoving) return No;
-        return R.Recently(R.BloodStalk, 2500) && R.Recently(R.Gluttony, 5000) ? No : Ok;
+        if (!R.Qt("勾刃")) return No;
+        if (R.Recently(R.BloodStalk, 2500) && R.Recently(R.Gluttony, 5000)) return No;
+        if (R.Has(3858u)) return No;
+        if (R.Has(2587u)) return No;
+        if (R.Near()) return No;
+        if (MoveManager.IsLocalPlayerMoving) return No;
+        if (R.Has(2593u)) return No;
+        return R.Ready(R.Harpe) ? Ok : No;
     }
     public override PAction GetAction() => R.A(R.Harpe);
 }

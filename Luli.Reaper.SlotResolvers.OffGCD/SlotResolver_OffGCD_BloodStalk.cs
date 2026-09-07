@@ -23,12 +23,20 @@ public sealed class BloodStalkOgcd : Ogcd
 {
     public override CheckResult Check()
     {
-        if (!R.Qt("隐匿挥割") || !R.Ready(R.BloodStalk) || !R.Weave || !R.Near() || JobGaugeHelper.RPR.灵魂值 < 50 || R.Has(2587u) || R.Has(3858u) || R.Has(2593u) || JobGaugeHelper.RPR.魂衣值 >= 100 || R.Has(3860u)) return No;
+        if (!R.Qt("隐匿挥割")) return No;
         if (R.Qt("死亡之影") && !R.TargetHas(2586u, 3.5f)) return No;
+        if (!R.Weave) return No;
+        if (!R.Near()) return No;
+        if (JobGaugeHelper.RPR.灵魂值 < 50) return No;
+        if (R.Has(3858u)) return No;
+        if (R.Has(2587u)) return No;
         if (R.Recently(R.BloodStalk, 2500) || R.Recently(R.Gluttony, 5000)) return No;
+        if (R.Has(3860u)) return No;
+        if (R.Has(2593u)) return No;
+        if (JobGaugeHelper.RPR.魂衣值 >= 100) return No;
         if (R.Cd(R.ArcaneCircle) is >= 99.5f and <= 115f) return No;
         if (R.Has(2972u) && R.Qt("只打大丰收附体")) return JobGaugeHelper.RPR.魂衣值 < 100 && R.Charges(R.SoulSlice) >= 1 ? Ok : No;
-        if (R.Has(2972u) && !R.Qt("只打大丰收附体")) return JobGaugeHelper.RPR.魂衣值 < 50 && JobGaugeHelper.RPR.灵魂值 >= 50 && R.Cd(R.Gluttony) >= 3.5f ? Ok : No;
+        if (R.Has(2972u) && !R.Qt("只打大丰收附体")) return JobGaugeHelper.RPR.魂衣值 < 50 && JobGaugeHelper.RPR.灵魂值 >= 50 && R.Cd(R.Gluttony) >= 2.5f ? Ok : No;
         if (R.Qt("死亡之影") && !R.TargetHas(2586u, 2)) return No;
         if (R.Qt("暴食") && ActionHelper.GetActionCooldown(R.Gluttony) <= ActionHelper.GetGcdTotal() * 2 && JobGaugeHelper.RPR.灵魂值 < 100) return No;
         if (R.Qt("双附体") && !R.Qt("三附体") && R.Cd(R.ArcaneCircle) < 17.5f && JobGaugeHelper.RPR.魂衣值 < 50) return No;

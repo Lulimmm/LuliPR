@@ -22,6 +22,12 @@ namespace Reaper.PR;
 public sealed class GibbetGcd : Gcd
 {
     private static uint ActionId => R.Has(2589u) ? R.Gallows : R.Has(2588u) ? R.Gibbet : R.Gallows;
-    public override CheckResult Check() => R.Ready(ActionId) && R.Near() && (R.Has(2587u) || R.Has(3858u)) ? Ok : No;
+    public override CheckResult Check()
+    {
+        if (!R.Near()) return No;
+        if (R.Has(3858u)) return R.Ready(ActionId) ? Ok : No;
+        if (R.Has(2587u)) return R.Ready(ActionId) ? Ok : No;
+        return No;
+    }
     public override PAction GetAction() => R.A(R.Adjust(ActionId));
 }

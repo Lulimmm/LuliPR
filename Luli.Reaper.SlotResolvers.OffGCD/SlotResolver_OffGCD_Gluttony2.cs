@@ -23,9 +23,13 @@ public sealed class SacrificiumOgcd : Ogcd
 {
     public override CheckResult Check()
     {
-        if (!R.Qt("牲祭") || !R.Ready(R.Sacrificium) || ActionHelper.GetGcdRemain() < .8f || !R.Has(3857u) || !R.TargetHasAny(2586u) || R.Cd(R.ArcaneCircle) < 5 || R.Has(3860u)) return No;
+        if (!R.Weave || ActionHelper.GetGcdRemain() < .8f) return No;
+        if (!R.Has(3857u)) return No;
+        if (!R.Ready(R.Sacrificium)) return No;
+        if (!R.TargetHasAny(2586u)) return No;
+        if (R.Cd(R.ArcaneCircle) < 5) return No;
         if (R.Cd(R.ArcaneCircle) > 110 && !R.Has(2599u)) return No;
-        return Ok;
+        return R.Qt("牲祭") ? Ok : No;
     }
     public override PAction GetAction() => R.A(R.Sacrificium, ActionType.OffGcd);
 }

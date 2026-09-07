@@ -21,6 +21,12 @@ namespace Reaper.PR;
 
 public sealed class PerfectioGcd : Gcd
 {
-    public override CheckResult Check() => R.Qt("完人") && R.Ready(R.Perfectio) && R.Has(3860u) && !R.Has(2587u) && !R.Has(3858u) ? Ok : No;
+    public override CheckResult Check()
+    {
+        if (!R.Ready(R.Perfectio)) return No;
+        if (R.Has(2587u) || R.Has(3858u)) return No;
+        if (!R.Qt("完人")) return No;
+        return R.Has(3860u) ? Ok : No;
+    }
     public override PAction GetAction() => R.A(R.Perfectio);
 }
