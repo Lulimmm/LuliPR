@@ -1,7 +1,7 @@
 {
   "author": "Cino",
   "version": "1.0.0.0",
-  "description": "",
+  "description": "割草 bACR，AEAssist 战斗逻辑已迁移至 PromeRotation PR，功能完整性待验证",
   "supportedJobs": [
     {
       "job": "RPR",

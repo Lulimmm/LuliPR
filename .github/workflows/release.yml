@@ -16,7 +16,7 @@ permissions:
 
 env:
   ACR_AUTHOR: Cino
-  ACR_DESCRIPTION: Luli Reaper PR ACR
+  ACR_DESCRIPTION: 割草 bACR，AEAssist 战斗逻辑已迁移至 PromeRotation PR，功能完整性待验证
   ACR_JOB: RPR
   ACR_CONTENT_SCOPE: Unspecified
   ACR_API_VERSION: "15"
