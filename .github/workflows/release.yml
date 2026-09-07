@@ -79,7 +79,11 @@ jobs:
           New-Item -ItemType Directory -Force $dist | Out-Null
           Copy-Item "Cino.zip" "$dist\latest.zip" -Force
           $sha = (Get-FileHash -Algorithm SHA256 "$dist\latest.zip").Hash.ToLowerInvariant()
-          [ordered]@{ author = "${{ env.ACR_AUTHOR }}"; version = "${{ steps.version.outputs.version }}"; description = "${{ env.ACR_DESCRIPTION }}"; supportedJobs = @([ordered]@{ job = "${{ env.ACR_JOB }}"; contentScope = "${{ env.ACR_CONTENT_SCOPE }}" }); apiVersion = [int]"${{ env.ACR_API_VERSION }}"; referencePromeVersion = "1.5.9.8"; downloadUrl = "https://github.com/${{ github.repository }}/releases/latest/download/latest.zip"; sourceRepositoryUrl = ""; sha256 = $sha } | ConvertTo-Json -Depth 8 | Set-Content -Encoding UTF8 "$dist\repo.json"
+          $manifest = Get-Content -Raw -Encoding UTF8 "repo.json" | ConvertFrom-Json
+          $manifest.sha256 = $sha
+          $manifest.downloadUrl = "https://github.com/${{ github.repository }}/releases/latest/download/latest.zip"
+          $manifest.sourceRepositoryUrl = ""
+          $manifest | ConvertTo-Json -Depth 8 | Set-Content -Encoding UTF8 "$dist\repo.json"
 
       - name: Publish release
         uses: softprops/action-gh-release@v2
