@@ -14,7 +14,7 @@
 		<PromeRotationInstalledRoot Condition="'$(PromeRotationInstalledRoot)' == ''">$(APPDATA)\XIVLauncherCN\installedPlugins\PromeRotation</PromeRotationInstalledRoot>
 		<PromeRotationDirs>$([System.IO.Directory]::GetDirectories('$(PromeRotationInstalledRoot)'))</PromeRotationDirs>
 		<PromeRotationReferenceRoot Condition="'$(PromeRotationReferenceRoot)' == ''">$([System.Text.RegularExpressions.Regex]::Match('$(PromeRotationDirs)', '[^;]+$').Value)</PromeRotationReferenceRoot>
-		<OutputPath Condition="'$(OutputPath)' == ''">$(APPDATA)\XIVLauncherCN\pluginConfigs\PromeRotation\ACR\菌子人\</OutputPath>
+		<OutputPath Condition="'$(OutputPath)' == ''">$(APPDATA)\XIVLauncherCN\pluginConfigs\PromeRotation\ACR\Cino\</OutputPath>
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     </PropertyGroup>
 

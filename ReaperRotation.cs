@@ -19,10 +19,10 @@ using PromeRotation.UI.HotKey;
 
 namespace Reaper.PR;
 
-[RotationMetadata(39u, "Luli Reaper PR", "菌子人", "1.0.0.0")]
+[RotationMetadata(39u, "Luli Reaper PR", "Cino", "1.0.0.0")]
 public sealed partial class ReaperRotation : IRotation, IRotationLifecycle
 {
-    public string AuthorName => "菌子人";
+    public string AuthorName => "Cino";
     // AE exposes the unset/no-opener state as "待定".
     private const string FollowTimelineOpener = "待定";
     private const string LegacyFollowTimelineOpener = "跟随时间轴";
@@ -186,7 +186,7 @@ public sealed partial class ReaperRotation : IRotation, IRotationLifecycle
 
     private static string ConfigPath => Path.Combine(
         Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-        "XIVLauncherCN", "pluginConfigs", "PromeRotation", "ACR", "菌子人", "opener.json");
+        "XIVLauncherCN", "pluginConfigs", "PromeRotation", "ACR", "Cino", "opener.json");
 
     private static OpenerConfig LoadOpenerConfig()
     {

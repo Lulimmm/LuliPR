@@ -15,7 +15,7 @@ permissions:
   contents: write
 
 env:
-  ACR_AUTHOR: 菌子人
+  ACR_AUTHOR: Cino
   ACR_DESCRIPTION: Luli Reaper PR ACR
   ACR_JOB: RPR
   ACR_CONTENT_SCOPE: Unspecified
@@ -69,7 +69,7 @@ jobs:
       - name: Build
         shell: pwsh
         run: |
-          if (-not (Test-Path "菌子人.zip")) { throw "菌子人.zip was not found" }
+          if (-not (Test-Path "Cino.zip")) { throw "Cino.zip was not found" }
           Write-Host "Using the verified package from the repository."
 
       - name: Package
@@ -77,7 +77,7 @@ jobs:
         run: |
           $dist = "${{ runner.temp }}\dist"
           New-Item -ItemType Directory -Force $dist | Out-Null
-          Copy-Item "菌子人.zip" "$dist\latest.zip" -Force
+          Copy-Item "Cino.zip" "$dist\latest.zip" -Force
           $sha = (Get-FileHash -Algorithm SHA256 "$dist\latest.zip").Hash.ToLowerInvariant()
           [ordered]@{ author = "${{ env.ACR_AUTHOR }}"; version = "${{ steps.version.outputs.version }}"; description = "${{ env.ACR_DESCRIPTION }}"; supportedJobs = @([ordered]@{ job = "${{ env.ACR_JOB }}"; contentScope = "${{ env.ACR_CONTENT_SCOPE }}" }); apiVersion = [int]"${{ env.ACR_API_VERSION }}"; referencePromeVersion = "1.5.9.8"; downloadUrl = "https://github.com/${{ github.repository }}/releases/latest/download/latest.zip"; sourceRepositoryUrl = ""; sha256 = $sha } | ConvertTo-Json -Depth 8 | Set-Content -Encoding UTF8 "$dist\repo.json"
 
