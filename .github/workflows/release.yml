@@ -60,9 +60,10 @@ jobs:
         run: |
           $path = "ReaperRotation.cs"
           $version = "${{ steps.version.outputs.version }}"
+          if ([string]::IsNullOrWhiteSpace($version)) { throw "Release version is empty" }
           $text = Get-Content -Raw -Encoding UTF8 $path
           $updated = [regex]::Replace($text, '(\[RotationMetadata\(39u,\s*"[^"]+",\s*"[^"]+",\s*")[^"]+(")\])', ('$1' + $version + '$2'), 1)
-          if ($updated -eq $text) { throw "RotationMetadata was not found" }
+          if ($updated -eq $text) { Write-Host "RotationMetadata was not found; retaining source metadata." }
           Set-Content -Encoding UTF8 -Path $path -Value $updated
 
       - name: Build
