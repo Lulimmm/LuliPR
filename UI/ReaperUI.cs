@@ -117,17 +117,43 @@ public void DrawSettings()
 
     private void SetQtPageHidden(bool hidden)
     {
+        // HiddenQts is shared by the PromeRotation UI. Track only IDs this page
+        // owns, while treating a persisted hidden-page state as page-owned so
+        // it can be restored after the user turns the page back on.
+        var initialHiddenPage = !qtPageVisibilityInitialized && hidden;
         foreach (var id in qtIds)
         {
             if (hidden)
             {
-                if (PromeSettings.Instance.HiddenQts.Add(id)) hiddenQtIds.Add(id);
+                if (initialHiddenPage)
+                {
+                    PromeSettings.Instance.HiddenQts.Add(id);
+                    hiddenQtIds.Add(id);
+                }
+                else if (!qtPageWasHidden)
+                {
+                    if (PromeSettings.Instance.HiddenQts.Contains(id))
+                        preexistingHiddenQtIds.Add(id);
+                    PromeSettings.Instance.HiddenQts.Add(id);
+                    hiddenQtIds.Add(id);
+                }
+                else if (qtPageWasHidden && hiddenQtIds.Contains(id))
+                    PromeSettings.Instance.HiddenQts.Add(id);
             }
-            else if (hiddenQtIds.Remove(id))
+            else if (qtPageWasHidden && hiddenQtIds.Remove(id)
+                && !preexistingHiddenQtIds.Remove(id))
             {
                 PromeSettings.Instance.HiddenQts.Remove(id);
             }
         }
+
+        if (!hidden && qtPageWasHidden)
+        {
+            hiddenQtIds.Clear();
+            preexistingHiddenQtIds.Clear();
+        }
+        qtPageWasHidden = hidden;
+        qtPageVisibilityInitialized = true;
     }
     public void DrawQTs() { }
 

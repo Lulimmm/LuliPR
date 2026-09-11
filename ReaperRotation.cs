@@ -19,7 +19,7 @@ using PromeRotation.UI.HotKey;
 
 namespace Reaper.PR;
 
-[RotationMetadata(39u, "Luli Reaper PR", "Cino", "1.0.0.6")]
+[RotationMetadata(39u, "Luli Reaper PR", "Cino", "1.0.0.7")]
 public sealed partial class ReaperRotation : IRotation, IRotationLifecycle
 {
     public string AuthorName => "Cino";
@@ -99,6 +99,9 @@ public sealed partial class ReaperRotation : IRotation, IRotationLifecycle
     private readonly HotkeyPanel hotkeyPanel;
     private readonly HashSet<string> qtIds = new();
     private readonly HashSet<string> hiddenQtIds = new();
+    private readonly HashSet<string> preexistingHiddenQtIds = new();
+    private bool qtPageWasHidden;
+    private bool qtPageVisibilityInitialized;
     internal static float ExtraRange => openerConfig.ExtraRange;
     internal static float MoveCasting => openerConfig.MoveCasting;
     public ReaperRotation()
