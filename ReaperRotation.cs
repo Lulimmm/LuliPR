@@ -19,7 +19,7 @@ using PromeRotation.UI.HotKey;
 
 namespace Reaper.PR;
 
-[RotationMetadata(39u, "Luli Reaper PR", "Cino", "1.0.0.7")]
+[RotationMetadata(39u, "Luli Reaper PR", "Cino", "1.0.0.8")]
 public sealed partial class ReaperRotation : IRotation, IRotationLifecycle
 {
     public string AuthorName => "Cino";
@@ -147,7 +147,19 @@ public sealed partial class ReaperRotation : IRotation, IRotationLifecycle
     }
     public PAction? NextGcd() { EnforceHiddenPanels(); return Next(gcd); }
     public PAction? NextOffGcd() { EnforceHiddenPanels(); return Next(ogcd); }
-    private static PAction? Next(IEnumerable<IDecisionResolver> rs) { foreach (var r in rs) if (r.Check().Success) return r.GetAction(); return null; }
+    private static PAction? Next(IEnumerable<IDecisionResolver> resolvers)
+    {
+        // PR 的解析器列表本身就是强制优先级。必须在第一个成功项处停止，
+        // 否则 Soul Slice 的 AE 返回值 1/2 会越过前面的完人、附体、
+        // 大丰收和妖异之镰，表现为这些原有拦截条件全部失效。
+        foreach (var resolver in resolvers)
+        {
+            if (resolver.Check().Success)
+                return resolver.GetAction();
+        }
+
+        return null;
+    }
     public void UpdateDebugStatus()
     {
         RotationManager.AlwaysSolverStatus.Clear();

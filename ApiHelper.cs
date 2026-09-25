@@ -5,6 +5,8 @@ using System.Text.Json;
 using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Bindings.ImGui;
 using ECommons.DalamudServices;
+using FfxivActionManager = FFXIVClientStructs.FFXIV.Client.Game.ActionManager;
+using FfxivActionType = FFXIVClientStructs.FFXIV.Client.Game.ActionType;
 using PromeRotation.Core;
 using PromeRotation.Data;
 using PromeRotation.Extensions;
@@ -66,6 +68,52 @@ internal static class R
     public static PAction A(uint id, ActionType type = ActionType.Gcd, ActionTargetType target = ActionTargetType.Target) => new(id, type, target);
     public static uint Adjust(uint id) => ActionHelper.GetAdjustedActionId(id);
     public static bool Recently(uint id, int ms) => ActionHelper.RecentlyUsed(id, ms);
+    public static unsafe bool Is1ChargesNextMs(uint id, long time = 30L)
+    {
+        if (id == 0)
+        {
+            Svc.Log.Error("禁止传id<=0的技能");
+            return false;
+        }
+
+        var rowOrDefault = Svc.Data.GetExcelSheet<Lumina.Excel.Sheets.Action>().GetRowOrDefault(id);
+        if (!rowOrDefault.HasValue)
+        {
+            return false;
+        }
+
+        var action = rowOrDefault.Value;
+        if (action.CooldownGroup == 0)
+        {
+            return true;
+        }
+
+        var recastTime = FfxivActionManager.GetAdjustedRecastTime(FfxivActionType.Action, action.RowId, true) / 1000f;
+        if (recastTime <= 0f)
+        {
+            return false;
+        }
+
+        var actionManager = FfxivActionManager.Instance();
+        if (actionManager == null)
+        {
+            return false;
+        }
+
+        var recastGroupDetail = actionManager->GetRecastGroupDetail(action.CooldownGroup - 1);
+        if (recastGroupDetail == null)
+        {
+            return (ActionHelper.GetActionRecastTimeElapsed(action.RowId) + time / 1000f) / recastTime >= 1f;
+        }
+
+        var maxCharges = FfxivActionManager.GetMaxCharges(action.RowId, 0u);
+        if (!recastGroupDetail->IsActive)
+        {
+            return maxCharges >= 1;
+        }
+
+        return (recastGroupDetail->Elapsed + time / 1000f) / recastTime >= 1f;
+    }
     public static int NearbyEnemies(float range = 5) => Target == null ? 0 : (int)TargetHelper.EnemyInRangeTarget(Target, range);
     public static bool HasSingleTargetFirewall => Has(3499u) || Has(3500u) || Has(4192u) || Has(4194u);
     public static bool ChargeSoon(uint id, float seconds)
@@ -108,9 +156,15 @@ public abstract class ReaperOpener : IOpener
         if (potion != 0)
             actions.Add(new PAction(potion, ActionType.Item, ActionTargetType.Self) { RequiresVerification = true });
     }
-    protected static PAction StanceFromTarget() =>
-        TargetHelper.GetTargetPositional() == Positional.Rear ? G(R.EnhancedGallows) : G(R.EnhancedGibbet);
-    protected static PAction StanceFromBuff() => R.Has(2589u) ? G(R.EnhancedGallows) : G(R.EnhancedGibbet);
+    protected static void AddPositionalPair(List<PAction> actions)
+    {
+        // PR 会在开战时一次性生成并入队整个 opener。此时第一刀尚未执行，
+        // 因此不能依赖第一刀产生的 2588/2589 Buff 来决定第二刀。
+        // 在真正入队时读取当前身位，并明确排入对应第一刀和相反的第二刀。
+        var startFromRear = TargetHelper.GetTargetPositional() == Positional.Rear;
+        actions.Add(G(startFromRear ? R.EnhancedGallows : R.EnhancedGibbet));
+        actions.Add(G(startFromRear ? R.EnhancedGibbet : R.EnhancedGallows));
+    }
     protected static void AddHarpeCountdown(CountDownHandler countdownHandler, int timeRemainingMs)
     {
         countdownHandler.AddAction(timeRemainingMs, G(R.Harpe));

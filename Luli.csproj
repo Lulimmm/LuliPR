@@ -24,13 +24,11 @@
         <BaseOutputPath Condition="'$(BaseOutputPath)' == ''">$(OutputPath)</BaseOutputPath>
     </PropertyGroup>
 
-    
     <ItemGroup>
       <!-- PR implementation. The AEAssist tree is reference-only and is never compiled. -->
-      <Compile Include="**\*.cs" Exclude="bin\**\*;obj\**\*" />
+      <Compile Include="**\*.cs" Exclude="bin\**\*;obj\**\*;**\bin\**\*;**\obj\**\*" />
     </ItemGroup>
 
-    
     <ItemGroup>
       <Reference Include="Dalamud">
         <HintPath>$(DalamudReferenceRoot)\Dalamud.dll</HintPath>
