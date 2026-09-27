@@ -74,6 +74,19 @@ public sealed class SoulSliceGcd : Gcd, IAePriorityResolver
             return Reject(-5, "当前处于附体/夜游魂衣阶段或有妖异之镰待消费");
         }
 
+        // 完人可用时保留 3860 proc，不能先消耗灵魂切割充能。
+        if (PerfectioGcd.IsAvailableForRotation())
+        {
+            return Reject(-12, "完人已满足释放条件");
+        }
+
+        // 大丰收满足完整释放条件时，必须让位给 24385，不能消耗灵魂切割充能。
+        // 复用 PlentifulHarvestGcd 的条件，避免仅按技能冷却做过度拦截。
+        if (PlentifulHarvestGcd.IsReadyForRotation())
+        {
+            return Reject(-11, "大丰收已满足释放条件");
+        }
+
         // -6：灵魂值大于 50 时不使用，避免灵魂资源溢出
         if (JobGaugeHelper.RPR.灵魂值 > 50)
         {

@@ -21,12 +21,20 @@ namespace Reaper.PR;
 
 public sealed class PerfectioGcd : Gcd
 {
+    internal static bool IsAvailableForRotation()
+    {
+        // Match AE: Perfectio is gated by unlock, QT, the proc status, and
+        // the same conflicting aura checks. Readiness is handled by the GCD
+        // decision window, so it must not make Soul Slice consume the proc.
+        if (!ActionHelper.IsUnlocked(R.Perfectio)) return false;
+        if (R.Has(2587u) || R.Has(3858u)) return false;
+        if (!R.Qt("完人")) return false;
+        return R.Has(3860u);
+    }
+
     public override CheckResult Check()
     {
-        if (!R.Ready(R.Perfectio)) return No;
-        if (R.Has(2587u) || R.Has(3858u)) return No;
-        if (!R.Qt("完人")) return No;
-        return R.Has(3860u) ? Ok : No;
+        return IsAvailableForRotation() ? Ok : No;
     }
     public override PAction GetAction() => R.A(R.Perfectio);
 }

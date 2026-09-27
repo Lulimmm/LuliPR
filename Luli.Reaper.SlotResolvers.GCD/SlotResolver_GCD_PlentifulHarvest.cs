@@ -21,16 +21,21 @@ namespace Reaper.PR;
 
 public sealed class PlentifulHarvestGcd : Gcd
 {
+    internal static bool IsReadyForRotation()
+    {
+        if (!R.Qt("大丰收")) return false;
+        if (Core.Me.Level >= 70 && (R.Has(3858u) || R.Has(2587u))) return false;
+        if (R.Has(2593u)) return false;
+        if (R.Distance > 15f) return false;
+        if (R.Has(2593u)) return false;
+        if (R.Has(2972u)) return false;
+        if (!R.Has(2592u)) return false;
+        return R.Ready(R.PlentifulHarvest);
+    }
+
     public override CheckResult Check()
     {
-        if (!R.Qt("大丰收")) return No;
-        if (Core.Me.Level >= 70 && (R.Has(3858u) || R.Has(2587u))) return No;
-        if (R.Has(2593u)) return No;
-        if (R.Distance > 15f) return No;
-        if (R.Has(2593u)) return No;
-        if (R.Has(2972u)) return No;
-        if (!R.Has(2592u)) return No;
-        return R.Ready(R.PlentifulHarvest) ? Ok : No;
+        return IsReadyForRotation() ? Ok : No;
     }
     public override PAction GetAction() => R.A(R.PlentifulHarvest);
 }

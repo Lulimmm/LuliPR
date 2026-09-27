@@ -20,7 +20,7 @@ using PromeRotation.UI.HotKey;
 
 namespace Reaper.PR;
 
-[RotationMetadata(39u, "Luli Reaper PR", "Cino", "1.0.0.9")]
+[RotationMetadata(39u, "Luli Reaper PR", "Cino", "1.0.0.10")]
 public sealed partial class ReaperRotation : IRotation, IRotationLifecycle
 {
     public string AuthorName => "Cino";
