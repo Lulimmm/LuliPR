@@ -14,12 +14,13 @@ using PromeRotation.PureTimeline;
 using PromeRotation.Resolvers;
 using PromeRotation.Rotation;
 using PromeRotation.Timeline;
+using PromeRotation.Timeline.Core;
 using PromeRotation.Updaters;
 using PromeRotation.UI.HotKey;
 
 namespace Reaper.PR;
 
-[RotationMetadata(39u, "Luli Reaper PR", "Cino", "1.0.0.8")]
+[RotationMetadata(39u, "Luli Reaper PR", "Cino", "1.0.0.9")]
 public sealed partial class ReaperRotation : IRotation, IRotationLifecycle
 {
     public string AuthorName => "Cino";
@@ -70,6 +71,42 @@ public sealed partial class ReaperRotation : IRotation, IRotationLifecycle
         ["特化1g暴食0g团辅"] = typeof(GluttonyOneGOpener),
         ["提前1G团辅特化起手"] = typeof(MinusOneGOpener)
     };
+
+    // PromeRotation reads this public static property while registering an
+    // external ACR. PTL uses the registration metadata to populate its QT
+    // action editor, so constructor-only AddQt calls are not sufficient.
+    public static IReadOnlyDictionary<string, bool> QtList { get; } = new Dictionary<string, bool>
+    {
+        ["基础连"] = true,
+        ["灵魂切割"] = true,
+        ["死亡之影"] = true,
+        ["收获月"] = false,
+        ["死亡之涡"] = true,
+        ["勾刃"] = false,
+        ["大丰收"] = true,
+        ["完人"] = true,
+        ["附体"] = true,
+        ["单附体"] = false,
+        ["双附体"] = true,
+        ["三附体"] = false,
+        ["牲祭"] = true,
+        ["暴食"] = true,
+        ["暴食前置"] = false,
+        ["隐匿挥割"] = true,
+        ["倾泄隐匿挥割"] = false,
+        ["自动真北"] = true,
+        ["神秘环"] = true,
+        ["爆发药"] = false,
+        ["移动读条"] = false,
+        ["提高完人优先级"] = false,
+        ["只打大丰收附体"] = false,
+        ["脱战播魂种"] = true,
+        ["长臂猿"] = false,
+        ["团契"] = true
+    };
+    // PTL uses this provider to expose live Reaper gauge conditions.
+    public static IJobNodeProvider NodeProvider { get; } = new Reaper.PR.Timeline.ReaperJobNodeProvider();
+
     // Resolver order mirrors AE's ReaperRotationEntry exactly. WhorlOfDeath
     // exists in the reference tree but is intentionally not registered there.
     private readonly List<IDecisionResolver> gcd = new()
@@ -106,19 +143,10 @@ public sealed partial class ReaperRotation : IRotation, IRotationLifecycle
     internal static float MoveCasting => openerConfig.MoveCasting;
     public ReaperRotation()
     {
-        foreach (var q in new[]
+        foreach (var q in QtList)
         {
-            ("基础连", true), ("灵魂切割", true), ("死亡之影", true), ("收获月", false),
-            ("死亡之涡", true), ("勾刃", false), ("大丰收", true), ("完人", true),
-            ("附体", true), ("单附体", false), ("双附体", true), ("三附体", false),
-            ("牲祭", true), ("暴食", true), ("暴食前置", false), ("隐匿挥割", true),
-            ("倾泄隐匿挥割", false), ("自动真北", true), ("神秘环", true), ("爆发药", false),
-            ("移动读条", false), ("提高完人优先级", false), ("只打大丰收附体", false),
-            ("脱战播魂种", true), ("长臂猿", false), ("团契", true)
-        })
-        {
-            PromeSettings.Instance.AddQt(q.Item1, q.Item2);
-            qtIds.Add(q.Item1);
+            PromeSettings.Instance.AddQt(q.Key, q.Value);
+            qtIds.Add(q.Key);
         }
 
         hotkeyPanel = new HotkeyPanel(7, 45f, 5f, "Luli Reaper Hotkeys", "LuliReaperPR");
