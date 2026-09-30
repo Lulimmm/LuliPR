@@ -1,6 +1,7 @@
 using System;
 using System.Numerics;
 using Dalamud.Bindings.ImGui;
+using ErosUI;
 using PromeRotation.Core;
 using PromeRotation.Data;
 using PromeRotation.Helpers;
@@ -15,6 +16,9 @@ public sealed partial class ReaperRotation
 {
 public void DrawSettings()
     {
+        ErosUIFramework.OpenSettings();
+        return;
+        /*
         EnforceHiddenPanels();
         if (!ImGui.BeginTabBar("LuliReaperSettingsTabs")) return;
         if (ImGui.BeginTabItem("通用"))
@@ -73,6 +77,7 @@ public void DrawSettings()
             ImGui.EndTabItem();
         }
         ImGui.EndTabBar();
+        */
     }
     private void DrawOpenerOptions()
     {

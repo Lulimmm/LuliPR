@@ -5,6 +5,7 @@ using System.Text.Json;
 using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Bindings.ImGui;
 using ECommons.DalamudServices;
+using ErosUI;
 using PromeRotation.Core;
 using PromeRotation.Data;
 using PromeRotation.Extensions;
@@ -20,7 +21,7 @@ using PromeRotation.UI.HotKey;
 
 namespace Reaper.PR;
 
-[RotationMetadata(39u, "Luli Reaper PR", "Cino", "1.0.0.10")]
+[RotationMetadata(39u, "Luli Reaper PR", "Cino", "1.0.1")]
 public sealed partial class ReaperRotation : IRotation, IRotationLifecycle
 {
     public string AuthorName => "Cino";
@@ -81,7 +82,6 @@ public sealed partial class ReaperRotation : IRotation, IRotationLifecycle
         ["灵魂切割"] = true,
         ["死亡之影"] = true,
         ["收获月"] = false,
-        ["死亡之涡"] = true,
         ["勾刃"] = false,
         ["大丰收"] = true,
         ["完人"] = true,
@@ -143,26 +143,56 @@ public sealed partial class ReaperRotation : IRotation, IRotationLifecycle
     internal static float MoveCasting => openerConfig.MoveCasting;
     public ReaperRotation()
     {
+        ErosUIFramework.Configure(
+            jobTag: "RPR",
+            jobName: "ACR",
+            qtAll: QtList,
+            qtIsMetaKey: _ => false,
+            qtIsVisibleInMode: (_, _) => true,
+            qtDefault: key => QtList.TryGetValue(key, out var value) && value,
+            qtCascadeRules: new Dictionary<string, (string key, bool invert)[]>(),
+            hotkeyNames: new[]
+            {
+                "\u7206\u53d1\u836f", "\u75be\u8dd1", "\u6781\u9650\u6280", "\u955c\u5934\u65b9\u5411\u540e\u64a4", "\u955c\u5934\u65b9\u5411\u7a81\u8fdb",
+                "\u7275\u5236", "\u64ad\u9b42\u79cd", "\u6d74\u8840", "\u5185\u4e39", "\u795e\u79d8\u7eb9", "\u4eb2\u758f\u81ea\u884c", "\u82e6\u96be\u4e4b\u5fc3"
+            },
+            buildHotkeys: b =>
+            {
+                b.Execute("\u7206\u53d1\u836f", new DynamicActionLogic(() => GameData.GetBestPotionId(), ActionType.Item, ActionTargetType.Self), iconActionID: R.Potion);
+                b.Fixed("\u75be\u8dd1", 3u, ActionType.OffGcd, ActionTargetType.Self);
+                b.Execute("\u6781\u9650\u6280", new DynamicActionLogic(LimitBreakHelper.GetLimitBreakActionId, ActionType.LimitBreak, ActionTargetType.Target));
+                b.Fixed("\u955c\u5934\u65b9\u5411\u540e\u64a4", 24402u, ActionType.OffGcd, ActionTargetType.Self);
+                b.Fixed("\u955c\u5934\u65b9\u5411\u7a81\u8fdb", R.Ingress, ActionType.OffGcd, ActionTargetType.Target);
+                b.Fixed("\u7275\u5236", 7549u, ActionType.OffGcd, ActionTargetType.Target);
+                b.Fixed("\u64ad\u9b42\u79cd", R.Soulsow, ActionType.Gcd, ActionTargetType.Target);
+                b.Fixed("\u6d74\u8840", 7542u, ActionType.OffGcd, ActionTargetType.Self);
+                b.Fixed("\u5185\u4e39", 7541u, ActionType.OffGcd, ActionTargetType.Self);
+                b.Fixed("\u795e\u79d8\u7eb9", 24404u, ActionType.OffGcd, ActionTargetType.Self);
+                b.Fixed("\u4eb2\u758f\u81ea\u884c", 7548u, ActionType.OffGcd, ActionTargetType.Self);
+                b.Fixed("\u82e6\u96be\u4e4b\u5fc3", 16535u, ActionType.OffGcd, ActionTargetType.Self);
+            },
+            author: "Cino");
+
         foreach (var q in QtList)
         {
             PromeSettings.Instance.AddQt(q.Key, q.Value);
             qtIds.Add(q.Key);
         }
 
+        // 这些开关只作为高级调试/特殊循环选项，默认不放进 QT 悬浮面板；
+        // 用户仍可在 ErosUI 设置的 QT 显隐页手动重新显示。
+        var uiSettings = ErosUISettings.Instance;
+        foreach (var key in new[]
+        {
+            "基础连", "完人", "大丰收", "团契", "牲祭", "勾刃", "只打大丰收附体"
+        })
+        {
+            if (!uiSettings.QtVisibleHighEnd.ContainsKey(key))
+                uiSettings.QtVisibleHighEnd[key] = false;
+        }
+        uiSettings.Save();
+
         hotkeyPanel = new HotkeyPanel(7, 45f, 5f, "Luli Reaper Hotkeys", "LuliReaperPR");
-        HotkeyManager.Instance.AddHotkeyPanel(hotkeyPanel);
-        hotkeyPanel.AddHotkey("爆发药", new DynamicActionLogic(() => GameData.GetBestPotionId(), ActionType.Item, ActionTargetType.Self), R.Potion);
-        hotkeyPanel.AddHotkey("疾跑", R.A(3u, ActionType.OffGcd, ActionTargetType.Self));
-        hotkeyPanel.AddHotkey("极限技", new DynamicActionLogic(LimitBreakHelper.GetLimitBreakActionId, ActionType.LimitBreak, ActionTargetType.Target));
-        hotkeyPanel.AddHotkey("镜头方向后撤", R.A(24402u, ActionType.OffGcd, ActionTargetType.Self));
-        hotkeyPanel.AddHotkey("镜头方向突进", R.A(R.Ingress, ActionType.OffGcd, ActionTargetType.Target));
-        hotkeyPanel.AddHotkey("牵制", R.A(7549u, ActionType.OffGcd));
-        hotkeyPanel.AddHotkey("播魂种", R.A(R.Soulsow, ActionType.Gcd));
-        hotkeyPanel.AddHotkey("浴血", R.A(7542u, ActionType.OffGcd, ActionTargetType.Self));
-        hotkeyPanel.AddHotkey("内丹", R.A(7541u, ActionType.OffGcd, ActionTargetType.Self));
-        hotkeyPanel.AddHotkey("神秘纹", R.A(24404u, ActionType.OffGcd, ActionTargetType.Self));
-        hotkeyPanel.AddHotkey("亲疏自行", R.A(7548u, ActionType.OffGcd, ActionTargetType.Self));
-        hotkeyPanel.AddHotkey("苦难之心", R.A(16535u, ActionType.OffGcd, ActionTargetType.Self));
         EnforceHiddenPanels();
     }
 
@@ -213,8 +243,18 @@ public sealed partial class ReaperRotation : IRotation, IRotationLifecycle
         return Activator.CreateInstance(type) as IOpener;
     }
     public IRotationEventHandler GetEventHandler() => events;
-    public void OnEnterAcr() => ReaperHooks.Update();
-    public void OnExitAcr() => ReaperHooks.Dispose();
+    public void OnEnterAcr()
+    {
+        ReaperHooks.Update();
+        ErosUIFramework.Install();
+    }
+
+    public void OnExitAcr()
+    {
+        ErosUIFramework.Uninstall();
+        ReaperHooks.Dispose();
+    }
+
     private sealed class OpenerConfig
     {
         public string? Selected { get; set; }
