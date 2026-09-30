@@ -74,6 +74,9 @@ public sealed partial class CombatControlWindow : Window
 
         // 顶部 6px 拖动区会让上侧留白比下侧多 6px；在按钮行下补同高占位，使按钮行上下居中
         ImGui.Dummy(new Vector2(0f, 6f));
+
+        // 三个按钮保留各自的点击行为；其余窗口区域支持双击同步切换 QT/Hotkey 面板。
+        HandlePanelVisibilityDoubleClick();
     }
 
     public override void PostDraw()
@@ -119,6 +122,32 @@ public sealed partial class CombatControlWindow : Window
             savePosition?.Invoke(ImGui.GetWindowPos());
         }
     }
+
+    private void HandlePanelVisibilityDoubleClick()
+    {
+        if (!ImGui.IsWindowHovered() || !ImGui.IsMouseDoubleClicked(ImGuiMouseButton.Left))
+            return;
+
+        var mouse = ImGui.GetIO().MousePos;
+        var content = ImGui.GetWindowPos() + ImGui.GetStyle().WindowPadding;
+        var rowTop = content.Y + 6f;
+
+        // 排除三个按钮的完整矩形，避免双击按钮同时触发面板显隐。
+        var state = new Vector4(content.X, rowTop, StateButtonWidth, ModernButtonHeight);
+        var autoPull = new Vector4(content.X + StateButtonWidth + DividerAdvance, rowTop,
+            AutoPullButtonWidth, ModernButtonHeight);
+        var settings = new Vector4(content.X + StateButtonWidth + DividerAdvance + AutoPullButtonWidth + DividerAdvance,
+            rowTop, SettingsButtonWidth, ModernButtonHeight);
+
+        if (在矩形内(mouse, state) || 在矩形内(mouse, autoPull) || 在矩形内(mouse, settings))
+            return;
+
+        ErosUIFramework.ToggleAuxiliaryPanels();
+    }
+
+    private static bool 在矩形内(Vector2 point, Vector4 rect) =>
+        point.X >= rect.X && point.X <= rect.X + rect.Z
+        && point.Y >= rect.Y && point.Y <= rect.Y + rect.W;
 
     // 把窗口位置限制在屏幕工作区内（含 4px 边距）；窗口尺寸未知时按全屏处理。
     private Vector2 限制到屏幕内(Vector2 pos)

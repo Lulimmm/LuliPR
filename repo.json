@@ -1,11 +1,11 @@
 {
   "author": "Cino",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "割草 bACR",
   "supportedJobs": [
     {
       "job": "RPR",
-      "contentScope": "Unspecified"
+      "contentScope": "HighEnd"
     }
   ],
   "apiVersion": 15,
@@ -13,5 +13,5 @@
   "downloadUrl": "https://github.com/Lulimmm/LuliPR/releases/latest/download/repo.json",
   "sourceRepositoryUrl": "",
   "sponsorUrl": "",
-  "sha256": "ef2b25f5a7af12fea96e2c8e3c22d85de45c8c03815fe25d2a75a07f70f3fc44"
+  "sha256": "3aa3e77f2e933cece430c2c2cbc9ee1f3a8e921153e86d01412a7fedb97aa97f"
 }

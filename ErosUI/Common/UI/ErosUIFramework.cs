@@ -130,6 +130,13 @@ public static class ErosUIFramework
     /// <summary>显示/隐藏热键悬浮面板。只切换显隐，不重建窗口。</summary>
     public static void SetHotkeyPanelVisible(bool visible) => ErosUIHotkeyUI.SetPanelVisible(visible);
 
+    /// <summary>同步切换 QT 与 Hotkey 悬浮面板的显隐状态。</summary>
+    public static void ToggleAuxiliaryPanels()
+    {
+        SetQtPanelVisible(!QtPanelVisible);
+        SetHotkeyPanelVisible(!HotkeyPanelVisible);
+    }
+
     /// <summary>打开设置窗口。</summary>
     public static void OpenSettings()
     {
