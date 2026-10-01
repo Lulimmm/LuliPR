@@ -29,8 +29,7 @@ public sealed class GluttonyOneGOpener : ReaperOpener
             var actions = new List<PAction> { O(R.ArcaneCircle), G(R.SoulSlice) };
             AddPotion(actions);
             actions.Add(O(R.Gluttony, ActionTargetType.Target));
-            AddPositionalPair(actions);
-            actions.AddRange(new[] { G(R.ShadowOfDeath), G(R.PlentifulHarvest) });
+            AddPositionalPair(actions, G(R.ShadowOfDeath), G(R.PlentifulHarvest));
             return actions;
         }
     }

@@ -108,6 +108,9 @@ public static class ErosUIFramework
     /// <summary>清空后按当前职业与当前模式重新注册 QT，并同步显隐配置到宿主。切换模式后调用。</summary>
     public static void 重建QT可见性() => APIHelper.重建QT可见性();
 
+    /// <summary>宿主清空 QT 注册表后恢复当前职业的 QT 及用户开关状态。</summary>
+    public static void RestoreQtIfHostCleared() => APIHelper.RestoreQtIfHostCleared();
+
     /// <summary>切换 QT 悬浮面板的显示/隐藏。</summary>
     public static void ToggleQtPanel()
     {

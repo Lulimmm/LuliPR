@@ -156,14 +156,12 @@ public abstract class ReaperOpener : IOpener
         if (potion != 0)
             actions.Add(new PAction(potion, ActionType.Item, ActionTargetType.Self) { RequiresVerification = true });
     }
-    protected static void AddPositionalPair(List<PAction> actions)
+    protected static void AddPositionalPair(List<PAction> actions, params PAction[] tail)
     {
-        // PR 会在开战时一次性生成并入队整个 opener。此时第一刀尚未执行，
-        // 因此不能依赖第一刀产生的 2588/2589 Buff 来决定第二刀。
-        // 在真正入队时读取当前身位，并明确排入对应第一刀和相反的第二刀。
-        var startFromRear = TargetHelper.GetTargetPositional() == Positional.Rear;
-        actions.Add(G(startFromRear ? R.EnhancedGallows : R.EnhancedGibbet));
-        actions.Add(G(startFromRear ? R.EnhancedGibbet : R.EnhancedGallows));
+        // AE evaluates both positional actions when they are reached. The PR
+        // opener queue is built before combat, so defer both actions until the
+        // preceding Gluttony cast and the first positional hit have completed.
+        OpenerPositionalRuntime.Begin(tail);
     }
     protected static void AddHarpeCountdown(CountDownHandler countdownHandler, int timeRemainingMs)
     {
@@ -172,4 +170,105 @@ public abstract class ReaperOpener : IOpener
     }
     protected static void AddArcaneCircleCountdown(CountDownHandler countdownHandler, int timeRemainingMs) =>
         countdownHandler.AddAction(timeRemainingMs, O(R.ArcaneCircle));
+}
+
+internal static class OpenerPositionalRuntime
+{
+    private enum Stage
+    {
+        Inactive,
+        WaitingForGluttony,
+        WaitingForFirstPositional,
+        Complete
+    }
+
+    private static Stage stage;
+    private static PAction[] tail = Array.Empty<PAction>();
+    private static uint firstPositionalAction;
+    private static bool gluttonyWasReady;
+    private static bool initialEnhancedGibbet;
+    private static bool initialEnhancedGallows;
+    private static long firstPositionalQueuedAt;
+    private static float firstPositionalGcdElapsed;
+
+    internal static void Begin(PAction[] openerTail)
+    {
+        tail = openerTail ?? Array.Empty<PAction>();
+        firstPositionalAction = 0;
+        gluttonyWasReady = false;
+        initialEnhancedGibbet = R.Has(2588u);
+        initialEnhancedGallows = R.Has(2589u);
+        firstPositionalQueuedAt = 0;
+        firstPositionalGcdElapsed = 0;
+        stage = Stage.WaitingForGluttony;
+    }
+
+    internal static void Reset()
+    {
+        tail = Array.Empty<PAction>();
+        firstPositionalAction = 0;
+        gluttonyWasReady = false;
+        initialEnhancedGibbet = false;
+        initialEnhancedGallows = false;
+        firstPositionalQueuedAt = 0;
+        firstPositionalGcdElapsed = 0;
+        stage = Stage.Inactive;
+    }
+
+    internal static void Update()
+    {
+        if (stage == Stage.WaitingForGluttony)
+        {
+            // Normal opener queues do not call ActionHelper.RecordAction, so
+            // RecentlyUsed cannot identify the queued Gluttony cast. Observe
+            // its cooldown transition instead.
+            if (!gluttonyWasReady)
+            {
+                gluttonyWasReady = R.Ready(R.Gluttony);
+                return;
+            }
+
+            if (R.Ready(R.Gluttony) && R.Cd(R.Gluttony) <= .1f)
+                return;
+
+            firstPositionalAction = TargetHelper.GetTargetPositional() == Positional.Rear
+                ? R.EnhancedGallows
+                : R.EnhancedGibbet;
+            ActionQueueManager.Enqueue(new PAction(firstPositionalAction, ActionType.Gcd, ActionTargetType.Target)
+            {
+                RequiresVerification = true
+            });
+            firstPositionalQueuedAt = Environment.TickCount64;
+            firstPositionalGcdElapsed = ActionHelper.GetGcdElapsed();
+            stage = Stage.WaitingForFirstPositional;
+            return;
+        }
+
+        if (stage != Stage.WaitingForFirstPositional || firstPositionalAction == 0)
+            return;
+
+        var now = Environment.TickCount64;
+        var gainedEnhancedBuff = (!initialEnhancedGibbet && R.Has(2588u))
+            || (!initialEnhancedGallows && R.Has(2589u));
+        var gcdWasReset = firstPositionalGcdElapsed > .25f
+            && ActionHelper.GetGcdElapsed() < .25f;
+        if (!gainedEnhancedBuff
+            && !gcdWasReset
+            && now - firstPositionalQueuedAt < 1800)
+            return;
+
+        var secondPositionalAction = R.Has(2589u)
+            ? R.EnhancedGallows
+            : R.EnhancedGibbet;
+        var actions = new List<PAction>
+        {
+            new(secondPositionalAction, ActionType.Gcd, ActionTargetType.Target)
+            {
+                RequiresVerification = true
+            }
+        };
+        actions.AddRange(tail);
+        ActionQueueManager.Enqueue(actions);
+        stage = Stage.Complete;
+    }
 }

@@ -5,6 +5,7 @@ using System.Text.Json;
 using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Bindings.ImGui;
 using ECommons.DalamudServices;
+using ErosUI;
 using PromeRotation.Core;
 using PromeRotation.Data;
 using PromeRotation.Extensions;
@@ -35,19 +36,26 @@ internal sealed class ReaperEventHandler : IRotationEventHandler
     {
         InBattle = false;
         soulsowAttemptAt = 0;
+        OpenerPositionalRuntime.Reset();
         PromeSettings.Instance.OpenerHasBeenExecuted = false;
         ReaperHooks.Update();
     }
-    public void OnNoTarget() => ReaperHooks.Update();
+    public void OnNoTarget()
+    {
+        ReaperHooks.Update();
+        ErosUIFramework.RestoreQtIfHostCleared();
+    }
     public void OnBattleUpdate()
     {
         InBattle = true;
+        OpenerPositionalRuntime.Update();
         ReaperHooks.Update();
     }
     public void OnBattleEnded()
     {
         InBattle = false;
         soulsowAttemptAt = 0;
+        OpenerPositionalRuntime.Reset();
         PromeSettings.Instance.OpenerHasBeenExecuted = false;
         ReaperHooks.Update();
     }
@@ -55,6 +63,7 @@ internal sealed class ReaperEventHandler : IRotationEventHandler
     {
         InBattle = false;
         soulsowAttemptAt = 0;
+        OpenerPositionalRuntime.Reset();
         PromeSettings.Instance.OpenerHasBeenExecuted = false;
         ReaperHooks.Dispose();
     }

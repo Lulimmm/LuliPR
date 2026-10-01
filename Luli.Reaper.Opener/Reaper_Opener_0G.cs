@@ -29,8 +29,7 @@ public sealed class ZeroGOpener : ReaperOpener
             var actions = new List<PAction> { O(R.ArcaneCircle), G(R.SoulSlice) };
             AddPotion(actions);
             actions.AddRange(new[] { G(R.ShadowOfDeath), O(R.Gluttony, ActionTargetType.Target) });
-            AddPositionalPair(actions);
-            actions.Add(G(R.PlentifulHarvest));
+            AddPositionalPair(actions, G(R.PlentifulHarvest));
             return actions;
         }
     }

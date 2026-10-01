@@ -9,6 +9,28 @@ namespace ErosUI;
 // 读 QT、屏幕提示、日志等与宿主一一等价的能力不在这里转发，直接用宿主 SDK。
 internal static class APIHelper
 {
+    private static readonly Dictionary<string, bool> LastKnownQtState = new(StringComparer.Ordinal);
+
+    // Keep a copy outside PromeSettings so a host-side ClearQts can be recovered
+    // without losing the user's current toggle choices.
+    internal static void RememberQtState()
+    {
+        foreach (var (key, _) in ErosUIJobEnv.QtAll)
+            if (PromeSettings.Instance.QuickToggles.TryGetValue(key, out var value))
+                LastKnownQtState[key] = value;
+    }
+
+    internal static void RestoreQtIfHostCleared()
+    {
+        if (PromeSettings.Instance.QuickToggles.Count != 0)
+        {
+            RememberQtState();
+            return;
+        }
+
+        重建QT可见性();
+    }
+
     #region QT 读写
 
     /// <summary>写入 QT 开关状态，并按联动表把关联的键一并写入。</summary>
@@ -26,14 +48,14 @@ internal static class APIHelper
     /// 多个 ACR 共存时互不残留。切换职业或模式后调用。</remarks>
     internal static void 重建QT可见性()
     {
+        RememberQtState();
         var isHigh = ErosUISettings.Instance.IsHighEnd;
         var qt = PromeSettings.Instance.QuickToggles;
         var saved = new Dictionary<string, bool>();
         foreach (var (key, _) in ErosUIJobEnv.QtAll)
             if (qt.TryGetValue(key, out var v)) saved[key] = v;
+            else if (LastKnownQtState.TryGetValue(key, out var cached)) saved[key] = cached;
         PromeSettings.Instance.ClearQts();
-        foreach (var k in qt.Keys.ToList())
-            if (!ErosUIJobEnv.QtAll.ContainsKey(k)) qt.Remove(k);
         // 按用户自定义顺序注册（悬浮面板右键拖拽调整; 未调整过 = QT 表定义顺序）,
         // 宿主 QuickToggles 键序与 ErosUI 悬浮面板保持同序
         foreach (var key in ErosUISettings.Instance.GetOrderedQtKeys())
@@ -42,6 +64,7 @@ internal static class APIHelper
             var val = saved.TryGetValue(key, out var sv) ? sv : ErosUIJobEnv.QtDefault(key);
             PromeSettings.Instance.AddQt(key, val);
             qt[key] = val;
+            LastKnownQtState[key] = val;
         }
         // PR 的 ClearQts 会连 HiddenQts 一起清空（宿主实测），重建后必须立刻按显隐配置回填，
         // 否则 QT管理 里隐藏的按钮在每次模式切换/进本后全部复活

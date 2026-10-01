@@ -21,7 +21,7 @@ using PromeRotation.UI.HotKey;
 
 namespace Reaper.PR;
 
-[RotationMetadata(39u, "Luli Reaper PR", "Cino", "1.0.2")]
+[RotationMetadata(39u, "Luli Reaper PR", "Cino", "1.0.3")]
 public sealed partial class ReaperRotation : IRotation, IRotationLifecycle
 {
     public string AuthorName => "Cino";
@@ -153,23 +153,20 @@ public sealed partial class ReaperRotation : IRotation, IRotationLifecycle
             qtCascadeRules: new Dictionary<string, (string key, bool invert)[]>(),
             hotkeyNames: new[]
             {
-                "\u7206\u53d1\u836f", "\u75be\u8dd1", "\u6781\u9650\u6280", "\u955c\u5934\u65b9\u5411\u540e\u64a4", "\u955c\u5934\u65b9\u5411\u7a81\u8fdb",
-                "\u7275\u5236", "\u64ad\u9b42\u79cd", "\u6d74\u8840", "\u5185\u4e39", "\u795e\u79d8\u7eb9", "\u4eb2\u758f\u81ea\u884c", "\u82e6\u96be\u4e4b\u5fc3"
+                "\u7206\u53d1\u836f", "\u75be\u8dd1", "\u6781\u9650\u6280",
+                "\u7275\u5236", "\u64ad\u9b42\u79cd", "\u6d74\u8840", "\u5185\u4e39", "\u795e\u79d8\u7eb9", "\u4eb2\u758f\u81ea\u884c"
             },
             buildHotkeys: b =>
             {
-                b.Execute("\u7206\u53d1\u836f", new DynamicActionLogic(() => GameData.GetBestPotionId(), ActionType.Item, ActionTargetType.Self), iconActionID: R.Potion);
+                b.Execute("\u7206\u53d1\u836f", new DynamicActionLogic(() => GameData.GetBestPotionId(), ActionType.Item, ActionTargetType.Self), dynamicGameIcon: GetPotionGameIcon);
                 b.Fixed("\u75be\u8dd1", 3u, ActionType.OffGcd, ActionTargetType.Self);
-                b.Execute("\u6781\u9650\u6280", new DynamicActionLogic(LimitBreakHelper.GetLimitBreakActionId, ActionType.LimitBreak, ActionTargetType.Target));
-                b.Fixed("\u955c\u5934\u65b9\u5411\u540e\u64a4", 24402u, ActionType.OffGcd, ActionTargetType.Self);
-                b.Fixed("\u955c\u5934\u65b9\u5411\u7a81\u8fdb", R.Ingress, ActionType.OffGcd, ActionTargetType.Target);
+                b.Execute("\u6781\u9650\u6280", new DynamicActionLogic(LimitBreakHelper.GetLimitBreakActionId, ActionType.LimitBreak, ActionTargetType.Target), gameIconID: 31399u);
                 b.Fixed("\u7275\u5236", 7549u, ActionType.OffGcd, ActionTargetType.Target);
                 b.Fixed("\u64ad\u9b42\u79cd", R.Soulsow, ActionType.Gcd, ActionTargetType.Target);
                 b.Fixed("\u6d74\u8840", 7542u, ActionType.OffGcd, ActionTargetType.Self);
                 b.Fixed("\u5185\u4e39", 7541u, ActionType.OffGcd, ActionTargetType.Self);
                 b.Fixed("\u795e\u79d8\u7eb9", 24404u, ActionType.OffGcd, ActionTargetType.Self);
                 b.Fixed("\u4eb2\u758f\u81ea\u884c", 7548u, ActionType.OffGcd, ActionTargetType.Self);
-                b.Fixed("\u82e6\u96be\u4e4b\u5fc3", 16535u, ActionType.OffGcd, ActionTargetType.Self);
             },
             author: "Cino");
 
@@ -194,6 +191,24 @@ public sealed partial class ReaperRotation : IRotation, IRotationLifecycle
 
         hotkeyPanel = new HotkeyPanel(7, 45f, 5f, "Luli Reaper Hotkeys", "LuliReaperPR");
         EnforceHiddenPanels();
+    }
+
+    private static (uint Icon, bool Hq) GetPotionGameIcon()
+    {
+        var potionId = GameData.GetBestPotionId();
+        if (potionId == 0) return (0, false);
+
+        var hq = potionId >= 1_000_000u;
+        var itemId = hq ? potionId - 1_000_000u : potionId;
+        try
+        {
+            var item = Svc.Data.GetExcelSheet<Lumina.Excel.Sheets.Item>().GetRowOrDefault(itemId);
+            return item.HasValue ? ((uint)item.Value.Icon, hq) : (0, false);
+        }
+        catch
+        {
+            return (0, false);
+        }
     }
 
     public PAction? NextAlways()

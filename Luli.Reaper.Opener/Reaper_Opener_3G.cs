@@ -29,8 +29,7 @@ public sealed class ThreeGOpener : ReaperOpener
             var actions = new List<PAction> { G(R.ShadowOfDeath) };
             AddPotion(actions);
             actions.AddRange(new[] { G(R.SoulSlice), G(R.Slice), O(R.ArcaneCircle), O(R.Gluttony, ActionTargetType.Target) });
-            AddPositionalPair(actions);
-            actions.Add(G(R.PlentifulHarvest));
+            AddPositionalPair(actions, G(R.PlentifulHarvest));
             return actions;
         }
     }

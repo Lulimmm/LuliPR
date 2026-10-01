@@ -355,7 +355,10 @@ public sealed class ErosUIQtPanelWindow : Window
 
         // 开关状态只靠底色/字色表达——勿加 ☑/☐ 等字形前缀，游戏字体集缺字形会渲染成乱码
         if (ImGui.Button(def.Label, new Vector2(格宽, 格高)))
+        {
             PromeSettings.Instance.SetQt(def.Id, !on);
+            APIHelper.RememberQtState();
+        }
 
         ImGui.PopStyleVar();
         ImGui.PopStyleColor(2);

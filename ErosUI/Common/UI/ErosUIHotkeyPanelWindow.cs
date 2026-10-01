@@ -19,7 +19,7 @@ public sealed class ErosUIHotkeyPanelWindow : Window
     // 格子圆角
     private const float 圆角 = 8f;
 
-    private readonly IReadOnlyList<(string Name, IHotkey Hotkey, uint GameIcon, bool GameIconHQ)> entries;
+    private readonly IReadOnlyList<(string Name, IHotkey Hotkey, uint GameIcon, bool GameIconHQ, Func<uint>? DynamicIconActionId, Func<(uint Icon, bool Hq)>? DynamicGameIcon)> entries;
     private readonly int columns;
     private readonly float tile;
     private readonly float spacing;
@@ -35,7 +35,7 @@ public sealed class ErosUIHotkeyPanelWindow : Window
 
     // 参数 tile: 按钮边长（已含缩放）
     // 参数 spacing: 按钮间距(px)
-    public ErosUIHotkeyPanelWindow(IReadOnlyList<(string Name, IHotkey Hotkey, uint GameIcon, bool GameIconHQ)> entries,
+    public ErosUIHotkeyPanelWindow(IReadOnlyList<(string Name, IHotkey Hotkey, uint GameIcon, bool GameIconHQ, Func<uint>? DynamicIconActionId, Func<(uint Icon, bool Hq)>? DynamicGameIcon)> entries,
         int columns, float tile, float spacing)
         : base($"{ErosUIJobEnv.作者}{ErosUIJobEnv.JobName}##hotkey",
             ImGuiWindowFlags.NoTitleBar
@@ -155,22 +155,41 @@ public sealed class ErosUIHotkeyPanelWindow : Window
     // ============================================================
     // 参数 floating: 拖拽源格：只画视觉、不参与点击判定与悬停反馈（跟随鼠标画在最上层）。
     private void DrawTile(ImDrawListPtr drawList,
-        (string Name, IHotkey Hotkey, uint GameIcon, bool GameIconHQ) entry,
+        (string Name, IHotkey Hotkey, uint GameIcon, bool GameIconHQ, Func<uint>? DynamicIconActionId, Func<(uint Icon, bool Hq)>? DynamicGameIcon) entry,
         Vector2 min, Vector2 max, int index, bool floating)
     {
         var name = entry.Name;
         var hk = entry.Hotkey;
         var gameIcon = entry.GameIcon;
         var gameIconHQ = entry.GameIconHQ;
+        if (entry.DynamicGameIcon != null)
+        {
+            try
+            {
+                (gameIcon, gameIconHQ) = entry.DynamicGameIcon();
+            }
+            catch
+            {
+                gameIcon = 0;
+                gameIconHQ = false;
+            }
+        }
 
         drawList.AddRectFilled(min, max, SimplePalette.ToU32(SimplePalette.FrameBg), 圆角);
 
         // 图标来源优先级：游戏内原始图标 id（物品等无动作条目，gameIconHQ=true 取 hq/ 子目录的 HQ 品质）
         // → customIconPath → Action 表动作图标
+        uint dynamicActionId = hk.ActionId;
+        if (entry.DynamicIconActionId != null)
+        {
+            try { dynamicActionId = entry.DynamicIconActionId(); }
+            catch { dynamicActionId = hk.ActionId; }
+        }
+
         var tex = gameIcon != 0
             ? Svc.Texture.GetFromGameIcon(new GameIconLookup(gameIcon, itemHq: gameIconHQ)).GetWrapOrDefault(null)
             : hk.CustomIconPath != null ? IconHelper.GetIconFromPath(hk.CustomIconPath)
-            : hk.ActionId.GetActionIcon();
+            : dynamicActionId.GetActionIcon();
         if (tex != null)
             drawList.AddImageRounded(tex.Handle, min + Vector2.One, max - Vector2.One,
                 Vector2.Zero, Vector2.One, SimplePalette.ToU32(Vector4.One), MathF.Max(0f, 圆角 - 1f));
@@ -278,8 +297,8 @@ public sealed class ErosUIHotkeyPanelWindow : Window
     // ============================================================
     // 把构建器产出的热键条目按 ErosUISettings.HotkeyOrder 的自定义顺序重排:
     // 顺序表里没有的名字按原相对顺序置尾（LINQ OrderBy 稳定排序）。
-    private static List<(string Name, IHotkey Hotkey, uint GameIcon, bool GameIconHQ)> 按自定义顺序排序(
-        IReadOnlyList<(string Name, IHotkey Hotkey, uint GameIcon, bool GameIconHQ)> entries)
+    private static List<(string Name, IHotkey Hotkey, uint GameIcon, bool GameIconHQ, Func<uint>? DynamicIconActionId, Func<(uint Icon, bool Hq)>? DynamicGameIcon)> 按自定义顺序排序(
+        IReadOnlyList<(string Name, IHotkey Hotkey, uint GameIcon, bool GameIconHQ, Func<uint>? DynamicIconActionId, Func<(uint Icon, bool Hq)>? DynamicGameIcon)> entries)
     {
         if (entries.Count < 2) return entries.ToList();
         var order = ErosUISettings.Instance.GetOrderedHotkeyNames();
@@ -331,7 +350,7 @@ public sealed class ErosUIHotkeyPanelWindow : Window
     }
 
     // 热键清单变化后移除失效条目的动画位置记录。
-    private void 清理动画格位(IReadOnlyList<(string Name, IHotkey Hotkey, uint GameIcon, bool GameIconHQ)> entries)
+    private void 清理动画格位(IReadOnlyList<(string Name, IHotkey Hotkey, uint GameIcon, bool GameIconHQ, Func<uint>? DynamicIconActionId, Func<(uint Icon, bool Hq)>? DynamicGameIcon)> entries)
     {
         if (动画格位.Count <= entries.Count) return;
         var live = new HashSet<string>(StringComparer.Ordinal);
