@@ -21,7 +21,7 @@ using PromeRotation.UI.HotKey;
 
 namespace Reaper.PR;
 
-[RotationMetadata(39u, "Luli Reaper PR", "Cino", "1.0.3")]
+[RotationMetadata(39u, "Luli Reaper PR", "Cino", "1.0.4", ContentScope = AcrContentScope.HighEnd)]
 public sealed partial class ReaperRotation : IRotation, IRotationLifecycle
 {
     public string AuthorName => "Cino";
