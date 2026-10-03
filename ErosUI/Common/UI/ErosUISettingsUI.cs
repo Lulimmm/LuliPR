@@ -78,6 +78,8 @@ public static class ErosUISettingsUI
         Hdr("面板控制");
         DrawPanelsVisibilityButton();
 
+        ErosUIJobEnv.DrawGeneralSettings?.Invoke();
+
     }
 
     // ============================================================

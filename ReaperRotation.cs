@@ -21,7 +21,7 @@ using PromeRotation.UI.HotKey;
 
 namespace Reaper.PR;
 
-[RotationMetadata(39u, "Luli Reaper PR", "Cino", "1.0.4", ContentScope = AcrContentScope.HighEnd)]
+[RotationMetadata(39u, "Luli Reaper PR", "Cino", "1.0.5", ContentScope = AcrContentScope.HighEnd)]
 public sealed partial class ReaperRotation : IRotation, IRotationLifecycle
 {
     public string AuthorName => "Cino";
@@ -168,7 +168,8 @@ public sealed partial class ReaperRotation : IRotation, IRotationLifecycle
                 b.Fixed("\u795e\u79d8\u7eb9", 24404u, ActionType.OffGcd, ActionTargetType.Self);
                 b.Fixed("\u4eb2\u758f\u81ea\u884c", 7548u, ActionType.OffGcd, ActionTargetType.Self);
             },
-            author: "Cino");
+            author: "Cino",
+            drawGeneralSettings: DrawGeneralSettings);
 
         foreach (var q in QtList)
         {

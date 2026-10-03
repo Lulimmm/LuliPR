@@ -14,6 +14,90 @@ namespace Reaper.PR;
 
 public sealed partial class ReaperRotation
 {
+    // 职业专属设置绘制到 ErosUI 的「基础设置」页，配置仍沿用 opener.json。
+    internal static void DrawGeneralSettings()
+    {
+        ImGui.Spacing();
+        ImGui.Separator();
+        ImGui.TextUnformatted("RPR 设置");
+
+        ImGui.SetNextItemWidth(300f);
+        if (ImGui.BeginCombo("选择起手", selectedOpener))
+        {
+            foreach (var option in OpenerOptions)
+            {
+                var isSelected = option == selectedOpener;
+                if (ImGui.Selectable(option, isSelected))
+                {
+                    selectedOpener = option;
+                    openerConfig.Selected = selectedOpener;
+                    SaveOpenerConfig();
+                }
+                if (isSelected) ImGui.SetItemDefaultFocus();
+            }
+            ImGui.EndCombo();
+        }
+
+        ImGui.TextDisabled(selectedOpener == FollowTimelineOpener
+            ? "不执行固定起手序列"
+            : "使用此 ACR 的固定起手序列");
+
+        var burst = openerConfig.OpenerBurst;
+        if (ImGui.Checkbox("起手使用爆发药", ref burst))
+        {
+            openerConfig.OpenerBurst = burst;
+            SaveOpenerConfig();
+        }
+
+        var rush = openerConfig.OpenerRush;
+        if (ImGui.Checkbox("起手使用突进", ref rush))
+        {
+            openerConfig.OpenerRush = rush;
+            SaveOpenerConfig();
+        }
+
+        ImGui.SetNextItemWidth(300f);
+        var potion = openerConfig.PotionType switch
+        {
+            1 => "0510",
+            2 => "2814",
+            _ => "0612"
+        };
+        if (ImGui.BeginCombo("爆发药选择", potion))
+        {
+            foreach (var item in new[]
+            {
+                (Label: "0612", Value: 0),
+                (Label: "0510", Value: 1),
+                (Label: "2814", Value: 2)
+            })
+            {
+                if (ImGui.Selectable(item.Label, item.Value == openerConfig.PotionType))
+                {
+                    openerConfig.PotionType = item.Value;
+                    SaveOpenerConfig();
+                }
+            }
+            ImGui.EndCombo();
+        }
+
+        var extraRange = openerConfig.ExtraRange;
+        ImGui.SetNextItemWidth(360f);
+        if (ImGui.SliderFloat("长臂猿额外攻击距离", ref extraRange, 0f, 3f, "%.1f 米"))
+        {
+            openerConfig.ExtraRange = Math.Clamp(extraRange, 0f, 3f);
+            SaveOpenerConfig();
+        }
+
+        var moveCasting = openerConfig.MoveCasting;
+        ImGui.SetNextItemWidth(360f);
+        if (ImGui.SliderFloat("移动读条提前结束", ref moveCasting, 0f, 0.5f, "%.2f 秒"))
+        {
+            openerConfig.MoveCasting = Math.Clamp(moveCasting, 0f, 0.5f);
+            SaveOpenerConfig();
+        }
+    }
+
 public void DrawSettings()
     {
         ErosUIFramework.OpenSettings();
