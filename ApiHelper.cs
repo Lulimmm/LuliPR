@@ -50,12 +50,18 @@ internal static class R
         return seconds <= 0 || target.GetStatusLeftTime(id) >= seconds;
     }
     public static float Distance => Core.Me == null || Target == null ? float.MaxValue : Core.Me.DistanceToMe();
-    public static float Range(float fallback = 3)
+    // Reaper's melee actions use a fixed 3m base range. Keep this calculation
+    // independent from PromeRotation's global range hack so the ACR always
+    // follows exactly: disabled = 3m, enabled = 3m + the slider value.
+    public static float Range()
     {
-        var range = GameData.GetCurrentAttackRange(fallback);
-        return PromeSettings.Instance.GetQt("长臂猿") ? range + ReaperRotation.ExtraRange : range;
+        const float reaperMeleeRange = 3f;
+        if (!PromeSettings.Instance.GetQt("长臂猿"))
+            return reaperMeleeRange;
+
+        return reaperMeleeRange + Math.Clamp(ReaperRotation.ExtraRange, 0f, 3f);
     }
-    public static bool Near(float range = 3) => Distance <= Range(range);
+    public static bool Near() => Distance <= Range();
     public static bool Ready(uint id) => ActionHelper.IsReady(id);
     public static float Cd(uint id) => ActionHelper.GetActionCooldown(id);
     public static float Charges(uint id) => ActionHelper.GetActionCharges(id);

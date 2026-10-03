@@ -30,7 +30,11 @@ public sealed class PlentifulHarvestGcd : Gcd
         if (R.Has(2593u)) return false;
         if (R.Has(2972u)) return false;
         if (!R.Has(2592u)) return false;
-        return R.Ready(R.PlentifulHarvest);
+        // AE returns success after the same state checks and lets the host
+        // action executor validate the skill itself. Keeping an additional
+        // ActionHelper.IsReady check here can make 24385 look usable in-game
+        // while incorrectly rejecting it and allowing Soul Slice first.
+        return true;
     }
 
     public override CheckResult Check()

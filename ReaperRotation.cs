@@ -21,7 +21,7 @@ using PromeRotation.UI.HotKey;
 
 namespace Reaper.PR;
 
-[RotationMetadata(39u, "Luli Reaper PR", "Cino", "1.0.7", ContentScope = AcrContentScope.HighEnd)]
+[RotationMetadata(39u, "Luli Reaper PR", "Cino", "1.0.8", ContentScope = AcrContentScope.HighEnd)]
 public sealed partial class ReaperRotation : IRotation, IRotationLifecycle
 {
     public string AuthorName => "Cino";
@@ -132,7 +132,7 @@ public sealed partial class ReaperRotation : IRotation, IRotationLifecycle
         new GluttonyOgcd(),
         new BloodStalkOgcd()
     };
-    private readonly IRotationEventHandler events = new ReaperEventHandler();
+    private readonly ReaperEventHandler events = new();
     private readonly HotkeyPanel hotkeyPanel;
     private readonly HashSet<string> qtIds = new();
     private readonly HashSet<string> hiddenQtIds = new();
@@ -261,12 +261,14 @@ public sealed partial class ReaperRotation : IRotation, IRotationLifecycle
     public IRotationEventHandler GetEventHandler() => events;
     public void OnEnterAcr()
     {
+        events.Attach();
         ReaperHooks.Update();
         ErosUIFramework.Install();
     }
 
     public void OnExitAcr()
     {
+        events.Dispose();
         ErosUIFramework.Uninstall();
         ReaperHooks.Dispose();
     }

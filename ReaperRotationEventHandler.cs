@@ -11,6 +11,8 @@ using PromeRotation.Data;
 using PromeRotation.Extensions;
 using PromeRotation.Helpers;
 using PromeRotation.Managers;
+using PromeRotation.Managers.CombatEventManager;
+using PromeRotation.Managers.CombatEventManager.Events;
 using PromeRotation.PureTimeline;
 using PromeRotation.Resolvers;
 using PromeRotation.Rotation;
@@ -20,10 +22,36 @@ using PromeRotation.UI.HotKey;
 
 namespace Reaper.PR;
 
-internal sealed class ReaperEventHandler : IRotationEventHandler
+internal sealed class ReaperEventHandler : IRotationEventHandler, IDisposable
 {
     internal static bool InBattle { get; private set; }
+    // AE's CurrGcdAbilityCount equivalent. Void/Cross Reaping consume one
+    // GCD ability slot; all other confirmed self actions use the normal value.
+    internal static int CurrGcdAbilityCount { get; private set; } = 2;
     private static long soulsowAttemptAt;
+    private bool actionEffectAttached;
+
+    internal void Attach()
+    {
+        if (actionEffectAttached) return;
+        CombatEventManager.OnActionEffect += OnActionEffect;
+        actionEffectAttached = true;
+    }
+
+    public void Dispose()
+    {
+        if (!actionEffectAttached) return;
+        CombatEventManager.OnActionEffect -= OnActionEffect;
+        actionEffectAttached = false;
+    }
+
+    private static void OnActionEffect(ActionEffectEvent action)
+    {
+        var me = Core.Me;
+        if (me == null || action.SourceId != me.EntityId) return;
+
+        CurrGcdAbilityCount = action.ActionId is R.VoidReaping or R.CrossReaping ? 1 : 2;
+    }
 
     public void OnUpdate() => ReaperHooks.Update();
     public void OnOutOfBattleUpdate()
@@ -36,6 +64,7 @@ internal sealed class ReaperEventHandler : IRotationEventHandler
     {
         InBattle = false;
         soulsowAttemptAt = 0;
+        CurrGcdAbilityCount = 2;
         OpenerPositionalRuntime.Reset();
         PromeSettings.Instance.OpenerHasBeenExecuted = false;
         ReaperHooks.Update();
@@ -55,6 +84,7 @@ internal sealed class ReaperEventHandler : IRotationEventHandler
     {
         InBattle = false;
         soulsowAttemptAt = 0;
+        CurrGcdAbilityCount = 2;
         OpenerPositionalRuntime.Reset();
         PromeSettings.Instance.OpenerHasBeenExecuted = false;
         ReaperHooks.Update();

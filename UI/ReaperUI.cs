@@ -88,6 +88,7 @@ public sealed partial class ReaperRotation
             openerConfig.ExtraRange = Math.Clamp(extraRange, 0f, 3f);
             SaveOpenerConfig();
         }
+        ImGui.TextDisabled($"当前攻击距离：{R.Range():F1} 米");
 
         var moveCasting = openerConfig.MoveCasting;
         ImGui.SetNextItemWidth(360f);
