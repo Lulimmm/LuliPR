@@ -23,9 +23,13 @@ public sealed class TrueNorthOgcd : Ogcd
 {
     public override CheckResult Check()
     {
-        if (!R.Qt("自动真北") || !R.Ready(R.TrueNorth) || R.Charges(R.TrueNorth) < 1 || ActionHelper.GetGcdRemain() < .4f || R.Recently(R.TrueNorth, 2120) || R.Has(1250u) || R.Has(2593u) || TargetHelper.GetTargetPositional() == Positional.None) return No;
+        if (!R.Qt("自动真北")) return No;
+        if (ActionHelper.GetGcdRemain() < .6f) return No;
+        if (R.Charges(R.TrueNorth) < 1) return No;
+        if (R.Recently(R.TrueNorth, 2120) || R.Has(1250u) || R.Has(2593u)) return No;
         if (R.GcdElapsed <= ActionHelper.GetGcdTotal() * .75f) return No;
-        if (!R.Recently(R.Gluttony, 5000) && !R.Recently(R.BloodStalk, 2120)) return No;
+        if (TargetHelper.GetTargetPositional() == Positional.None) return No;
+        if (!R.Recently(R.Gluttony, 5000) && !R.Recently(R.Adjust(R.BloodStalk), 2120)) return No;
         var pos = TargetHelper.GetTargetPositional();
         return (R.Has(2588u) && pos != Positional.Flank) || (R.Has(2589u) && pos != Positional.Rear) ? Ok : No;
     }
