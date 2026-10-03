@@ -158,9 +158,9 @@ public sealed partial class ReaperRotation : IRotation, IRotationLifecycle
             },
             buildHotkeys: b =>
             {
-                b.Execute("\u7206\u53d1\u836f", new DynamicActionLogic(() => GameData.GetBestPotionId(), ActionType.Item, ActionTargetType.Self), dynamicGameIcon: GetPotionGameIcon);
+                b.Execute("\u7206\u53d1\u836f", new DynamicActionLogic(() => GameData.GetBestPotionId(), ActionType.Item, ActionTargetType.Self),
+                    dynamicIconActionId: GameData.GetBestPotionId, dynamicGameIcon: GetPotionGameIcon);
                 b.Fixed("\u75be\u8dd1", 3u, ActionType.OffGcd, ActionTargetType.Self);
-                b.Execute("\u6781\u9650\u6280", new DynamicActionLogic(LimitBreakHelper.GetLimitBreakActionId, ActionType.LimitBreak, ActionTargetType.Target), gameIconID: 31399u);
                 b.Fixed("\u7275\u5236", 7549u, ActionType.OffGcd, ActionTargetType.Target);
                 b.Fixed("\u64ad\u9b42\u79cd", R.Soulsow, ActionType.Gcd, ActionTargetType.Target);
                 b.Fixed("\u6d74\u8840", 7542u, ActionType.OffGcd, ActionTargetType.Self);

@@ -77,9 +77,20 @@ public sealed class ErosUIQtPanelWindow : Window
         IReadOnlyList<QtDefinition> defs;
         try
         {
-            defs = QtRegistry.ResolveVisible(
-                PromeSettings.Instance.QuickToggles.Keys,
-                PromeSettings.Instance.HiddenQts);
+            // HiddenQts is also used by the host to hide its native QT page.
+            // Keep that page-level state separate from this custom panel; the
+            // panel only follows its own per-QT visibility settings.
+            var visibleKeys = new HashSet<string>(StringComparer.Ordinal);
+            foreach (var key in PromeSettings.Instance.QuickToggles.Keys)
+                if (ErosUISettings.Instance.IsQtVisible(key))
+                    visibleKeys.Add(key);
+
+            var resolved = QtRegistry.ResolveVisible(
+                visibleKeys,
+                new HashSet<string>(StringComparer.Ordinal));
+            // Keep one stable snapshot for this frame while the host registry
+            // may be rebuilt by a rotation refresh.
+            defs = new List<QtDefinition>(resolved);
         }
         catch
         {
@@ -117,7 +128,7 @@ public sealed class ErosUIQtPanelWindow : Window
         if (拖拽源 >= 0)
         {
             (源组, 源槽) = 查组内槽位(groups, 拖拽源);
-            if (源组 < 0)
+            if (源组 < 0 || 源组 >= groups.Count || 拖拽源 >= count)
             {
                 拖拽源 = -1;
                 拖拽目标 = -1;
@@ -126,7 +137,7 @@ public sealed class ErosUIQtPanelWindow : Window
 
         // 拖拽目标 = 鼠标按源组网格换算的组内槽位（不依赖条目悬停判定, 上移/下移同权）;
         // 组内其它格子按「假设此刻松手」的显示序列实时让位, 指数阻尼滑向新格位
-        if (拖拽源 >= 0)
+        if (拖拽源 >= 0 && 源组 >= 0 && 源组 < groups.Count)
             拖拽目标 = 计算拖拽目标(ImGui.GetIO().MousePos, groups[源组], cols);
 
         // 逐组绘制（组标题 + 网格）: 静止格子先画, 拖拽源最后画（跟随鼠标, 不被其它格子遮挡）;
@@ -143,7 +154,12 @@ public sealed class ErosUIQtPanelWindow : Window
             scratch = 显示序;
             for (var slot = 0; slot < n; slot++)
             {
-                var tileIndex = g.条目[显示序[slot]];
+                var displayIndex = 显示序[slot];
+                if (displayIndex < 0 || displayIndex >= g.条目.Count)
+                    continue;
+                var tileIndex = g.条目[displayIndex];
+                if (tileIndex < 0 || tileIndex >= defs.Count)
+                    continue;
                 if (tileIndex == 拖拽源) continue;
                 画开关(defs[tileIndex], winPos + 取动画格位(defs[tileIndex].Id, 格位偏移(g, slot, cols)), locked, tileIndex);
             }
@@ -166,7 +182,9 @@ public sealed class ErosUIQtPanelWindow : Window
             {
                 // 松手落位: 组内目标槽 → 该槽当前条目在全序中的索引（插入语义与组内让位一致）,
                 // MoveQt 内落盘并重建注册序, 让位动画按新格位收敛; 拖到格外/原位 = 取消
-                if (!locked && 拖拽目标 >= 0 && 拖拽目标 != 源槽)
+                if (!locked && 源组 >= 0 && 源组 < groups.Count
+                    && 拖拽目标 >= 0 && 拖拽目标 < groups[源组].条目.Count
+                    && 拖拽目标 != 源槽 && 拖拽源 < defs.Count)
                     ErosUISettings.Instance.MoveQt(defs[拖拽源].Id, groups[源组].条目[拖拽目标]);
                 拖拽源 = -1;
                 拖拽目标 = -1;
@@ -176,7 +194,9 @@ public sealed class ErosUIQtPanelWindow : Window
                 拖拽源 = -1;   // 松手帧面板未绘制（错过释放）, 兜底取消
             }
             // 落点标记: 高亮描边
-            else if (拖拽目标 >= 0 && 拖拽目标 != 源槽)
+            else if (源组 >= 0 && 源组 < groups.Count
+                && 拖拽目标 >= 0 && 拖拽目标 < groups[源组].条目.Count
+                && 拖拽目标 != 源槽)
             {
                 画目标格高亮(groups[源组], 拖拽目标, cols);
             }

@@ -1,6 +1,9 @@
+using System;
+using System.Collections.Generic;
 using System.Numerics;
 using Dalamud.Bindings.ImGui;
 using Dalamud.Interface.Textures;
+using Dalamud.Interface.Textures.TextureWraps;
 using Dalamud.Interface.Windowing;
 using ECommons.DalamudServices;
 using PromeRotation.Data;
@@ -186,10 +189,39 @@ public sealed class ErosUIHotkeyPanelWindow : Window
             catch { dynamicActionId = hk.ActionId; }
         }
 
-        var tex = gameIcon != 0
-            ? Svc.Texture.GetFromGameIcon(new GameIconLookup(gameIcon, itemHq: gameIconHQ)).GetWrapOrDefault(null)
-            : hk.CustomIconPath != null ? IconHelper.GetIconFromPath(hk.CustomIconPath)
-            : dynamicActionId.GetActionIcon();
+        IDalamudTextureWrap? tex = null;
+        if (gameIcon != 0)
+        {
+            try
+            {
+                tex = Svc.Texture.GetFromGameIcon(
+                    new GameIconLookup(gameIcon, itemHq: gameIconHQ)).GetWrapOrDefault(null);
+            }
+            catch (Exception ex)
+            {
+                // Some jobs expose an action/item ID whose game icon is not
+                // present in the current client build. Do not abort ImGui's
+                // whole window draw when that happens.
+                Svc.Log.Debug($"[{ErosUIJobEnv.作者}] missing hotkey icon {gameIcon}: {ex.Message}");
+            }
+        }
+
+        if (tex == null && hk.CustomIconPath != null)
+        {
+            try { tex = IconHelper.GetIconFromPath(hk.CustomIconPath); }
+            catch (Exception ex)
+            {
+                Svc.Log.Debug($"[{ErosUIJobEnv.作者}] custom hotkey icon failed for {name}: {ex.Message}");
+            }
+        }
+
+        if (tex == null && dynamicActionId != 0)
+        {
+            try { tex = dynamicActionId.GetActionIcon(); }
+            catch
+            {
+            }
+        }
         if (tex != null)
             drawList.AddImageRounded(tex.Handle, min + Vector2.One, max - Vector2.One,
                 Vector2.Zero, Vector2.One, SimplePalette.ToU32(Vector4.One), MathF.Max(0f, 圆角 - 1f));
@@ -228,6 +260,10 @@ public sealed class ErosUIHotkeyPanelWindow : Window
             drawList.AddRectFilled(new Vector2(min.X + 7f, max.Y - 3f), new Vector2(max.X - 7f, max.Y - 1f),
                 SimplePalette.ToU32(accent), 99f);
 
+        var itemCooldownId = entry.DynamicGameIcon != null ? dynamicActionId : 0u;
+        var cooldownId = itemCooldownId != 0 ? itemCooldownId : hk.ActionId;
+        var cooldownIsItem = itemCooldownId != 0;
+
         if (hk.ActionId != 0 && HotkeyQueueManager.IsPending(hk.ActionId))
         {
             // 队列待发：强调色呼吸罩 + 加粗描边
@@ -237,9 +273,9 @@ public sealed class ErosUIHotkeyPanelWindow : Window
             drawList.AddRect(min, max,
                 SimplePalette.ToU32(SimplePalette.WithAlpha(accent, 0.9f)), 圆角, ImDrawFlags.RoundCornersAll, 2.2f);
         }
-        else if (hk.ActionId != 0)
+        else if (cooldownId != 0)
         {
-            DrawCooldown(drawList, hk, min, max);
+            DrawCooldown(drawList, cooldownId, cooldownIsItem, min, max);
         }
 
         // 描边：平时 BorderStrong（20%），悬停提亮到主文字色 40%
@@ -252,15 +288,19 @@ public sealed class ErosUIHotkeyPanelWindow : Window
     }
 
     // 冷却：顶部暗纱按剩余比例下压 + 居中秒数 + 多充能未满时右下角充能数。
-    private static void DrawCooldown(ImDrawListPtr drawList, IHotkey hk, Vector2 min, Vector2 max)
+    private static void DrawCooldown(ImDrawListPtr drawList, uint actionId, bool isItem, Vector2 min, Vector2 max)
     {
-        var cd = ActionHelper.GetActionCooldown(hk.ActionId);
+        var cd = isItem
+            ? ActionHelper.GetItemCooldown(actionId)
+            : ActionHelper.GetActionCooldown(actionId);
         if (cd <= 0f) return;
-        var charges = ActionHelper.GetActionCharges(hk.ActionId);
-        var maxCharges = Math.Max(1, ActionHelper.GetMaxCharges(hk.ActionId));
-        if (!ActionHelper.IsActionRecharging(cd, charges, maxCharges)) return;
+        var charges = isItem ? 0f : ActionHelper.GetActionCharges(actionId);
+        var maxCharges = isItem ? 1 : Math.Max(1, ActionHelper.GetMaxCharges(actionId));
+        if (!isItem && !ActionHelper.IsActionRecharging(cd, charges, maxCharges)) return;
 
-        var recast = ActionHelper.GetActionRecastTime(hk.ActionId);
+        // Item recasts do not have an Action sheet recast time. The remaining
+        // item cooldown is still shown as a countdown and a full overlay.
+        var recast = isItem ? MathF.Max(cd, 1f) : ActionHelper.GetActionRecastTime(actionId);
         if (recast <= 0.001f) return;
         var progress = Math.Clamp(cd / recast, 0f, 1f);
 
