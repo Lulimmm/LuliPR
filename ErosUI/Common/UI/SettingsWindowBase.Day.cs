@@ -8,7 +8,7 @@ namespace ErosUI;
 public abstract partial class SettingsWindowBase
 {
     // 日间模式底色：半透明米白（显式 AddRectFilled 填充，不做模糊）。
-    private static readonly Vector4 DayBackgroundTint = new(0.96f, 0.94f, 0.89f, 0.85f);
+    private static readonly Vector4 DayBackgroundTint = new(0.96f, 0.94f, 0.89f, 0.97f);
 
     // 日间模式专属全局样式：标题栏半透明主色、滚动条用暗一档 Accent。
     // Push 数量必须等于 SidebarChromeColorCount，改动后同步该常量。

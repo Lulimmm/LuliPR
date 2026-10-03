@@ -405,9 +405,9 @@ public sealed class ErosUIQtPanelWindow : Window
         drawList.PushClipRect(pos, max, false);
 
         var day = ErosUICommonSettings.Instance.UIMode == SettingsUIMode.Day;
-        var tint = day ? new Vector4(0.96f, 0.94f, 0.89f, 0.85f)
+        var tint = day ? new Vector4(0.96f, 0.94f, 0.89f, 0.97f)
                        : new Vector4(0.11f, 0.11f, 0.12f, 0.85f);
-        var border = day ? new Vector4(0f, 0f, 0f, 0.10f)
+        var border = day ? new Vector4(0f, 0f, 0f, 0.18f)
                          : new Vector4(1f, 1f, 1f, 0.10f);
 
         drawList.AddRectFilled(pos + new Vector2(0.5f), max - new Vector2(0.5f),

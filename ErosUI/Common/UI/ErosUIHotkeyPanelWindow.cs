@@ -284,7 +284,23 @@ public sealed class ErosUIHotkeyPanelWindow : Window
                                         : SimplePalette.BorderStrong),
             圆角, ImDrawFlags.RoundCornersAll, 1.2f);
 
-        if (hovered) ImGui.SetTooltip(name);
+        if (hovered) DrawHotkeyTooltip(name);
+    }
+
+    // SetTooltip uses the host's deferred tooltip style, which can remain a
+    // white-on-transparent tooltip after switching to the light theme. Draw
+    // this tooltip with an explicit opaque background and matching text color.
+    private static void DrawHotkeyTooltip(string name)
+    {
+        ImGui.PushStyleColor(ImGuiCol.PopupBg, SimplePalette.PopupBg);
+        ImGui.PushStyleColor(ImGuiCol.Text, SimplePalette.TextPrimary);
+        ImGui.PushStyleColor(ImGuiCol.Border, SimplePalette.BorderStrong);
+        ImGui.PushStyleVar(ImGuiStyleVar.PopupRounding, 6f);
+        ImGui.BeginTooltip();
+        ImGui.TextUnformatted(name);
+        ImGui.EndTooltip();
+        ImGui.PopStyleVar();
+        ImGui.PopStyleColor(3);
     }
 
     // 冷却：顶部暗纱按剩余比例下压 + 居中秒数 + 多充能未满时右下角充能数。
@@ -414,9 +430,9 @@ public sealed class ErosUIHotkeyPanelWindow : Window
         drawList.PushClipRect(pos, max, false);
 
         var day = ErosUICommonSettings.Instance.UIMode == SettingsUIMode.Day;
-        var tint = day ? new Vector4(0.96f, 0.94f, 0.89f, 0.85f)
+        var tint = day ? new Vector4(0.96f, 0.94f, 0.89f, 0.97f)
                        : new Vector4(0.11f, 0.11f, 0.12f, 0.85f);
-        var border = day ? new Vector4(0f, 0f, 0f, 0.10f)
+        var border = day ? new Vector4(0f, 0f, 0f, 0.18f)
                          : new Vector4(1f, 1f, 1f, 0.10f);
 
         drawList.AddRectFilled(pos + new Vector2(0.5f), max - new Vector2(0.5f),

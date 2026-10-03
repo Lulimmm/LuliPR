@@ -103,15 +103,15 @@ public static class SimplePalette
         if (currentScheme == UIColorScheme.Light)
         {
             TextPrimary = new(0.15f, 0.15f, 0.17f, 1f);
-            TextSecondary = new(0.38f, 0.38f, 0.42f, 1f);
-            TextDisabled = new(0.62f, 0.62f, 0.66f, 1f);
-            FrameBg = new(1f, 1f, 1f, 0.85f);
-            FrameBgHovered = new(1f, 1f, 1f, 0.95f);
+            TextSecondary = new(0.30f, 0.30f, 0.34f, 1f);
+            TextDisabled = new(0.48f, 0.48f, 0.52f, 1f);
+            FrameBg = new(1f, 1f, 1f, 0.96f);
+            FrameBgHovered = new(1f, 1f, 1f, 0.99f);
             FrameBgActive = new(0.94f, 0.94f, 0.96f, 1f);
             PopupBg = new(1f, 1f, 1f, 0.98f);
-            Border = new(0f, 0f, 0f, 0.10f);
-            BorderStrong = new(0f, 0f, 0f, 0.18f);
-            NavActiveBg = new(1f, 1f, 1f, 0.92f);
+            Border = new(0f, 0f, 0f, 0.18f);
+            BorderStrong = new(0f, 0f, 0f, 0.30f);
+            NavActiveBg = new(1f, 1f, 1f, 0.98f);
             NavActiveText = TextPrimary;
         }
         else
