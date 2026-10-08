@@ -29,6 +29,7 @@ internal sealed class ReaperEventHandler : IRotationEventHandler, IDisposable
     // GCD ability slot; all other confirmed self actions use the normal value.
     internal static int CurrGcdAbilityCount { get; private set; } = 2;
     private static long soulsowAttemptAt;
+    private static readonly Dictionary<uint, long> confirmedActionAt = new();
     private bool actionEffectAttached;
 
     internal void Attach()
@@ -50,7 +51,20 @@ internal sealed class ReaperEventHandler : IRotationEventHandler, IDisposable
         var me = Core.Me;
         if (me == null || action.SourceId != me.EntityId) return;
 
+        var now = Environment.TickCount64;
+        confirmedActionAt[action.ActionId] = now;
+        if (action.ActionId == R.Gluttony || action.ActionId == R.Adjust(R.Gluttony))
+            confirmedActionAt[R.Gluttony] = now;
+        if (action.ActionId == R.BloodStalk || action.ActionId == R.Adjust(R.BloodStalk))
+            confirmedActionAt[R.BloodStalk] = now;
+
         CurrGcdAbilityCount = action.ActionId is R.VoidReaping or R.CrossReaping ? 1 : 2;
+    }
+
+    internal static bool RecentlyConfirmed(uint actionId, int milliseconds)
+    {
+        if (!confirmedActionAt.TryGetValue(actionId, out var timestamp)) return false;
+        return Environment.TickCount64 - timestamp <= milliseconds;
     }
 
     public void OnUpdate() => ReaperHooks.Update();
@@ -65,6 +79,7 @@ internal sealed class ReaperEventHandler : IRotationEventHandler, IDisposable
         InBattle = false;
         soulsowAttemptAt = 0;
         CurrGcdAbilityCount = 2;
+        confirmedActionAt.Clear();
         OpenerPositionalRuntime.Reset();
         PromeSettings.Instance.OpenerHasBeenExecuted = false;
         ReaperHooks.Update();
@@ -85,6 +100,7 @@ internal sealed class ReaperEventHandler : IRotationEventHandler, IDisposable
         InBattle = false;
         soulsowAttemptAt = 0;
         CurrGcdAbilityCount = 2;
+        confirmedActionAt.Clear();
         OpenerPositionalRuntime.Reset();
         PromeSettings.Instance.OpenerHasBeenExecuted = false;
         ReaperHooks.Update();
@@ -95,6 +111,7 @@ internal sealed class ReaperEventHandler : IRotationEventHandler, IDisposable
         soulsowAttemptAt = 0;
         OpenerPositionalRuntime.Reset();
         PromeSettings.Instance.OpenerHasBeenExecuted = false;
+        confirmedActionAt.Clear();
         ReaperHooks.Dispose();
     }
 

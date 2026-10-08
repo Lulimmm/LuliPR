@@ -25,11 +25,19 @@ public sealed class TrueNorthOgcd : Ogcd
     {
         if (!R.Qt("自动真北")) return No;
         if (ActionHelper.GetGcdRemain() < .6f) return No;
-        if (R.Charges(R.TrueNorth) < 1) return No;
-        if (R.Recently(R.TrueNorth, 2120) || R.Has(1250u) || R.Has(2593u)) return No;
+        if (R.Charges(R.TrueNorth) < 1 && !R.Ready(R.TrueNorth)) return No;
+        if (ReaperEventHandler.RecentlyConfirmed(R.TrueNorth, 2120)
+            || R.Recently(R.TrueNorth, 2120)
+            || R.Has(1250u) || R.Has(2593u)) return No;
         if (R.GcdElapsed <= ActionHelper.GetGcdTotal() * .75f) return No;
-        if (TargetHelper.GetTargetPositional() == Positional.None) return No;
-        if (!R.Recently(R.Gluttony, 5000) && !R.Recently(R.Adjust(R.BloodStalk), 2120)) return No;
+        if (R.Target == null || TargetHelper.GetTargetPositional() == Positional.None) return No;
+        var hasRecentBurst = ReaperEventHandler.RecentlyConfirmed(R.Gluttony, 5000)
+            || ReaperEventHandler.RecentlyConfirmed(R.BloodStalk, 2120)
+            || R.Recently(R.Gluttony, 5000)
+            || R.Recently(R.BloodStalk, 2120)
+            || R.Recently(R.Adjust(R.BloodStalk), 2120);
+        var hasPositionalBurstState = R.Has(2588u) || R.Has(2589u);
+        if (!hasRecentBurst && !hasPositionalBurstState) return No;
         var pos = TargetHelper.GetTargetPositional();
         return (R.Has(2588u) && pos != Positional.Flank) || (R.Has(2589u) && pos != Positional.Rear) ? Ok : No;
     }
