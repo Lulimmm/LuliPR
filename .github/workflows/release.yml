@@ -71,7 +71,7 @@ jobs:
       - name: Build
         shell: pwsh
         run: |
-          dotnet build Luli.csproj --configuration Release -p:DalamudReferenceRoot="$env:GITHUB_WORKSPACE\lib" -p:PromeRotationReferenceRoot="$env:GITHUB_WORKSPACE\lib"
+          dotnet build Luli.csproj --configuration Release -p:DalamudReferenceRoot="$env:GITHUB_WORKSPACE\lib" -p:PromeRotationInstalledRoot="$env:GITHUB_WORKSPACE\lib" -p:PromeRotationReferenceRoot="$env:GITHUB_WORKSPACE\lib"
           if (-not (Test-Path "$env:APPDATA\XIVLauncherCN\pluginConfigs\PromeRotation\ACR\Cino\LuliReaperPR.dll")) { throw "ACR assembly was not built" }
 
       - name: Package
