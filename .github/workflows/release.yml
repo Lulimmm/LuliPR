@@ -6,7 +6,7 @@ on:
       version:
         description: Release version, for example 1.0.0.0
         required: true
-        default: 1.0.10
+        default: 1.1.0
   push:
     tags:
       - v*
@@ -71,7 +71,7 @@ jobs:
       - name: Build
         shell: pwsh
         run: |
-          dotnet build Luli.csproj --configuration Release
+          dotnet build Luli.csproj --configuration Release -p:DalamudReferenceRoot="$env:GITHUB_WORKSPACE\lib" -p:PromeRotationReferenceRoot="$env:GITHUB_WORKSPACE\lib"
           if (-not (Test-Path "$env:APPDATA\XIVLauncherCN\pluginConfigs\PromeRotation\ACR\Cino\LuliReaperPR.dll")) { throw "ACR assembly was not built" }
 
       - name: Package

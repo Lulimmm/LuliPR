@@ -20,4 +20,4 @@ The checked-in [`repo.json`](repo.json) is a metadata template. The release work
 
 ## Release
 
-Push a version tag such as `v1.0.10` or run the `Build and Release` workflow manually. The workflow builds the ACR assembly and packages it with its dependency manifest.
+Push a version tag such as `v1.1.0` or run the `Build and Release` workflow manually. The workflow builds the ACR assembly and packages it with its dependency manifest.
