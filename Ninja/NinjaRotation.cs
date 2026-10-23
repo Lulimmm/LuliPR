@@ -22,7 +22,7 @@ using Ninja.PR.Timeline;
 
 namespace Ninja.PR;
 
-[RotationMetadata(30u, "Luli Ninja PR", "Cino", "1.1.0", ContentScope = AcrContentScope.HighEnd)]
+[RotationMetadata(30u, "Luli Ninja PR", "Cino", "1.1.1", ContentScope = AcrContentScope.HighEnd)]
 public sealed class NinjaRotation : IRotation, IRotationLifecycle
 {
     private static readonly HashSet<string> HiddenQtKeys = new(StringComparer.Ordinal)
@@ -46,6 +46,7 @@ public sealed class NinjaRotation : IRotation, IRotationLifecycle
     internal static readonly FieldInfo? RetryTimerField = typeof(ActionUpdater)
         .GetField("_retryTimer", BindingFlags.Static | BindingFlags.NonPublic);
     internal static string LastUpdaterRecovery = "None";
+    internal static long staleGcdLockSince;
 
     public string RotationName => "Luli Ninja PR";
     public uint JobId => 30u;
@@ -278,6 +279,7 @@ public sealed class NinjaRotation : IRotation, IRotationLifecycle
         ImGui.Text($"Pending TCJ submit: {FormatDebugAction(NinjaCombatState.PendingTcjJutsu)} ({NinjaCombatState.PendingTcjAgeMs} ms)");
         ImGui.Text($"Last observed action: {NinjaCombatState.LastObservedActionId}");
         ImGui.Text($"Last GCD: {FormatDebugAction(NinjaCombatState.LastGcd)}");
+        ImGui.Text($"TCJ Suiton recent 15s: {NinjaCombatState.Recently(NinjaActions.TcjSuiton, 15000)}");
         ImGui.Separator();
         ImGui.Text($"GCD gate: {(NinjaCombatState.IsTcjSequenceActive ? "TCJ exclusive" : "normal resolvers")}");
         ImGui.Text($"oGCD gate: {(NinjaCombatState.IsTcjSequenceActive ? "blocked by TCJ" : "open")}");
@@ -285,6 +287,7 @@ public sealed class NinjaRotation : IRotation, IRotationLifecycle
         ImGui.Text($"Active command: {ActionUpdater.HasActiveCommand()}");
         ImGui.Text($"Locked GCD: {ActionUpdater.HasLockedGcdAction()}");
         ImGui.Text($"Updater recovery: {LastUpdaterRecovery}");
+        ImGui.Text($"Stale GCD lock age: {NinjaEventHandler.GetStaleGcdLockAgeMs()} ms");
         ImGui.Text($"Queued actions: {ActionQueueManager.HasActionsInQueue()}");
         ImGui.Separator();
         ImGui.Text($"Selected Always: {FirstActive(RotationManager.AlwaysSolverStatus)}");
@@ -492,6 +495,8 @@ internal sealed class NinjaEventHandler : IRotationEventHandler, IDisposable
             return;
         }
 
+        if (TryRecoverStaleGcdLock()) return;
+
         // ActionUpdater can promote an oGCD during the last weave window and
         // then retain it after the GCD reaches zero. At that point its own
         // canUseOffGcd gate is false, so the command can never submit and no
@@ -516,6 +521,68 @@ internal sealed class NinjaEventHandler : IRotationEventHandler, IDisposable
             ActionUpdaterRouter.Reset();
             NinjaRotation.LastUpdaterRecovery = "reset stale oGCD lock and queues";
         }
+    }
+
+    private static bool TryRecoverStaleGcdLock()
+    {
+        if (!ActionUpdaterRouter.HasActiveCommand()
+            || !ActionUpdaterRouter.HasLockedGcdAction()
+            || ActionQueueManager.HasActionsInQueue()
+            || ActionQueueManager.HasHighPriorityAction()
+            || ActionHelper.GetGcdRemain() > 0.1f
+            || IsActiveActionGroup())
+        {
+            NinjaRotation.staleGcdLockSince = 0;
+            return false;
+        }
+
+        PAction? active;
+        try
+        {
+            active = NinjaRotation.PeekLockedActionMethod?.Invoke(null, null) as PAction;
+        }
+        catch
+        {
+            NinjaRotation.staleGcdLockSince = 0;
+            return false;
+        }
+
+        // A legitimate GCD command is normally attempted immediately. This
+        // narrow case is specifically the updater state seen when a command
+        // survived without _lastActionAttempted being populated.
+        var attempted = NinjaRotation.LastAttemptedActionField?.GetValue(null) as PAction;
+        if (active?.Type != ActionType.Gcd || attempted != null)
+        {
+            NinjaRotation.staleGcdLockSince = 0;
+            return false;
+        }
+
+        var now = Environment.TickCount64;
+        if (NinjaRotation.staleGcdLockSince == 0) NinjaRotation.staleGcdLockSince = now;
+        if (now - NinjaRotation.staleGcdLockSince < 1000) return false;
+
+        try
+        {
+            // SkipCurrentTask only drops the command for normal actions; the
+            // updater's private _gcdLocked flag is cleared by Reset(). The
+            // queue checks above make this reset safe for this recovery path.
+            ActionUpdaterRouter.Reset();
+            NinjaRotation.LastUpdaterRecovery = $"reset stale GCD lock ({active.ActionId})";
+        }
+        catch
+        {
+            ActionUpdaterRouter.Reset();
+            NinjaRotation.LastUpdaterRecovery = $"reset stale GCD lock and queues ({active.ActionId})";
+        }
+
+        NinjaRotation.staleGcdLockSince = 0;
+        return true;
+    }
+
+    internal static long GetStaleGcdLockAgeMs()
+    {
+        if (NinjaRotation.staleGcdLockSince == 0) return 0;
+        return Math.Max(0, Environment.TickCount64 - NinjaRotation.staleGcdLockSince);
     }
 
     private static void RecoverStaleVerification(bool preserveQueues)
@@ -617,6 +684,7 @@ internal sealed class NinjaEventHandler : IRotationEventHandler, IDisposable
     {
         NinjaAeSlotSequence.Reset();
         NinjaCombatState.Reset();
+        NinjaRotation.staleGcdLockSince = 0;
         PromeSettings.Instance.OpenerHasBeenExecuted = false;
     }
 
@@ -624,6 +692,7 @@ internal sealed class NinjaEventHandler : IRotationEventHandler, IDisposable
     {
         NinjaAeSlotSequence.Reset();
         NinjaCombatState.Reset();
+        NinjaRotation.staleGcdLockSince = 0;
         PromeSettings.Instance.OpenerHasBeenExecuted = false;
     }
 

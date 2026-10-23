@@ -95,6 +95,15 @@ internal static class NinjaCombatState
 
     private static uint CanonicalActionId(uint id)
     {
+        // Some clients report the final TCJ packet as the ordinary Suiton
+        // action (2271). Keep that packet distinct from a normal Suiton cast
+        // so the AE-equivalent 18881 RecentlyUsed condition can pass.
+        if (id == NinjaActions.Suiton
+            && (Core.Me?.HasStatus(NinjaActions.TcjStatus) == true
+                || PendingTcjJutsu == NinjaActions.TcjSuiton
+                || Recently(NinjaActions.TenChiJin, 2120)))
+            return NinjaActions.TcjSuiton;
+
         // Base mudra/ninjutsu actions are separate GCD inputs. They must not
         // be canonicalized to a TCJ follow-up through ActionManager's
         // adjusted-action aliases.
@@ -181,6 +190,15 @@ internal static class NinjaCombatState
             return;
         PendingTcjJutsu = id;
         PendingTcjJutsuAt = Environment.TickCount64;
+
+        // The client does not expose a consistent cast/effect packet for the
+        // final TCJ action: depending on the packet path it can be reported
+        // as 18881, ordinary Suiton (2271), or only as the transformed action
+        // submission. AE's RecentlyUsed(18881) is based on the successful
+        // action slot, so keep the same recency anchor as soon as that slot is
+        // submitted. A later combat event still refreshes the timestamp.
+        if (id == NinjaActions.TcjSuiton)
+            ActionTimes[NinjaActions.TcjSuiton] = PendingTcjJutsuAt;
     }
 
     public static uint GetTcjStepForDecision()
@@ -230,12 +248,17 @@ internal abstract class NinjaResolver : IDecisionResolver
 {
     protected static CheckResult No => new(false, "未满足使用条件");
     protected static CheckResult Ok => new(true, string.Empty);
+    protected static CheckResult Blocked(string message) => new(false, message);
     protected static bool Ready(uint id) => ActionHelper.IsReady(id);
     protected static bool InMeleeRange => Core.Target != null && Core.Me != null
         && NinjaTarget.Distance <= NinjaTarget.AttackRange;
     protected static bool HasMeleeTarget => Core.Target?.CanUseAttackActionOn() == true && InMeleeRange;
     protected static PAction Build(uint id, ActionType type, ActionTargetType target)
         => new(id, type, target) { RequiresVerification = true };
+    // AE's normal combo Spell is not an opener action and does not wait for
+    // UAL/AEP confirmation before the next rotation decision.
+    protected static PAction BuildNormal(uint id, ActionType type, ActionTargetType target)
+        => new(id, type, target);
     public abstract CheckResult Check();
     public abstract PAction GetAction();
 }
@@ -550,7 +573,7 @@ internal sealed class NinjaEarlier4Or3Resolver : NinjaResolver
         var action = JobGaugeHelper.NIN.Kazematoi == 0
             ? NinjaActions.ArmorCrush
             : NinjaActions.AeolianEdge;
-        return Build(ActionHelper.GetAdjustedActionId(action), ActionType.Gcd, ActionTargetType.Target);
+        return BuildNormal(action, ActionType.Gcd, ActionTargetType.Target);
     }
 }
 
@@ -589,7 +612,7 @@ internal sealed class NinjaKBaseResolver : NinjaResolver
         }
         else action = last == NinjaActions.SpinningEdge ? NinjaActions.GustSlash : NinjaActions.SpinningEdge;
 
-        return Build(ActionHelper.GetAdjustedActionId(action), ActionType.Gcd, ActionTargetType.Target);
+        return BuildNormal(action, ActionType.Gcd, ActionTargetType.Target);
     }
 }
 
@@ -599,24 +622,14 @@ internal sealed class NinjaTenriJindoResolver : NinjaResolver
     {
         var me = Core.Me;
         if (!PromeSettings.Instance.GetQt(NinjaQts.TenriJindo)) return No;
-        // Ten Chi Jin owns the action window. Do not allow a previously
-        // available 36961 to be selected while the local 1186 buff is up,
-        // including the short packet gap before IsTcjSequenceActive updates.
-        if (me == null || me.HasStatus(NinjaActions.TcjStatus)
-            || NinjaCombatState.IsTcjSequenceActive) return No;
-        if (ActionHelper.GetGcdRemain() < 0.6f) return No;
-        if (!ActionHelper.IsUnlocked(NinjaActions.TenriJindo)
-            || !Ready(NinjaActions.TenriJindo)) return No;
-        if (NinjaCombatState.Recently(NinjaActions.TenChiJin, 2120)) return No;
+        if (me == null || ActionHelper.GetGcdRemain() < 0.6f) return No;
+        if (NinjaCombatState.Recently(NinjaActions.TenChiJin, 2120)
+            || me.HasStatus(NinjaActions.TcjStatus)) return No;
         return me.HasStatus(NinjaActions.TenriJindoReady) ? Ok : No;
     }
 
-    public override PAction GetAction()
-    {
-        var adjusted = ActionHelper.GetAdjustedActionId(NinjaActions.TenriJindo);
-        return Build(adjusted == 0 ? NinjaActions.TenriJindo : adjusted,
-            ActionType.OffGcd, ActionTargetType.Target);
-    }
+    public override PAction GetAction() =>
+        Build(NinjaActions.TenriJindo, ActionType.OffGcd, ActionTargetType.Target);
 }
 
 internal static class NinjaBhavacakraPolicy
@@ -680,6 +693,7 @@ internal sealed class NinjaPriorityBhavacakraResolver : NinjaResolver
             || NinjaCombatState.Recently(36960u, 1060)
             || JobGaugeHelper.NIN.Ninki < 50
             || NinjaCombatState.Recently(NinjaActions.MugCurrent, 1060)
+            || me.HasStatus(NinjaActions.TcjStatus)
             || NinjaCombatState.IsTcjSequenceActive
             || (ActionHelper.GetActionCooldown(NinjaActions.TrickAttackCurrent) < 1.26f
                 && PromeSettings.Instance.GetQt(NinjaQts.SmallTrick)
@@ -823,21 +837,35 @@ internal sealed class NinjaMeisuiResolver : NinjaResolver
         // AE's direct Meisui resolver does not gate on the Meisui QT. The QT
         // is only part of the _100B overflow-priority branch above, so keep
         // that distinction when migrating the 16489 resolver.
-        if (me == null
-            || ActionHelper.GetActionCooldown(NinjaActions.Meisui) > 0f
-            || !ActionHelper.IsUnlocked(NinjaActions.Meisui)
-            || ActionHelper.GetGcdRemain() < .6f
-            || me.HasStatus(NinjaActions.TcjStatus)) return No;
+        if (me == null) return Blocked("Meisui: player unavailable");
 
-        if (JobGaugeHelper.NIN.Ninki < 50
-            && me.HasStatus(NinjaActions.ShadowWalkerStatus)
-            && NinjaCombatState.Recently(NinjaActions.TcjSuiton, 15000)
-            && ActionHelper.GetActionCooldown(NinjaActions.TrickAttackCurrent) >= 20f) return Ok;
+        // Keep the success path in the same order as AE's 16489 resolver.
+        if (ActionHelper.GetGcdRemain() < .6f)
+            return Blocked("Meisui: GCD < 600ms");
+        if (JobGaugeHelper.NIN.Ninki >= 50)
+            return Blocked($"Meisui: Ninki {JobGaugeHelper.NIN.Ninki} >= 50");
 
-        return No;
+        var cooldown = ActionHelper.GetActionCooldown(NinjaActions.Meisui);
+        if (cooldown > 0f)
+            return Blocked($"Meisui: cooldown {cooldown:F2}s");
+        if (!ActionHelper.IsUnlocked(NinjaActions.Meisui))
+            return Blocked("Meisui: locked");
+        if (!me.HasStatus(NinjaActions.ShadowWalkerStatus))
+            return Blocked("Meisui: missing 3848");
+        if (me.HasStatus(NinjaActions.TcjStatus))
+            return Blocked("Meisui: TCJ status active");
+        if (!NinjaCombatState.Recently(NinjaActions.TcjSuiton, 15000))
+            return Blocked("Meisui: no TCJ Suiton in 15s");
+
+        var trickCooldown = ActionHelper.GetActionCooldown(NinjaActions.TrickAttackCurrent);
+        return trickCooldown >= 20f
+            ? Ok
+            : Blocked($"Meisui: Trick Attack cooldown {trickCooldown:F2}s < 20s");
     }
 
-    public override PAction GetAction() => Build(NinjaActions.Meisui, ActionType.OffGcd, ActionTargetType.Self);
+    // AE adds Meisui as a normal ability slot; verification is reserved for
+    // fixed opener actions in PR and must not stall the regular oGCD queue.
+    public override PAction GetAction() => BuildNormal(NinjaActions.Meisui, ActionType.OffGcd, ActionTargetType.Self);
 }
 
 internal sealed class NinjaAssassinateResolver : NinjaResolver
@@ -924,6 +952,6 @@ internal sealed class NinjaComboResolver : NinjaResolver
         }
         else action = last == NinjaActions.SpinningEdge && me.Level >= 4 ? NinjaActions.GustSlash : NinjaActions.SpinningEdge;
 
-        return Build(ActionHelper.GetAdjustedActionId(action), ActionType.Gcd, ActionTargetType.Target);
+        return BuildNormal(action, ActionType.Gcd, ActionTargetType.Target);
     }
 }
