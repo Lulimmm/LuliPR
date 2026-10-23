@@ -109,7 +109,7 @@ public sealed class NinjaRotation : IRotation, IRotationLifecycle
             hotkeyNames: Array.Empty<string>(),
             buildHotkeys: null,
             author: "Cino",
-            drawGeneralSettings: null,
+            drawGeneralSettings: DrawGeneralSettings,
             drawDebugSettings: DrawDebugPanel);
         foreach (var qt in QtList)
         {
@@ -224,6 +224,33 @@ public sealed class NinjaRotation : IRotation, IRotationLifecycle
     public void DrawSettings()
     {
         ErosUIFramework.DrawSettingsEntry();
+    }
+
+    private static void DrawGeneralSettings()
+    {
+        ImGui.Text("起手设置");
+        var selected = NinjaSettings.Instance.Opener;
+        if (ImGui.BeginCombo("起手选择", selected))
+        {
+            foreach (var option in new[] { "常规斩击背刺起手", "ED起手", "无" })
+            {
+                var isSelected = selected == option;
+                if (ImGui.Selectable(option, isSelected))
+                {
+                    NinjaSettings.Instance.Opener = option;
+                    NinjaSettings.Instance.Save();
+                }
+                if (isSelected) ImGui.SetItemDefaultFocus();
+            }
+            ImGui.EndCombo();
+        }
+
+        var openerBurst = NinjaSettings.Instance.OpenerBurst;
+        if (ImGui.Checkbox("起手使用爆发药", ref openerBurst))
+        {
+            NinjaSettings.Instance.OpenerBurst = openerBurst;
+            NinjaSettings.Instance.Save();
+        }
     }
 
     private static bool GetQtDefault(string key)

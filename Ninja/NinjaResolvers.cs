@@ -596,13 +596,17 @@ internal sealed class NinjaTenriJindoResolver : NinjaResolver
     public override CheckResult Check()
     {
         var me = Core.Me;
-        var target = Core.Target;
         if (!PromeSettings.Instance.GetQt(NinjaQts.TenriJindo)) return No;
-        if (target?.CanUseAttackActionOn() != true) return No;
+        // Ten Chi Jin owns the action window. Do not allow a previously
+        // available 36961 to be selected while the local 1186 buff is up,
+        // including the short packet gap before IsTcjSequenceActive updates.
+        if (me == null || me.HasStatus(NinjaActions.TcjStatus)
+            || NinjaCombatState.IsTcjSequenceActive) return No;
         if (ActionHelper.GetGcdRemain() < 0.6f) return No;
-        if (NinjaCombatState.Recently(NinjaActions.TenChiJin, 2120)
-            || me?.HasStatus(NinjaActions.TcjStatus) == true) return No;
-        return me?.HasStatus(NinjaActions.TenriJindoReady) == true ? Ok : No;
+        if (!ActionHelper.IsUnlocked(NinjaActions.TenriJindo)
+            || !Ready(NinjaActions.TenriJindo)) return No;
+        if (NinjaCombatState.Recently(NinjaActions.TenChiJin, 2120)) return No;
+        return me.HasStatus(NinjaActions.TenriJindoReady) ? Ok : No;
     }
 
     public override PAction GetAction()
