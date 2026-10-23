@@ -11,7 +11,7 @@ internal sealed class NinjaSettings
         "XIVLauncherCN", "pluginConfigs", "PromeRotation", "ACR", "Cino", "ninja.json");
 
     public static NinjaSettings Instance { get; } = Load();
-    public string Opener = "常规斩击背刺起手";
+    public string Opener = NinjaOpener.StandardOpenerName;
     public bool OpenerBurst;
     public bool TrickAttackDelayUntilNextMug;
     public bool P5PerfectBunshin;
@@ -36,7 +36,16 @@ internal sealed class NinjaSettings
         try
         {
             if (File.Exists(PathName))
-                return JsonSerializer.Deserialize<NinjaSettings>(File.ReadAllText(PathName), new JsonSerializerOptions { IncludeFields = true }) ?? new();
+            {
+                var settings = JsonSerializer.Deserialize<NinjaSettings>(File.ReadAllText(PathName), new JsonSerializerOptions { IncludeFields = true }) ?? new();
+                var normalized = NormalizeOpener(settings.Opener);
+                if (settings.Opener != normalized)
+                {
+                    settings.Opener = normalized;
+                    settings.Save();
+                }
+                return settings;
+            }
 
             // Migrate the old AE settings file when this is the first PR load.
             var legacyPath = Path.Combine(Path.GetDirectoryName(PathName)!, "NinjaSettings", "Ninja.json");
@@ -50,11 +59,12 @@ internal sealed class NinjaSettings
                 {
                     settings.Opener = opener.GetString() switch
                     {
-                        "Raiton" => "常规斩击背刺起手",
+                        "Raiton" => NinjaOpener.StandardOpenerName,
                         "Tudun" => "ED起手",
                         "None" => "无",
                         _ => settings.Opener
                     };
+                    settings.Opener = NormalizeOpener(settings.Opener);
                 }
                 settings.Save();
                 return settings;
@@ -62,5 +72,18 @@ internal sealed class NinjaSettings
         }
         catch { }
         return new();
+    }
+
+    private static string NormalizeOpener(string? opener)
+    {
+        if (opener == new NinjaStandardOpener().OpenerName
+            || opener == "常规斩击背刺起手"
+            || opener == "Raiton")
+            return NinjaOpener.StandardOpenerName;
+        if (opener == new NinjaEdOpener().OpenerName || opener == "Tudun")
+            return "ED起手";
+        if (opener == "None")
+            return "无";
+        return string.IsNullOrWhiteSpace(opener) ? NinjaOpener.StandardOpenerName : opener;
     }
 }

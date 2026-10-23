@@ -9,6 +9,8 @@ namespace Ninja.PR;
 
 public abstract class NinjaOpener : IOpener
 {
+    public const string StandardOpenerName = "常规起手";
+
     protected static PAction G(uint id) => new(id, ActionType.Gcd, ActionTargetType.Target) { RequiresVerification = true };
     protected static PAction S(uint id) => new(id, ActionType.Gcd, ActionTargetType.Self) { RequiresVerification = true };
     // AE marks every mudra GCD with DontUseGcdOpt. NinjaAeSlotSequence
@@ -51,10 +53,9 @@ public abstract class NinjaOpener : IOpener
     public abstract List<PAction> InCombatSequence { get; }
     public virtual void InitializeCountdown(CountDownHandler handler) => AddStandardCountdown(handler);
 }
-
 public sealed class NinjaStandardOpener : NinjaOpener
 {
-    public override string OpenerName => "常规斩击背刺起手";
+    public override string OpenerName => StandardOpenerName;
     public override List<PAction> InCombatSequence
     {
         get

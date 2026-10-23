@@ -430,7 +430,9 @@ internal sealed class NinjaPhantomResolver : NinjaResolver
     {
         var me = Core.Me;
         var target = Core.Target;
-        if (me?.HasStatus(NinjaActions.PhantomReady) != true || NinjaCombatState.IsTcjSequenceActive
+        if (me?.HasStatus(NinjaActions.PhantomReady) != true
+            || me.HasStatus(NinjaActions.TcjStatus)
+            || NinjaCombatState.IsTcjSequenceActive
             || target?.CanUseAttackActionOn() != true
             || !PromeSettings.Instance.GetQt(NinjaQts.Phantom) || JobGaugeHelper.NIN.Ninki > 90) return No;
 
@@ -821,7 +823,8 @@ internal sealed class NinjaMeisuiResolver : NinjaResolver
         // AE's direct Meisui resolver does not gate on the Meisui QT. The QT
         // is only part of the _100B overflow-priority branch above, so keep
         // that distinction when migrating the 16489 resolver.
-        if (me == null || !Ready(NinjaActions.Meisui)
+        if (me == null
+            || ActionHelper.GetActionCooldown(NinjaActions.Meisui) > 0f
             || !ActionHelper.IsUnlocked(NinjaActions.Meisui)
             || ActionHelper.GetGcdRemain() < .6f
             || me.HasStatus(NinjaActions.TcjStatus)) return No;

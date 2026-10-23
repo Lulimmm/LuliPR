@@ -73,7 +73,7 @@ public sealed class NinjaRotation : IRotation, IRotationLifecycle
 
     public static IReadOnlyDictionary<string, Type> Openers { get; } = new Dictionary<string, Type>
     {
-        ["常规斩击背刺起手"] = typeof(NinjaStandardOpener),
+        [NinjaOpener.StandardOpenerName] = typeof(NinjaStandardOpener),
         ["ED起手"] = typeof(NinjaEdOpener)
     };
 
@@ -215,7 +215,7 @@ public sealed class NinjaRotation : IRotation, IRotationLifecycle
         if (NinjaSettings.Instance.Opener == "无") return null;
         return NinjaSettings.Instance.Opener switch
         {
-            "常规斩击背刺起手" => new NinjaStandardOpener(),
+            NinjaOpener.StandardOpenerName => new NinjaStandardOpener(),
             "ED起手" => new NinjaEdOpener(),
             _ => null
         };
@@ -232,7 +232,7 @@ public sealed class NinjaRotation : IRotation, IRotationLifecycle
         var selected = NinjaSettings.Instance.Opener;
         if (ImGui.BeginCombo("起手选择", selected))
         {
-            foreach (var option in new[] { "常规斩击背刺起手", "ED起手", "无" })
+            foreach (var option in new[] { NinjaOpener.StandardOpenerName, "ED起手", "无" })
             {
                 var isSelected = selected == option;
                 if (ImGui.Selectable(option, isSelected))
