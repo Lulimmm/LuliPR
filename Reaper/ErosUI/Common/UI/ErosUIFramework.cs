@@ -27,10 +27,11 @@ public static class ErosUIFramework
         System.Action<ErosUIHotkeyBuilder>? buildHotkeys,
         string? author = null,
         string? defaultSettingsJson = null,
-        System.Action? drawGeneralSettings = null)
+        System.Action? drawGeneralSettings = null,
+        System.Action? drawDebugSettings = null)
         => ErosUIJobEnv.Configure(jobTag, jobName, qtAll, qtIsMetaKey, qtIsVisibleInMode,
             qtDefault, qtCascadeRules, hotkeyNames, buildHotkeys, author,
-            defaultSettingsJson, drawGeneralSettings);
+            defaultSettingsJson, drawGeneralSettings, drawDebugSettings);
 
     /// <summary>注册全部窗口并完成初始化：构建热键面板、注册 QT、压制宿主自带面板。幂等，重复调用会先卸载再注册。OnEnterAcr 调用。</summary>
     public static void Install()

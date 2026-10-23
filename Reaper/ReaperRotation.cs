@@ -21,14 +21,14 @@ using PromeRotation.UI.HotKey;
 
 namespace Reaper.PR;
 
-[RotationMetadata(39u, "Luli Reaper PR", "Cino", "1.0.9", ContentScope = AcrContentScope.HighEnd)]
+[RotationMetadata(39u, "Luli Reaper PR", "Cino", "1.0.10", ContentScope = AcrContentScope.HighEnd)]
 public sealed partial class ReaperRotation : IRotation, IRotationLifecycle
 {
     public string AuthorName => "Cino";
     // AE exposes the unset/no-opener state as "待定".
     private const string FollowTimelineOpener = "待定";
-    private const string LegacyFollowTimelineOpener = "跟随时间轴";
-    private const string LegacyNoOpener = "无起手";
+    private const string PreviousFollowTimelineOpener = "跟随时间轴";
+    private const string PreviousNoOpener = "无起手";
     private static readonly string[] OpenerOptions =
     {
         "切割2G团辅起手",
@@ -52,8 +52,8 @@ public sealed partial class ReaperRotation : IRotation, IRotationLifecycle
 
     private static string CanonicalOpenerName(string? name) => name switch
     {
-        LegacyFollowTimelineOpener => FollowTimelineOpener,
-        LegacyNoOpener => FollowTimelineOpener,
+        PreviousFollowTimelineOpener => FollowTimelineOpener,
+        PreviousNoOpener => FollowTimelineOpener,
         "0G团辅起手" => "绝丝瓜起手0g起手",
         "-1G起手" => "提前1G团辅特化起手",
         "2G团辅起手" => "切割2G团辅起手",
@@ -253,7 +253,7 @@ public sealed partial class ReaperRotation : IRotation, IRotationLifecycle
     }
     public IOpener? GetOpener()
     {
-        if (selectedOpener == FollowTimelineOpener || selectedOpener == LegacyNoOpener) return null;
+        if (selectedOpener == FollowTimelineOpener || selectedOpener == PreviousNoOpener) return null;
         var name = CanonicalOpenerName(selectedOpener);
         if (string.IsNullOrWhiteSpace(name) || !Openers.TryGetValue(name, out var type)) return null;
         return Activator.CreateInstance(type) as IOpener;

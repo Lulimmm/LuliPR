@@ -6,7 +6,7 @@ on:
       version:
         description: Release version, for example 1.0.0.0
         required: true
-        default: 1.0.0.0
+        default: 1.0.10
   push:
     tags:
       - v*
@@ -17,8 +17,8 @@ permissions:
 env:
   ACR_AUTHOR: Cino
   ACR_DESCRIPTION: 割草 bACR
-  ACR_JOB: RPR
-  ACR_CONTENT_SCOPE: Unspecified
+  ACR_JOB: RPR,NIN
+  ACR_CONTENT_SCOPE: HighEnd
   ACR_API_VERSION: "15"
 
 jobs:
@@ -58,26 +58,33 @@ jobs:
       - name: Sync metadata version
         shell: pwsh
         run: |
-          $path = "ReaperRotation.cs"
           $version = "${{ steps.version.outputs.version }}"
           if ([string]::IsNullOrWhiteSpace($version)) { throw "Release version is empty" }
-          $text = Get-Content -Raw -Encoding UTF8 $path
-          $updated = [regex]::Replace($text, '(\[RotationMetadata\(39u,\s*"[^"]+",\s*"[^"]+",\s*")[^"]+("\)\])', ('$1' + $version + '$2'), 1)
-          if ($updated -eq $text) { Write-Host "RotationMetadata was not found; retaining source metadata." }
-          Set-Content -Encoding UTF8 -Path $path -Value $updated
+          foreach ($path in @("Ninja/NinjaRotation.cs", "Reaper/ReaperRotation.cs")) {
+            $text = Get-Content -Raw -Encoding UTF8 $path
+            $jobId = if ($path.StartsWith("Ninja/")) { "30u" } else { "39u" }
+            $updated = [regex]::Replace($text, '(\[RotationMetadata\(' + $jobId + ',\s*"[^"]+",\s*"[^"]+",\s*")[^"]+("),', ('${1}' + $version + '${2},'), 1)
+            if ($updated -eq $text -and $text -notmatch ('"' + [regex]::Escape($version) + '"')) { throw "RotationMetadata was not found in $path" }
+            Set-Content -Encoding UTF8 -Path $path -Value $updated
+          }
 
       - name: Build
         shell: pwsh
         run: |
-          if (-not (Test-Path "Cino.zip")) { throw "Cino.zip was not found" }
-          Write-Host "Using the verified package from the repository."
+          dotnet build Luli.csproj --configuration Release
+          if (-not (Test-Path "$env:APPDATA\XIVLauncherCN\pluginConfigs\PromeRotation\ACR\Cino\LuliReaperPR.dll")) { throw "ACR assembly was not built" }
 
       - name: Package
         shell: pwsh
         run: |
           $dist = "${{ runner.temp }}\dist"
           New-Item -ItemType Directory -Force $dist | Out-Null
-          Copy-Item "Cino.zip" "$dist\latest.zip" -Force
+          $package = Join-Path $dist "Cino"
+          New-Item -ItemType Directory -Force $package | Out-Null
+          $output = "$env:APPDATA\XIVLauncherCN\pluginConfigs\PromeRotation\ACR\Cino"
+          Copy-Item "$output\LuliReaperPR.dll" $package -Force
+          Copy-Item "$output\LuliReaperPR.deps.json" $package -Force
+          Compress-Archive -Path $package -DestinationPath "$dist\latest.zip" -Force
           $sha = (Get-FileHash -Algorithm SHA256 "$dist\latest.zip").Hash.ToLowerInvariant()
           $manifest = Get-Content -Raw -Encoding UTF8 "repo.json" | ConvertFrom-Json
           $manifest.sha256 = $sha

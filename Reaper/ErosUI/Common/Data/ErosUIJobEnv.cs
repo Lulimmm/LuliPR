@@ -46,6 +46,7 @@ internal static class ErosUIJobEnv
 
     /// <summary>职业基础设置页的附加内容，由职业侧注入。</summary>
     public static System.Action? DrawGeneralSettings { get; private set; }
+    public static System.Action? DrawDebugSettings { get; private set; }
 
     /// <summary>首次使用时写入的出厂配置 JSON（可选，内容是完整的 ErosUISettings 序列化结果）。不注入则找框架 DLL 内嵌的 Resources/Default{JobTag}.json，仍没有才走代码里的默认值。</summary>
     public static string? DefaultSettingsJson { get; private set; }
@@ -63,7 +64,8 @@ internal static class ErosUIJobEnv
         System.Action<ErosUIHotkeyBuilder>? buildHotkeys,
         string? author = null,
         string? defaultSettingsJson = null,
-        System.Action? drawGeneralSettings = null)
+        System.Action? drawGeneralSettings = null,
+        System.Action? drawDebugSettings = null)
     {
         JobTag = jobTag;
         JobName = jobName;
@@ -77,6 +79,7 @@ internal static class ErosUIJobEnv
         BuildHotkeys = buildHotkeys;
         DefaultSettingsJson = defaultSettingsJson;
         DrawGeneralSettings = drawGeneralSettings;
+        DrawDebugSettings = drawDebugSettings;
         Configured = true;
     }
 }

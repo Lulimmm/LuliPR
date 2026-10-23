@@ -26,7 +26,13 @@
 
     <ItemGroup>
       <!-- PR implementation. The AEAssist tree is reference-only and is never compiled. -->
-      <Compile Include="**\*.cs" Exclude="bin\**\*;obj\**\*;**\bin\**\*;**\obj\**\*" />
+      <Compile Include="**\*.cs" Exclude="bin\**\*;obj\**\*;**\bin\**\*;**\obj\**\*;Ninja\**\*" />
+      <Compile Include="Ninja\NinjaRotation.cs" />
+      <Compile Include="Ninja\NinjaResolvers.cs" />
+      <Compile Include="Ninja\NinjaSettings.cs" />
+      <Compile Include="Ninja\NinjaOpeners.cs" />
+      <Compile Include="Ninja\NinjaAeSlotSequence.cs" />
+      <Compile Include="Ninja\Timeline\NinjaNinkiCondition.cs" />
     </ItemGroup>
 
     <ItemGroup>

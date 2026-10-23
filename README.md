@@ -1,6 +1,6 @@
-# Luli Reaper PR
+# Luli PR ACR
 
-PromeRotation ACR for Reaper (RPR), migrated from the AE rotation logic.
+PromeRotation ACR for Reaper (RPR) and Ninja (NIN), migrated from the AE rotation logic.
 
 ## Local build
 
@@ -20,4 +20,4 @@ The checked-in [`repo.json`](repo.json) is a metadata template. The release work
 
 ## Release
 
-Push a version tag such as `v1.0.0.0` or run the `Build and Release` workflow manually. The workflow packages only the ACR assembly and its dependency manifest.
+Push a version tag such as `v1.0.10` or run the `Build and Release` workflow manually. The workflow builds the ACR assembly and packages it with its dependency manifest.
