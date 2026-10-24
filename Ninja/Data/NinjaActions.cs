@@ -21,7 +21,7 @@ internal static class NinjaActions
     public const uint HyoshoRanryu = 16492, TenCombo = 18805, ChiCombo = 18806, JinCombo = 18807;
     public const uint TcjFumaShuriken = 18873, TcjRaiton = 18877, TcjSuiton = 18881;
     public const uint TrickDebuff = 3254, KunaisBaneStatus = 3906;
-    public const uint RaijuReady = 2690, TcjStatus = 1186;
+    public const uint RaijuReady = 2690, MudraStatus = 496, TcjStatus = 1186;
     public const uint ShadowWalkerStatus = 3848, KassatsuStatus = 497, TenriJindoReady = 3851;
     public const uint PhantomReady = 2723, BunshinStatus = 1954, MugDebuff = 3849;
 }

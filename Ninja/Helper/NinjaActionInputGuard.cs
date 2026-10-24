@@ -31,6 +31,9 @@ internal static class NinjaActionInputGuard
         bool* outOptAreaTargeted);
 
     private static Hook<UseActionDelegate>? useActionHook;
+    public static bool IsAttached => useActionHook != null;
+    public static uint LastBlockedActionId { get; private set; }
+    public static int BlockedActionCount { get; private set; }
 
     public static unsafe void Attach()
     {
@@ -69,6 +72,8 @@ internal static class NinjaActionInputGuard
         finally
         {
             useActionHook = null;
+            LastBlockedActionId = 0;
+            BlockedActionCount = 0;
         }
     }
 
@@ -85,7 +90,11 @@ internal static class NinjaActionInputGuard
         if (actionType == FfxivActionType.Action
             && NinjaSequencePolicy.IsNormalMudraActive
             && !IsRotationOwnedAction(actionId))
+        {
+            LastBlockedActionId = actionId;
+            BlockedActionCount++;
             return false;
+        }
 
         return useActionHook!.Original(self, actionType, actionId, targetId, extraParam,
             mode, comboRouteId, outOptAreaTargeted);

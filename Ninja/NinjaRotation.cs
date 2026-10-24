@@ -301,6 +301,8 @@ public sealed class NinjaRotation : IRotation, IRotationLifecycle
     {
         UpdateDebugStatus();
         ImGui.Text($"TCJ active: {NinjaCombatState.IsTcjSequenceActive}");
+        ImGui.Text($"Mudra input guard: {NinjaActionInputGuard.IsAttached}");
+        ImGui.Text($"Mudra blocked action: {NinjaActionInputGuard.LastBlockedActionId} ({NinjaActionInputGuard.BlockedActionCount})");
         ImGui.Text($"Last TCJ step: {FormatDebugAction(NinjaCombatState.GetLastTcjStep())}");
         ImGui.Text($"Pending TCJ submit: {FormatDebugAction(NinjaCombatState.PendingTcjJutsu)} ({NinjaCombatState.PendingTcjAgeMs} ms)");
         ImGui.Text($"Last observed action: {NinjaCombatState.LastObservedActionId}");

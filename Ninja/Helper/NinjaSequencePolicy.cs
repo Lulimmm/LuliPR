@@ -36,11 +36,21 @@ internal static class NinjaSequencePolicy
 
     public static void Record(uint actionId)
     {
-        if (active && actionId == terminalAction) End();
+        if (active && actionId == terminalAction
+            && (terminalAction == NinjaActions.TcjSuiton
+                || Core.Me?.HasStatus(NinjaActions.MudraStatus) != true))
+            End();
     }
 
     public static void Update()
     {
+        if (active
+            && terminalAction is NinjaActions.Suiton or NinjaActions.Raiton or NinjaActions.HyoshoRanryu
+            && Core.Me?.HasStatus(NinjaActions.MudraStatus) != true)
+        {
+            End();
+            return;
+        }
         if (active && Environment.TickCount64 >= expiresAt) End();
     }
 
@@ -49,6 +59,7 @@ internal static class NinjaSequencePolicy
     public static bool IsNormalMudraActive =>
         active
         && terminalAction is NinjaActions.Suiton or NinjaActions.Raiton or NinjaActions.HyoshoRanryu
+        && Core.Me?.HasStatus(NinjaActions.MudraStatus) == true
         && Core.Me?.HasStatus(NinjaActions.TcjStatus) != true;
 
     private static void End()
