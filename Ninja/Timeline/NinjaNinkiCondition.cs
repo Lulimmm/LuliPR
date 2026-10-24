@@ -6,6 +6,8 @@ using PromeRotation.Data;
 using PromeRotation.Helpers;
 using PromeRotation.Timeline.Core;
 
+using Ninja.PR.Data;
+
 namespace Ninja.PR.Timeline;
 
 public sealed class NinjaJobNodeProvider : IJobNodeProvider
@@ -184,7 +186,7 @@ public sealed class NinjaSettingAction : IAction, ISerializableAction, IJobNodeD
             case "trickDelay": settings.TrickAttackDelayUntilNextMug = enabled; break;
             case "forceRaiton": settings.ForceRaiton = enabled; break;
             case "raitonBackstab": settings.RaitonBackstab = enabled; break;
-            case "raitonRange": settings.RaitonWhenOutOfRange = enabled; break;
+            case "raitonRange": PromeSettings.Instance.SetQt(NinjaQts.RaitonWhenOutOfRange, enabled); break;
             case "p5Bunshin": settings.P5PerfectBunshin = enabled; break;
         }
     }

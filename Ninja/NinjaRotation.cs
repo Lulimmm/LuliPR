@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Diagnostics;
+using Dalamud.Game.Command;
 using Dalamud.Bindings.ImGui;
 using ErosUI;
 using PromeRotation.Core;
@@ -19,10 +20,19 @@ using PromeRotation.Resolvers;
 using PromeRotation.Rotation;
 using PromeRotation.Updaters;
 using Ninja.PR.Timeline;
+using ECommons.DalamudServices;
+
+using Ninja.PR.Action;
+using Ninja.PR.Action.Gcd;
+using Ninja.PR.Action.OffGcd;
+using Ninja.PR.Data;
+using Ninja.PR.Helper;
+using Ninja.PR.Opener;
+using Ninja.PR.UI;
 
 namespace Ninja.PR;
 
-[RotationMetadata(30u, "Luli Ninja PR", "Cino", "1.1.2", ContentScope = AcrContentScope.HighEnd)]
+[RotationMetadata(30u, "Luli Ninja PR", "Cino", "1.1.3", ContentScope = AcrContentScope.HighEnd)]
 public sealed class NinjaRotation : IRotation, IRotationLifecycle
 {
     private static readonly HashSet<string> HiddenQtKeys = new(StringComparer.Ordinal)
@@ -60,6 +70,7 @@ public sealed class NinjaRotation : IRotation, IRotationLifecycle
         ["梦幻三段"] = true,
         [NinjaQts.Suiton] = true,
         [NinjaQts.Raiton] = true,
+        [NinjaQts.RaitonWhenOutOfRange] = false,
         [NinjaQts.Phantom] = true,
         [NinjaQts.Raiju] = true,
         [NinjaQts.Bunshin] = true,
@@ -74,21 +85,20 @@ public sealed class NinjaRotation : IRotation, IRotationLifecycle
 
     public static IReadOnlyDictionary<string, Type> Openers { get; } = new Dictionary<string, Type>
     {
-        [NinjaOpener.StandardOpenerName] = typeof(NinjaStandardOpener),
-        ["ED起手"] = typeof(NinjaEdOpener)
+        [NinjaOpener.StandardOpenerName] = typeof(NinjaStandardOpener)
     };
 
     public static IJobNodeProvider? NodeProvider { get; } = new NinjaJobNodeProvider();
-    // AE's GCD SlotResolverManager order. ReadyGoSuiton is the PR equivalent
-    // of the pre-pull Suiton resolver; TCJ follows it before Kassatsu jutsu.
+    // GCD priority. The pre-pull Suiton resolver runs before TCJ follow-ups.
     private readonly List<IDecisionResolver> gcd = new() { new NinjaAlwaysResolver(), new NinjaTcjResolver(), new NinjaKassatsuJutsuResolver(), new NinjaJutsuResolver(), new NinjaEarlier4Or3Resolver(), new NinjaKBaseResolver(), new NinjaPhantomResolver(), new NinjaRaijuResolver(), new NinjaRaitonResolver(), new NinjaComboResolver() };
-    // AE's SlotMode.Always resolvers are evaluated by the framework's
-    // always pass, independently from the oGCD queue. Preserve their order.
+    // Always resolvers run independently from the oGCD queue. Preserve order.
     private readonly List<IDecisionResolver> always;
     private readonly List<IDecisionResolver> ogcd;
+    private readonly NinjaTenriJindoResolver tenriJindo = new();
     private readonly NinjaTrickAttackResolver trickAttack = new();
     private readonly NinjaPriorityBhavacakraResolver priorityBhavacakra;
     private readonly NinjaEventHandler events = new();
+    private bool commandRegistered;
 
     public NinjaRotation()
     {
@@ -97,8 +107,8 @@ public sealed class NinjaRotation : IRotation, IRotationLifecycle
         // luli order for the oGCD slots:
         // _100B, Mug, Bunshin, Ten Chi Jin, Meisui, Tenri Jindo,
         // Assassinate, Bhavacakra, True North. Kassatsu and Trick Attack
-        // remain in the Always list above, matching AE's SlotMode.Always.
-        ogcd = new() { priorityBhavacakra, new NinjaMugResolver(), new NinjaBunshinResolver(), new NinjaTenChiJinResolver(), new NinjaMeisuiResolver(), new NinjaTenriJindoResolver(), new NinjaAssassinateResolver(), new NinjaOgcdResolver(IsComboResolverFirst, IsRaijuResolverFirst), new NinjaTrueNorthResolver(IsComboResolverFirst) };
+        // remain in the Always list above.
+        ogcd = new() { priorityBhavacakra, new NinjaMugResolver(), new NinjaBunshinResolver(), new NinjaTenChiJinResolver(), new NinjaMeisuiResolver(), tenriJindo, new NinjaAssassinateResolver(), new NinjaOgcdResolver(IsComboResolverFirst, IsRaijuResolverFirst), new NinjaTrueNorthResolver(IsComboResolverFirst) };
         ErosUIFramework.Configure(
             jobTag: "NIN",
             jobName: "Ninja",
@@ -107,15 +117,26 @@ public sealed class NinjaRotation : IRotation, IRotationLifecycle
             qtIsVisibleInMode: (key, _) => !HiddenQtKeys.Contains(key),
             qtDefault: GetQtDefault,
             qtCascadeRules: new Dictionary<string, (string key, bool invert)[]>(),
-            hotkeyNames: Array.Empty<string>(),
-            buildHotkeys: null,
+            hotkeyNames: new[] { "缩地" },
+            buildHotkeys: b =>
+            {
+                b.Execute("缩地", new NinjaMovementHotkey(), iconActionID: NinjaActions.Shukuchi);
+            },
             author: "Cino",
             drawGeneralSettings: DrawGeneralSettings,
             drawDebugSettings: DrawDebugPanel);
         foreach (var qt in QtList)
         {
-            MigrateQtKey(qt.Key);
             PromeSettings.Instance.AddQt(qt.Key, GetQtDefault(qt.Key));
+        }
+
+        // Preserve the old NinjaSettings flag once, then let the QT own the
+        // setting so its visible state and the resolver cannot diverge.
+        if (NinjaSettings.Instance.RaitonWhenOutOfRange)
+        {
+            PromeSettings.Instance.SetQt(NinjaQts.RaitonWhenOutOfRange, true);
+            NinjaSettings.Instance.RaitonWhenOutOfRange = false;
+            NinjaSettings.Instance.Save();
         }
     }
 
@@ -123,17 +144,23 @@ public sealed class NinjaRotation : IRotation, IRotationLifecycle
     {
         // While TCJ owns the GCD, no ordinary resolver may consume the slot.
         // This also covers resolvers whose individual checks do not need a
-        // TCJ condition because they are normally prevented by AE's slot
-        // ordering.
+        // TCJ condition because the scheduler owns the GCD while TCJ is active.
         if (NinjaCombatState.IsTcjSequenceActive)
             return NextTcjOnly();
+
+        // Evaluate the ready Tenri Jindo before allowing a normal GCD to
+        // occupy the queue. It is especially time-sensitive: if it
+        // is ready and the 600ms weave gate is open, queueing a GCD first can
+        // leave 36961 behind that GCD for a full cycle.
+        if (tenriJindo.Check().Success)
+            return null;
         return Next(gcd);
     }
 
     public PAction? NextOffGcd()
     {
-        // AE does not weave unrelated abilities during Ten Chi Jin. Keeping
-        // this gate at the scheduler boundary prevents a missed per-resolver
+        // Do not weave unrelated abilities during Ten Chi Jin. Keeping this
+        // gate at the scheduler boundary prevents a missed per-resolver
         // condition from interrupting the three ninjutsu sequence.
         return NinjaCombatState.IsTcjSequenceActive ? null : Next(ogcd);
     }
@@ -166,7 +193,7 @@ public sealed class NinjaRotation : IRotation, IRotationLifecycle
 
     private bool IsComboResolverFirst()
     {
-        foreach (var resolver in GetSlotResolverPriority())
+        foreach (var resolver in GetResolverPriority())
         {
             if (resolver.Check().Success) return resolver is NinjaComboResolver;
         }
@@ -175,14 +202,14 @@ public sealed class NinjaRotation : IRotation, IRotationLifecycle
 
     private bool IsRaijuResolverFirst()
     {
-        foreach (var resolver in GetSlotResolverPriority())
+        foreach (var resolver in GetResolverPriority())
         {
             if (resolver.Check().Success) return resolver is NinjaRaijuResolver;
         }
         return false;
     }
 
-    private IEnumerable<IDecisionResolver> GetSlotResolverPriority()
+    private IEnumerable<IDecisionResolver> GetResolverPriority()
     {
         foreach (var resolver in gcd)
         {
@@ -217,7 +244,6 @@ public sealed class NinjaRotation : IRotation, IRotationLifecycle
         return NinjaSettings.Instance.Opener switch
         {
             NinjaOpener.StandardOpenerName => new NinjaStandardOpener(),
-            "ED起手" => new NinjaEdOpener(),
             _ => null
         };
     }
@@ -233,7 +259,7 @@ public sealed class NinjaRotation : IRotation, IRotationLifecycle
         var selected = NinjaSettings.Instance.Opener;
         if (ImGui.BeginCombo("起手选择", selected))
         {
-            foreach (var option in new[] { NinjaOpener.StandardOpenerName, "ED起手", "无" })
+            foreach (var option in new[] { NinjaOpener.StandardOpenerName, "无" })
             {
                 var isSelected = selected == option;
                 if (ImGui.Selectable(option, isSelected))
@@ -343,14 +369,35 @@ public sealed class NinjaRotation : IRotation, IRotationLifecycle
     public void OnEnterAcr()
     {
         events.Attach();
+        RegisterCommands();
         ErosUIFramework.Install();
     }
 
     public void OnExitAcr()
     {
         events.Dispose();
+        UnregisterCommands();
         ErosUIFramework.Uninstall();
     }
+
+    private void RegisterCommands()
+    {
+        if (commandRegistered) return;
+        Svc.Commands.AddHandler("/lldd", new CommandInfo(HandleLldd)
+        {
+            HelpMessage = "使用忍者缩地"
+        });
+        commandRegistered = true;
+    }
+
+    private void UnregisterCommands()
+    {
+        if (!commandRegistered) return;
+        Svc.Commands.RemoveHandler("/lldd");
+        commandRegistered = false;
+    }
+
+    private static void HandleLldd(string command, string args) => NinjaMovementHotkey.TryUse();
 }
 
 internal sealed class NinjaEventHandler : IRotationEventHandler, IDisposable
@@ -360,8 +407,8 @@ internal sealed class NinjaEventHandler : IRotationEventHandler, IDisposable
     public void Attach()
     {
         if (attached) return;
-        // AE advances TCJ's LastGcd from MemApiSpellCastSuccess. The PR
-        // equivalent is the cast-start event; keep action-effect recording as
+        // Advance the TCJ step from the cast-start event; keep action-effect
+        // recording as
         // a fallback for instant actions and network packets.
         CombatEventManager.OnStartCast += OnStartCast;
         CombatEventManager.OnActionEffect += OnActionEffect;
@@ -387,7 +434,7 @@ internal sealed class NinjaEventHandler : IRotationEventHandler, IDisposable
         // path and still applies adjusted-action matching.
         ActionUpdaterRouter.NotifyUAL(action.ActionId);
         ActionUpdaterRouter.NotifyAEP(action.ActionId);
-        if (action.ActionId == NinjaActions.TenChiJin)
+        if (IsTenChiJinEvent(action.ActionId))
         {
             // A GCD decision queued immediately before TCJ must not run in
             // the exclusive TCJ window. The opener's TCJ is the terminal
@@ -395,7 +442,12 @@ internal sealed class NinjaEventHandler : IRotationEventHandler, IDisposable
             // If ActionUpdater already promoted a normal Group to its active
             // command, clearing queues alone is too late; drop that command
             // before the TCJ resolver takes exclusive GCD ownership.
-            ActionUpdater.SkipCurrentTask();
+            // TCJ is an instant action. If the host selected it through the
+            // verified path, the client may not emit a matching verification
+            // id, leaving 7403 as the active command after TCJ has finished.
+            // Reset the updater at the confirmed cast boundary so the next
+            // TCJ jutsu or the post-TCJ oGCD can be selected.
+            ActionUpdaterRouter.Reset();
             ActionQueueManager.ClearNormalQueues();
         }
         NinjaCombatState.Record(action.ActionId);
@@ -411,16 +463,15 @@ internal sealed class NinjaEventHandler : IRotationEventHandler, IDisposable
         // adjusted action ID.
         ActionUpdaterRouter.NotifyUAL(action.ActionId);
         ActionUpdaterRouter.NotifyAEP(action.ActionId);
-        if (action.ActionId == NinjaActions.TenChiJin)
+        if (IsTenChiJinEvent(action.ActionId))
         {
             // Some client paths publish the action effect without a matching
             // start-cast event. Apply the same queue handoff in that path.
-            ActionUpdater.SkipCurrentTask();
+            ActionUpdaterRouter.Reset();
             ActionQueueManager.ClearNormalQueues();
         }
         NinjaCombatState.Record(action.ActionId);
-        // AE's RecentlyUsed checks are written against both the pre- and
-        // post-upgrade action ids. Record aliases as well so an effect packet
+        // Record both pre- and post-upgrade action aliases so an effect packet
         // reported with either id observes the same recency window.
         switch (action.ActionId)
         {
@@ -455,12 +506,26 @@ internal sealed class NinjaEventHandler : IRotationEventHandler, IDisposable
         if (action.SourceId != Core.Me?.EntityId) return;
         ActionUpdaterRouter.NotifyUAL(action.ActionId);
         ActionUpdaterRouter.NotifyAEP(action.ActionId);
+        if (IsTenChiJinEvent(action.ActionId))
+        {
+            ActionUpdaterRouter.Reset();
+            ActionQueueManager.ClearNormalQueues();
+            NinjaCombatState.Record(action.ActionId);
+            return;
+        }
         if (action.ActionId is not (NinjaActions.TcjFumaShuriken or NinjaActions.TcjRaiton
             or NinjaActions.TcjSuiton)
             && !NinjaCombatState.IsExpectedTcjActionAlias(action.ActionId)) return;
         // Some instant TCJ packets expose only the effect entry. Record it as
         // the same cast-success signal used by the full action-effect event.
         NinjaCombatState.Record(action.ActionId);
+    }
+
+    private static bool IsTenChiJinEvent(uint actionId)
+    {
+        if (actionId == NinjaActions.TenChiJin) return true;
+        var adjusted = ActionHelper.GetAdjustedActionId(NinjaActions.TenChiJin);
+        return adjusted != 0 && actionId == adjusted;
     }
 
     public void OnUpdate() => DropStaleOffGcdLock();
@@ -470,22 +535,64 @@ internal sealed class NinjaEventHandler : IRotationEventHandler, IDisposable
     }
     public void OnBattleStarted()
     {
-        NinjaAeSlotSequence.Reset();
+        NinjaSequencePolicy.Reset();
         NinjaCombatState.Reset();
         // RotationManager enqueues the selected opener before invoking the
         // rotation event handler. Start the strict GCD policy after that
         // queue has been created, so the handler reset cannot erase it.
         if (PromeSettings.Instance.OpenerHasBeenExecuted)
-            NinjaAeSlotSequence.Begin(NinjaActions.TenChiJin);
+            NinjaSequencePolicy.Begin(NinjaActions.TenChiJin);
     }
     public void OnBattleUpdate()
     {
-        NinjaAeSlotSequence.Update();
+        NinjaSequencePolicy.Update();
+        DropStaleTcjBeforeTenriJindo();
         DropStaleOffGcdLock();
+    }
+
+    private static void DropStaleTcjBeforeTenriJindo()
+    {
+        var me = Core.Me;
+        if (me?.HasStatus(NinjaActions.TenriJindoReady) != true
+            || me.HasStatus(NinjaActions.TcjStatus)) return;
+
+        try
+        {
+            var active = NinjaRotation.PeekLockedActionMethod?.Invoke(null, null) as PAction;
+            var staleActive = active != null && IsTenChiJinAction(active.ActionId);
+            var staleQueued = false;
+            foreach (var queue in ActionQueueManager.GetQueueStatus().Values)
+            {
+                foreach (var command in queue)
+                {
+                    if (command.Contains($": {NinjaActions.TenChiJin}", StringComparison.Ordinal))
+                    {
+                        staleQueued = true;
+                        break;
+                    }
+                }
+                if (staleQueued) break;
+            }
+
+            if (!staleActive && !staleQueued) return;
+
+            // 3851 belongs to the post-TCJ Tenri Jindo window. Any remaining
+            // 7403 command was created before that window and must not delay
+            // 36961. Rebuild the normal queues on the next rotation pulse.
+            ActionUpdaterRouter.Reset();
+            NinjaSequencePolicy.Reset();
+            NinjaRotation.LastUpdaterRecovery = "removed stale TCJ before Tenri Jindo";
+        }
+        catch
+        {
+            // Queue inspection is a compatibility cleanup path only.
+        }
     }
 
     private static void DropStaleOffGcdLock()
     {
+        if (TryRecoverCompletedTcjCommand()) return;
+
         if (HasVerificationMismatch())
         {
             // A previous verification can remain while the updater has
@@ -521,6 +628,39 @@ internal sealed class NinjaEventHandler : IRotationEventHandler, IDisposable
             ActionUpdaterRouter.Reset();
             NinjaRotation.LastUpdaterRecovery = "reset stale oGCD lock and queues";
         }
+    }
+
+    private static bool TryRecoverCompletedTcjCommand()
+    {
+        try
+        {
+            var active = NinjaRotation.PeekLockedActionMethod?.Invoke(null, null) as PAction;
+            if (active == null || active.Type != ActionType.OffGcd
+                || !IsTenChiJinAction(active.ActionId)) return false;
+
+            // Once TCJ has started its recast is running. If the 1186 status
+            // is already gone, an old verified 7403 command cannot execute
+            // again and must not block Tenri Jindo or the normal queue.
+            if (Core.Me?.HasStatus(NinjaActions.TcjStatus) == true
+                || ActionHelper.GetActionCooldown(NinjaActions.TenChiJin) <= 0f)
+                return false;
+
+            ActionUpdaterRouter.Reset();
+            ActionQueueManager.ClearNormalQueues();
+            NinjaRotation.LastUpdaterRecovery = "reset completed TCJ command (7403)";
+            return true;
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
+    private static bool IsTenChiJinAction(uint actionId)
+    {
+        if (actionId == NinjaActions.TenChiJin) return true;
+        var adjusted = ActionHelper.GetAdjustedActionId(NinjaActions.TenChiJin);
+        return adjusted != 0 && actionId == adjusted;
     }
 
     private static bool TryRecoverStaleGcdLock()
@@ -682,7 +822,7 @@ internal sealed class NinjaEventHandler : IRotationEventHandler, IDisposable
     }
     public void OnBattleEnded()
     {
-        NinjaAeSlotSequence.Reset();
+        NinjaSequencePolicy.Reset();
         NinjaCombatState.Reset();
         NinjaRotation.staleGcdLockSince = 0;
         PromeSettings.Instance.OpenerHasBeenExecuted = false;
@@ -690,7 +830,7 @@ internal sealed class NinjaEventHandler : IRotationEventHandler, IDisposable
 
     public void OnTerritoryChanged(ushort territoryId)
     {
-        NinjaAeSlotSequence.Reset();
+        NinjaSequencePolicy.Reset();
         NinjaCombatState.Reset();
         NinjaRotation.staleGcdLockSince = 0;
         PromeSettings.Instance.OpenerHasBeenExecuted = false;
