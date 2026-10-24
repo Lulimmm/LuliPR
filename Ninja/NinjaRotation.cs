@@ -32,7 +32,7 @@ using Ninja.PR.UI;
 
 namespace Ninja.PR;
 
-[RotationMetadata(30u, "Luli Ninja PR", "Cino", "1.1.3", ContentScope = AcrContentScope.HighEnd)]
+[RotationMetadata(30u, "Luli Ninja PR", "Cino", "1.1.4", ContentScope = AcrContentScope.HighEnd)]
 public sealed class NinjaRotation : IRotation, IRotationLifecycle
 {
     private static readonly HashSet<string> HiddenQtKeys = new(StringComparer.Ordinal)
@@ -428,6 +428,7 @@ internal sealed class NinjaEventHandler : IRotationEventHandler, IDisposable
     private static void OnStartCast(StartCastEvent action)
     {
         if (action.SourceId != Core.Me?.EntityId) return;
+        RecoverManualIntervention(action.ActionId);
         // Instant oGCDs such as Tenri Jindo can be observed through the
         // start-cast bridge without a subsequent action-effect packet. Feed
         // both verifier paths here as well; the updater ignores the inactive
@@ -456,6 +457,7 @@ internal sealed class NinjaEventHandler : IRotationEventHandler, IDisposable
     private static void OnActionEffect(ActionEffectEvent action)
     {
         if (action.SourceId != Core.Me?.EntityId) return;
+        RecoverManualIntervention(action.ActionId);
         // ActionFlowManager normally correlates UAL/AEP internally. Some
         // instant or adjusted Ninja actions arrive only through the combat
         // event bridge, so feed both verification paths with the resolved ID
@@ -504,6 +506,7 @@ internal sealed class NinjaEventHandler : IRotationEventHandler, IDisposable
     private static void OnActionEffectEntry(ActionEffectEntryEvent action)
     {
         if (action.SourceId != Core.Me?.EntityId) return;
+        RecoverManualIntervention(action.ActionId);
         ActionUpdaterRouter.NotifyUAL(action.ActionId);
         ActionUpdaterRouter.NotifyAEP(action.ActionId);
         if (IsTenChiJinEvent(action.ActionId))
@@ -526,6 +529,38 @@ internal sealed class NinjaEventHandler : IRotationEventHandler, IDisposable
         if (actionId == NinjaActions.TenChiJin) return true;
         var adjusted = ActionHelper.GetAdjustedActionId(NinjaActions.TenChiJin);
         return adjusted != 0 && actionId == adjusted;
+    }
+
+    private static void RecoverManualIntervention(uint actionId)
+    {
+        try
+        {
+            var attempted = NinjaRotation.LastAttemptedActionField?.GetValue(null) as PAction;
+            if (attempted == null || ActionIdsMatch(actionId, attempted.ActionId)) return;
+
+            // An action from the player arrived while the updater was waiting
+            // for a different action. Treat it as an intentional interruption
+            // and abandon the normal mudra group instead of leaving a stale
+            // UAL verification state with no queue to consume it.
+            ActionUpdaterRouter.Reset();
+            ActionQueueManager.ClearNormalQueues();
+            NinjaSequencePolicy.Reset();
+            NinjaRotation.LastUpdaterRecovery =
+                $"manual action {actionId} interrupted {attempted.ActionId}";
+        }
+        catch
+        {
+            // Recovery is best effort; the normal stale-verification path
+            // still runs on the next rotation update.
+        }
+    }
+
+    private static bool ActionIdsMatch(uint observed, uint expected)
+    {
+        if (observed == expected) return true;
+        var observedAdjusted = ActionHelper.GetAdjustedActionId(observed);
+        var expectedAdjusted = ActionHelper.GetAdjustedActionId(expected);
+        return observedAdjusted != 0 && observedAdjusted == expectedAdjusted;
     }
 
     public void OnUpdate() => DropStaleOffGcdLock();
