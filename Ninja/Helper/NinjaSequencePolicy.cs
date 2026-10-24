@@ -1,5 +1,8 @@
 using System;
+using PromeRotation.Core;
 using PromeRotation.Data;
+using PromeRotation.Extensions;
+using Ninja.PR.Data;
 
 namespace Ninja.PR.Helper;
 
@@ -42,6 +45,11 @@ internal static class NinjaSequencePolicy
     }
 
     public static void Reset() => End();
+
+    public static bool IsNormalMudraActive =>
+        active
+        && terminalAction is NinjaActions.Suiton or NinjaActions.Raiton or NinjaActions.HyoshoRanryu
+        && Core.Me?.HasStatus(NinjaActions.TcjStatus) != true;
 
     private static void End()
     {
