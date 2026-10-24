@@ -21,7 +21,7 @@ internal sealed class NinjaJutsuResolver : NinjaResolver
         var target = Core.Target;
         if (me == null || target?.CanUseAttackActionOn() != true) return No;
         if (!PromeSettings.Instance.GetQt(NinjaQts.Suiton) || !PromeSettings.Instance.GetQt(NinjaQts.SmallTrick)) return No;
-        if (me.HasStatus(NinjaActions.RaijuReady) || me.HasStatus(NinjaActions.TcjStatus)) return No;
+        if (me.HasStatus(NinjaActions.RaijuReady) || NinjaCombatState.IsTcjSequenceActive) return No;
         if (ActionHelper.GetActionCharges(NinjaActions.Ten) < 1 || NinjaCombatState.Recently(NinjaActions.Ten, 2120)) return No;
         if (me.HasStatus(NinjaActions.KassatsuStatus) || NinjaCombatState.Recently(NinjaActions.Kassatsu, 2120)) return No;
         if (me.HasStatus(NinjaActions.ShadowWalkerStatus) || NinjaCombatState.Recently(NinjaActions.Suiton, 15000)) return No;

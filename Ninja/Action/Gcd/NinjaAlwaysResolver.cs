@@ -23,7 +23,7 @@ internal sealed class NinjaAlwaysResolver : NinjaResolver
         // sequence. The TCJ resolver owns every GCD while the 1186 aura is
         // active; otherwise the prep queue (2259/18806/18807/2271) can be
         // selected first and consume the window without submitting 18873.
-        if (Core.Me?.HasStatus(NinjaActions.TcjStatus) == true) return No;
+        if (NinjaCombatState.IsTcjSequenceActive) return No;
 
         return Ok;
     }

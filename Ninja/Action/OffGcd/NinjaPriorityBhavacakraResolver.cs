@@ -28,7 +28,6 @@ internal sealed class NinjaPriorityBhavacakraResolver : NinjaResolver
             || NinjaCombatState.Recently(36960u, 1060)
             || JobGaugeHelper.NIN.Ninki < 50
             || NinjaCombatState.Recently(NinjaActions.MugCurrent, 1060)
-            || me.HasStatus(NinjaActions.TcjStatus)
             || NinjaCombatState.IsTcjSequenceActive
             || (ActionHelper.GetActionCooldown(NinjaActions.TrickAttackCurrent) < 1.26f
                 && PromeSettings.Instance.GetQt(NinjaQts.SmallTrick)

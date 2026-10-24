@@ -55,7 +55,7 @@ internal sealed class NinjaOgcdResolver : NinjaResolver
     {
         var me = Core.Me;
         if (me == null || Core.Target == null || ActionHelper.GetGcdRemain() < .6f
-            || me.HasStatus(NinjaActions.TcjStatus)) return No;
+            || NinjaCombatState.IsTcjSequenceActive) return No;
         return CanUseBhavacakra() ? Ok : No;
     }
 

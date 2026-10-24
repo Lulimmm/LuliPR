@@ -36,7 +36,7 @@ internal sealed class NinjaMeisuiResolver : NinjaResolver
             return Blocked("Meisui: locked");
         if (!me.HasStatus(NinjaActions.ShadowWalkerStatus))
             return Blocked("Meisui: missing 3848");
-        if (me.HasStatus(NinjaActions.TcjStatus))
+        if (NinjaCombatState.IsTcjSequenceActive)
             return Blocked("Meisui: TCJ status active");
         if (!NinjaCombatState.Recently(NinjaActions.TcjSuiton, 15000))
             return Blocked("Meisui: no TCJ Suiton in 15s");

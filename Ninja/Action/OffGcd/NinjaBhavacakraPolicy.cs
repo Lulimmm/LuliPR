@@ -22,7 +22,7 @@ internal static class NinjaBhavacakraPolicy
         if (!PromeSettings.Instance.GetQt(NinjaQts.Bhavacakra) || me == null
             || target?.CanUseAttackActionOn() != true
             || NinjaTarget.Distance > NinjaTarget.AttackRange
-            || me.HasStatus(NinjaActions.TcjStatus) || JobGaugeHelper.NIN.Ninki < 50
+            || NinjaCombatState.IsTcjSequenceActive || JobGaugeHelper.NIN.Ninki < 50
             || NinjaCombatState.Recently(NinjaActions.Bhavacakra, 1060)
             || NinjaCombatState.Recently(36960, 1060)
             || NinjaCombatState.Recently(NinjaActions.MugCurrent, 1060)

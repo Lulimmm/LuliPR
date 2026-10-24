@@ -22,7 +22,7 @@ internal sealed class NinjaKassatsuResolver : NinjaResolver
         if (me == null || target?.CanUseAttackActionOn() != true
             || !PromeSettings.Instance.GetQt("生杀予夺")
             || ActionHelper.GetGcdRemain() < 0.6f
-            || me.HasStatus(NinjaActions.TcjStatus)
+            || NinjaCombatState.IsTcjSequenceActive
             || !Ready(NinjaActions.Kassatsu)) return No;
 
         if (PromeSettings.Instance.GetQt("倾斜资源")) return Ok;

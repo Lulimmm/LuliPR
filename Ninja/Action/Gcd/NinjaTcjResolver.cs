@@ -18,7 +18,7 @@ internal sealed class NinjaTcjResolver : NinjaResolver
     public override CheckResult Check()
     {
         if (Core.Target?.CanUseAttackActionOn() != true
-            || Core.Me?.HasStatus(NinjaActions.TcjStatus) != true)
+            || !NinjaCombatState.IsTcjSequenceActive)
             return No;
 
         // 1186 owns the sequence window. Once the client removes it, TCJ is

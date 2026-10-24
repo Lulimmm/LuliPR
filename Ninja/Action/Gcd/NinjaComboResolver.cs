@@ -19,7 +19,7 @@ internal sealed class NinjaComboResolver : NinjaResolver
     {
         var me = Core.Me;
         return HasMeleeTarget && me != null && !me.HasStatus(NinjaActions.RaijuReady)
-            && !me.HasStatus(NinjaActions.TcjStatus) ? Ok : No;
+            && !NinjaCombatState.IsTcjSequenceActive ? Ok : No;
     }
 
     public override PAction GetAction()

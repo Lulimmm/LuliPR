@@ -21,7 +21,7 @@ internal sealed class NinjaRaijuResolver : NinjaResolver
         var target = Core.Target;
         if (!PromeSettings.Instance.GetQt(NinjaQts.Raiju) || me == null
             || target?.CanUseAttackActionOn() != true || NinjaTarget.Distance > NinjaTarget.AttackRange
-            || me.HasStatus(NinjaActions.TcjStatus)) return No;
+            || NinjaCombatState.IsTcjSequenceActive) return No;
         if (target.HasStatus(NinjaActions.KunaisBaneStatus)
             && ActionHelper.GetActionCooldown(NinjaActions.Ten) < 2.5f) return No;
         return me.HasStatus(NinjaActions.RaijuReady) ? Ok : No;

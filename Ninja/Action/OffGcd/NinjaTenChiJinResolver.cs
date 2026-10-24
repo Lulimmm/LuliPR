@@ -22,6 +22,7 @@ internal sealed class NinjaTenChiJinResolver : NinjaResolver
         if (me == null || target?.CanUseAttackActionOn() != true
             || !PromeSettings.Instance.GetQt(NinjaQts.TenChiJin)
             || !Ready(NinjaActions.TenChiJin)
+            || NinjaCombatState.IsTcjSequenceActive
             // 3851 means the previous TCJ sequence has granted 36961. Do
             // not enqueue another 7403 while Tenri Jindo is waiting.
             || me.HasStatus(NinjaActions.TenriJindoReady)

@@ -21,7 +21,7 @@ internal sealed class NinjaRaitonResolver : NinjaResolver
         var target = Core.Target;
         if (me == null || target?.CanUseAttackActionOn() != true
             || !PromeSettings.Instance.GetQt(NinjaQts.Raiton)
-            || me.HasStatus(NinjaActions.TcjStatus)
+            || NinjaCombatState.IsTcjSequenceActive
             || ActionHelper.GetActionCharges(NinjaActions.Ten) < 1
             || NinjaCombatState.Recently(NinjaActions.Ten, 2120)
             || me.HasStatus(NinjaActions.KassatsuStatus)

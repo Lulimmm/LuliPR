@@ -24,8 +24,7 @@ internal sealed class NinjaTenriJindoResolver : NinjaResolver
             return Blocked("Tenri Jindo: no valid target");
         if (ActionHelper.GetGcdRemain() < 0.6f)
             return Blocked("Tenri Jindo: GCD < 600ms");
-        if (me.HasStatus(NinjaActions.TcjStatus)
-            || NinjaCombatState.IsTcjSequenceActive)
+        if (NinjaCombatState.IsTcjSequenceActive)
             return Blocked("Tenri Jindo: TCJ sequence active");
         if (!me.HasStatus(NinjaActions.TenriJindoReady))
             return Blocked("Tenri Jindo: missing 3851");

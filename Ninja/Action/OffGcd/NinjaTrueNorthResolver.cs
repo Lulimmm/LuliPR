@@ -30,7 +30,7 @@ internal sealed class NinjaTrueNorthResolver : NinjaResolver
             || ActionHelper.GetActionCharges(NinjaActions.TrueNorth) < 1
             || ActionHelper.GetGcdRemain() < .6f
             || ActionHelper.GetGcdTotal() - ActionHelper.GetGcdRemain() <= ActionHelper.GetGcdTotal() * .625f
-            || me.HasStatus(NinjaActions.TcjStatus)
+            || NinjaCombatState.IsTcjSequenceActive
             || (PromeSettings.Instance.GetQt(NinjaQts.SmallTrick)
                 && ActionHelper.GetActionCooldown(NinjaActions.TrickAttackCurrent) < 2.12f)
             || !TargetHelper.HasPositionalRequirement(target)

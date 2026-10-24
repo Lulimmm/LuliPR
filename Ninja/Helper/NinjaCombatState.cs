@@ -22,6 +22,18 @@ internal static class NinjaCombatState
     public static long PendingTcjJutsuAt { get; private set; }
     public static uint LastObservedActionId { get; private set; }
     public static long LastObservedActionAt { get; private set; }
+    // AE's AfterSpell sets CurrGcdAbilityCount to 1 after the final
+    // ninjutsu. Keep the same one-oGCD budget until the next GCD confirms.
+    public static int PostNinjutsuOffGcdLimit { get; private set; }
+    public static int PostNinjutsuOffGcdUsed { get; private set; }
+    public static bool IsPostNinjutsuOffGcdLimited => PostNinjutsuOffGcdLimit > 0;
+    public static bool CanUsePostNinjutsuOffGcd =>
+        PostNinjutsuOffGcdLimit == 0 || PostNinjutsuOffGcdUsed < PostNinjutsuOffGcdLimit;
+    public static int GcdOffGcdUsed { get; private set; }
+    public static int MaxGcdOffGcd => Math.Clamp(PromeSettings.Instance.Hacks.MaxOgcdsPerGcd, 1, 5);
+    public static bool CanUseGcdOffGcd => GcdOffGcdUsed < MaxGcdOffGcd;
+    public static bool CanQueueMultipleOffGcd =>
+        !IsPostNinjutsuOffGcdLimited && GcdOffGcdUsed + 2 <= MaxGcdOffGcd;
     private const int PendingTcjTimeoutMs = 2500;
 
     public static void Reset()
@@ -33,9 +45,12 @@ internal static class NinjaCombatState
         PendingTcjJutsuAt = 0;
         LastObservedActionId = 0;
         LastObservedActionAt = 0;
+        PostNinjutsuOffGcdLimit = 0;
+        PostNinjutsuOffGcdUsed = 0;
+        GcdOffGcdUsed = 0;
     }
 
-    public static void Record(uint id)
+    public static void Record(uint id, bool confirmTcjStep = true)
     {
         var now = Environment.TickCount64;
         LastObservedActionId = id;
@@ -52,7 +67,8 @@ internal static class NinjaCombatState
             PendingTcjJutsu = 0;
             PendingTcjJutsuAt = 0;
         }
-        else if (canonical is NinjaActions.TcjFumaShuriken or NinjaActions.TcjRaiton or NinjaActions.TcjSuiton)
+        else if (confirmTcjStep
+            && canonical is (NinjaActions.TcjFumaShuriken or NinjaActions.TcjRaiton or NinjaActions.TcjSuiton))
         {
             LastTcjJutsu = canonical;
             // The client can report the transformed action through a
@@ -61,12 +77,63 @@ internal static class NinjaCombatState
             PendingTcjJutsu = 0;
             PendingTcjJutsuAt = 0;
         }
-        if (canonical is NinjaActions.TcjFumaShuriken or NinjaActions.TcjRaiton or NinjaActions.TcjSuiton
-            or NinjaActions.SpinningEdge or NinjaActions.GustSlash or NinjaActions.AeolianEdge or NinjaActions.ArmorCrush
-            or NinjaActions.Suiton or NinjaActions.Raiton or NinjaActions.PhantomKamaitachi or NinjaActions.FleetingRaiju
-            or NinjaActions.HyoshoRanryu)
+        if ((confirmTcjStep
+                && canonical is (NinjaActions.TcjFumaShuriken or NinjaActions.TcjRaiton or NinjaActions.TcjSuiton))
+            || canonical is (NinjaActions.SpinningEdge or NinjaActions.GustSlash or NinjaActions.AeolianEdge or NinjaActions.ArmorCrush
+                or NinjaActions.Suiton or NinjaActions.Raiton or NinjaActions.PhantomKamaitachi or NinjaActions.FleetingRaiju
+                or NinjaActions.HyoshoRanryu))
             LastGcd = canonical;
     }
+
+    // This is called only for confirmed action-effect events. Start-cast
+    // events are intentionally excluded so an unsuccessful input cannot
+    // consume the AE-equivalent oGCD budget.
+    public static void RecordConfirmed(uint id)
+    {
+        var canonical = CanonicalActionId(id);
+        if (IsGcdAction(canonical))
+        {
+            // A confirmed GCD starts a new PR oGCD budget. The final
+            // ninjutsu gets the AE-specific one-oGCD exception below.
+            GcdOffGcdUsed = 0;
+            PostNinjutsuOffGcdLimit = 0;
+            PostNinjutsuOffGcdUsed = 0;
+            if (IsFinalNinjutsu(canonical))
+                PostNinjutsuOffGcdLimit = 1;
+            return;
+        }
+
+        // Some clients report an adjusted action ID for an oGCD. Count both
+        // the raw packet and its canonical action so the AE-equivalent slot
+        // is consumed regardless of which alias the event bridge exposes.
+        if (IsOffGcdAction(id) || IsOffGcdAction(canonical))
+        {
+            GcdOffGcdUsed = Math.Min(GcdOffGcdUsed + 1, MaxGcdOffGcd);
+            PostNinjutsuOffGcdUsed = Math.Min(PostNinjutsuOffGcdUsed + 1, PostNinjutsuOffGcdLimit);
+        }
+    }
+
+    private static bool IsFinalNinjutsu(uint id) => id is NinjaActions.Suiton
+        or NinjaActions.Raiton or NinjaActions.TcjSuiton or NinjaActions.HyoshoRanryu;
+
+    private static bool IsGcdAction(uint id) => id is NinjaActions.SpinningEdge
+        or NinjaActions.GustSlash or NinjaActions.AeolianEdge or NinjaActions.ArmorCrush
+        or NinjaActions.FumaShuriken or NinjaActions.Raiton or NinjaActions.Suiton
+        or NinjaActions.Ten or 2260u or 2261u or 2263u
+        or 2266u or 2268u or 2269u or 2270u
+        or 16491u
+        or NinjaActions.TcjFumaShuriken or NinjaActions.TcjRaiton or NinjaActions.TcjSuiton
+        or 18876u or 18878u or 18880u
+        or NinjaActions.TenCombo or NinjaActions.ChiCombo or NinjaActions.JinCombo
+        or NinjaActions.PhantomKamaitachi or NinjaActions.FleetingRaiju
+        or NinjaActions.HyoshoRanryu;
+
+    private static bool IsOffGcdAction(uint id) => id is NinjaActions.Bunshin
+        or NinjaActions.Bhavacakra or 36960u or NinjaActions.Mug or NinjaActions.MugCurrent
+        or NinjaActions.TrickAttack or NinjaActions.TrickAttackCurrent
+        or NinjaActions.TenChiJin or NinjaActions.Kassatsu or NinjaActions.Shukuchi
+        or NinjaActions.TenriJindo or NinjaActions.Meisui or NinjaActions.Assassinate
+        or NinjaActions.AssassinateCooldown or NinjaActions.TrueNorth;
 
     private static uint CanonicalActionId(uint id)
     {
@@ -190,9 +257,10 @@ internal static class NinjaCombatState
         ? 0
         : (int)Math.Clamp(Environment.TickCount64 - PendingTcjJutsuAt, 0, int.MaxValue);
 
-    // 1186 is the authoritative Ten Chi Jin window. The action timestamp is
-    // retained for packet decoding only; it must not keep TCJ ownership alive
-    // after the client removes the buff.
+    // 1186 is the authoritative Ten Chi Jin window. The 7403 action is only
+    // the activation event; its timestamp must not keep the TCJ resolver
+    // active after the status has been removed by the client. Otherwise an
+    // unknown/stale step falls back to 18873 and is retried outside TCJ.
     public static bool IsTcjSequenceActive =>
         Core.Me?.HasStatus(NinjaActions.TcjStatus) == true;
 }

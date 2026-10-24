@@ -22,7 +22,7 @@ internal sealed class NinjaEarlier4Or3Resolver : NinjaResolver
         return NinjaSettings.Instance.RaitonBackstab
             && target?.CanUseAttackActionOn() == true
             && NinjaTarget.Distance <= NinjaTarget.AttackRange
-            && me?.HasStatus(NinjaActions.TcjStatus) != true
+            && !NinjaCombatState.IsTcjSequenceActive
             && target.HasStatus(NinjaActions.KunaisBaneStatus)
             && ActionHelper.GetLastComboID() == NinjaActions.GustSlash
             && NinjaCombatState.Recently(NinjaActions.TenChiJin, 8000)

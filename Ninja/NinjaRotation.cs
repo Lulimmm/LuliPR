@@ -32,7 +32,7 @@ using Ninja.PR.UI;
 
 namespace Ninja.PR;
 
-[RotationMetadata(30u, "Luli Ninja PR", "Cino", "1.1.5", ContentScope = AcrContentScope.HighEnd)]
+[RotationMetadata(30u, "Luli Ninja PR", "Cino", "1.1.6", ContentScope = AcrContentScope.HighEnd)]
 public sealed class NinjaRotation : IRotation, IRotationLifecycle
 {
     private static readonly HashSet<string> HiddenQtKeys = new(StringComparer.Ordinal)
@@ -90,7 +90,8 @@ public sealed class NinjaRotation : IRotation, IRotationLifecycle
 
     public static IJobNodeProvider? NodeProvider { get; } = new NinjaJobNodeProvider();
     // GCD priority. The pre-pull Suiton resolver runs before TCJ follow-ups.
-    private readonly List<IDecisionResolver> gcd = new() { new NinjaAlwaysResolver(), new NinjaTcjResolver(), new NinjaKassatsuJutsuResolver(), new NinjaJutsuResolver(), new NinjaEarlier4Or3Resolver(), new NinjaKBaseResolver(), new NinjaPhantomResolver(), new NinjaRaijuResolver(), new NinjaRaitonResolver(), new NinjaComboResolver() };
+    private readonly NinjaPhantomResolver phantom = new();
+    private readonly List<IDecisionResolver> gcd;
     // Always resolvers run independently from the oGCD queue. Preserve order.
     private readonly List<IDecisionResolver> always;
     private readonly List<IDecisionResolver> ogcd;
@@ -104,6 +105,15 @@ public sealed class NinjaRotation : IRotation, IRotationLifecycle
     {
         priorityBhavacakra = new NinjaPriorityBhavacakraResolver();
         always = new() { new NinjaKassatsuResolver(), trickAttack };
+        // Keep the AE GCD order. The Phantom resolver is also checked by the
+        // expiry safeguard in NextGcd before this normal list is evaluated.
+        gcd = new()
+        {
+            new NinjaAlwaysResolver(), new NinjaTcjResolver(),
+            new NinjaKassatsuJutsuResolver(), new NinjaJutsuResolver(),
+            new NinjaEarlier4Or3Resolver(), new NinjaKBaseResolver(), phantom,
+            new NinjaRaijuResolver(), new NinjaRaitonResolver(), new NinjaComboResolver()
+        };
         // luli order for the oGCD slots:
         // _100B, Mug, Bunshin, Ten Chi Jin, Meisui, Tenri Jindo,
         // Assassinate, Bhavacakra, True North. Kassatsu and Trick Attack
@@ -148,6 +158,11 @@ public sealed class NinjaRotation : IRotation, IRotationLifecycle
         if (NinjaCombatState.IsTcjSequenceActive)
             return NextTcjOnly();
 
+        // Do not let an earlier normal GCD resolver consume the slot when the
+        // 2723 proc would expire before the next available GCD.
+        if (phantom.IsExpiringSoon())
+            return phantom.GetAction();
+
         // Evaluate the ready Tenri Jindo before allowing a normal GCD to
         // occupy the queue. It is especially time-sensitive: if it
         // is ready and the 600ms weave gate is open, queueing a GCD first can
@@ -162,14 +177,22 @@ public sealed class NinjaRotation : IRotation, IRotationLifecycle
         // Do not weave unrelated abilities during Ten Chi Jin. Keeping this
         // gate at the scheduler boundary prevents a missed per-resolver
         // condition from interrupting the three ninjutsu sequence.
-        return NinjaCombatState.IsTcjSequenceActive ? null : Next(ogcd);
+        if (NinjaCombatState.IsTcjSequenceActive
+            || !NinjaCombatState.CanUsePostNinjutsuOffGcd
+            || !NinjaCombatState.CanUseGcdOffGcd)
+            return null;
+        return Next(ogcd);
     }
     public PAction? NextAlways()
     {
         // TCJ owns all action slots until its third transformed jutsu is
         // confirmed. This prevents an Always resolver from stealing the
         // window between the three GCD packets.
-        return NinjaCombatState.IsTcjSequenceActive ? null : Next(always);
+        if (NinjaCombatState.IsTcjSequenceActive
+            || !NinjaCombatState.CanUsePostNinjutsuOffGcd
+            || !NinjaCombatState.CanUseGcdOffGcd)
+            return null;
+        return Next(always);
     }
 
     private static PAction? Next(IEnumerable<IDecisionResolver> resolvers)
@@ -278,6 +301,7 @@ public sealed class NinjaRotation : IRotation, IRotationLifecycle
             NinjaSettings.Instance.OpenerBurst = openerBurst;
             NinjaSettings.Instance.Save();
         }
+
     }
 
     private static bool GetQtDefault(string key)
@@ -301,12 +325,12 @@ public sealed class NinjaRotation : IRotation, IRotationLifecycle
     {
         UpdateDebugStatus();
         ImGui.Text($"TCJ active: {NinjaCombatState.IsTcjSequenceActive}");
-        ImGui.Text($"Mudra input guard: {NinjaActionInputGuard.IsAttached}");
-        ImGui.Text($"Mudra blocked action: {NinjaActionInputGuard.LastBlockedActionId} ({NinjaActionInputGuard.BlockedActionCount})");
         ImGui.Text($"Last TCJ step: {FormatDebugAction(NinjaCombatState.GetLastTcjStep())}");
         ImGui.Text($"Pending TCJ submit: {FormatDebugAction(NinjaCombatState.PendingTcjJutsu)} ({NinjaCombatState.PendingTcjAgeMs} ms)");
         ImGui.Text($"Last observed action: {NinjaCombatState.LastObservedActionId}");
         ImGui.Text($"Last GCD: {FormatDebugAction(NinjaCombatState.LastGcd)}");
+        ImGui.Text($"Post-ninjutsu oGCD: {NinjaCombatState.PostNinjutsuOffGcdUsed}/{NinjaCombatState.PostNinjutsuOffGcdLimit}");
+        ImGui.Text($"PR oGCD/GCD: {NinjaCombatState.GcdOffGcdUsed}/{NinjaCombatState.MaxGcdOffGcd}");
         ImGui.Text($"TCJ Suiton recent 15s: {NinjaCombatState.Recently(NinjaActions.TcjSuiton, 15000)}");
         ImGui.Separator();
         ImGui.Text($"GCD gate: {(NinjaCombatState.IsTcjSequenceActive ? "TCJ exclusive" : "normal resolvers")}");
@@ -436,7 +460,9 @@ internal sealed class NinjaEventHandler : IRotationEventHandler, IDisposable
         // Instant oGCDs such as Tenri Jindo can be observed through the
         // start-cast bridge without a subsequent action-effect packet. Feed
         // both verifier paths here as well; the updater ignores the inactive
-        // path and still applies adjusted-action matching.
+        // path and still applies adjusted-action matching. A successful TCJ
+        // start-cast is also the AE/cloud step-confirmation signal, so it
+        // must advance LastTcjJutsu before the next GCD decision.
         ActionUpdaterRouter.NotifyUAL(action.ActionId);
         ActionUpdaterRouter.NotifyAEP(action.ActionId);
         if (IsTenChiJinEvent(action.ActionId))
@@ -477,6 +503,7 @@ internal sealed class NinjaEventHandler : IRotationEventHandler, IDisposable
             ActionQueueManager.ClearNormalQueues();
         }
         NinjaCombatState.Record(action.ActionId);
+        NinjaCombatState.RecordConfirmed(action.ActionId);
         // Record both pre- and post-upgrade action aliases so an effect packet
         // reported with either id observes the same recency window.
         switch (action.ActionId)
@@ -513,6 +540,11 @@ internal sealed class NinjaEventHandler : IRotationEventHandler, IDisposable
         RecoverManualIntervention(action.ActionId);
         ActionUpdaterRouter.NotifyUAL(action.ActionId);
         ActionUpdaterRouter.NotifyAEP(action.ActionId);
+        // AE's AfterSpell callback applies the ability budget for every
+        // confirmed self action. Entry events are a valid fallback path for
+        // normal Raiton/Suiton/Hyosho packets as well as TCJ aliases, so feed
+        // the same counter before the TCJ-only sequence filter below.
+        NinjaCombatState.RecordConfirmed(action.ActionId);
         if (IsTenChiJinEvent(action.ActionId))
         {
             ActionUpdaterRouter.Reset();
@@ -567,7 +599,11 @@ internal sealed class NinjaEventHandler : IRotationEventHandler, IDisposable
         return observedAdjusted != 0 && observedAdjusted == expectedAdjusted;
     }
 
-    public void OnUpdate() => DropStaleOffGcdLock();
+    public void OnUpdate()
+    {
+        ConfirmSubmittedGcdFromRuntimeState();
+        DropStaleOffGcdLock();
+    }
     public void OnOutOfBattleUpdate()
     {
         if (Core.Target == null) TryPrepareSuiton();
@@ -585,8 +621,37 @@ internal sealed class NinjaEventHandler : IRotationEventHandler, IDisposable
     public void OnBattleUpdate()
     {
         NinjaSequencePolicy.Update();
+        ConfirmSubmittedGcdFromRuntimeState();
         DropStaleTcjBeforeTenriJindo();
         DropStaleOffGcdLock();
+    }
+
+    private static void ConfirmSubmittedGcdFromRuntimeState()
+    {
+        try
+        {
+            var attempted = NinjaRotation.LastAttemptedActionField?.GetValue(null) as PAction;
+            if (attempted?.Type != ActionType.Gcd) return;
+
+            var me = Core.Me;
+            if (me == null) return;
+
+            // UAL/AEP packets can be missed for an instant GCD. Once the
+            // client reports the matching cast or starts a new recast, the
+            // submission itself is confirmed and the opener may advance.
+            var castStarted = me.IsCasting && ActionIdsMatch(me.CastActionId, attempted.ActionId);
+            var recastStarted = ActionHelper.GetGcdRemain() > 0.1f;
+            if (!castStarted && !recastStarted) return;
+
+            ActionUpdaterRouter.NotifyUAL(attempted.ActionId);
+            ActionUpdaterRouter.NotifyAEP(attempted.ActionId);
+        }
+        catch
+        {
+            // Reflection is a compatibility bridge for ActionUpdater's
+            // private verification state; normal event verification remains
+            // the primary path when the host changes its internals.
+        }
     }
 
     private static void DropStaleTcjBeforeTenriJindo()

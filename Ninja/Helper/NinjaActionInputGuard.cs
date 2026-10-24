@@ -1,5 +1,4 @@
 using System;
-using System.Reflection;
 using System.Runtime.InteropServices;
 using Dalamud.Hooking;
 using ECommons.DalamudServices;
@@ -10,13 +9,10 @@ using PromeRotation.Helpers;
 
 using FfxivActionType = FFXIVClientStructs.FFXIV.Client.Game.ActionType;
 
-using Ninja.PR.Data;
-
 namespace Ninja.PR.Helper;
 
-// During a normal mudra group, allow only the action currently owned by the
-// rotation updater. Other player action requests are discarded until the
-// group completes. Ten Chi Jin is excluded by NinjaSequencePolicy.
+// Prevent a second manual mudra from changing the game's ninjutsu state while
+// PR owns a normal mudra group. Ten Chi Jin is excluded by the sequence state.
 internal static class NinjaActionInputGuard
 {
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
@@ -31,9 +27,6 @@ internal static class NinjaActionInputGuard
         bool* outOptAreaTargeted);
 
     private static Hook<UseActionDelegate>? useActionHook;
-    public static bool IsAttached => useActionHook != null;
-    public static uint LastBlockedActionId { get; private set; }
-    public static int BlockedActionCount { get; private set; }
 
     public static unsafe void Attach()
     {
@@ -72,8 +65,6 @@ internal static class NinjaActionInputGuard
         finally
         {
             useActionHook = null;
-            LastBlockedActionId = 0;
-            BlockedActionCount = 0;
         }
     }
 
@@ -90,11 +81,7 @@ internal static class NinjaActionInputGuard
         if (actionType == FfxivActionType.Action
             && NinjaSequencePolicy.IsNormalMudraActive
             && !IsRotationOwnedAction(actionId))
-        {
-            LastBlockedActionId = actionId;
-            BlockedActionCount++;
             return false;
-        }
 
         return useActionHook!.Original(self, actionType, actionId, targetId, extraParam,
             mode, comboRouteId, outOptAreaTargeted);

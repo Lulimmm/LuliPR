@@ -7,6 +7,7 @@ using PromeRotation.Helpers;
 using PromeRotation.UI.HotKey;
 
 using Ninja.PR.Data;
+using Ninja.PR.Helper;
 
 namespace Ninja.PR.UI;
 
@@ -25,11 +26,20 @@ internal sealed class NinjaMovementHotkey : IHotkeyLogic
         return uiModule->GetRaptureAtkModule();
     }
 
-    // Keep the hotkey available while one of Shukuchi's charges is recharging,
-    // Keep the hotkey available while one of Shukuchi's charges is ready.
-    private static bool HasCharge() =>
-        ActionHelper.IsUnlocked(NinjaActions.Shukuchi)
-        && ActionHelper.GetActionCharges(NinjaActions.Shukuchi) >= 1f;
+    // Match AE's IsUnlockWithCDCheck: reject the short post-cast duplicate
+    // window, accept a ready charge, and allow the 100 ms ability queue window
+    // when the last charge is about to become available.
+    private static bool HasCharge()
+    {
+        if (!ActionHelper.IsUnlocked(NinjaActions.Shukuchi)
+            || NinjaCombatState.Recently(NinjaActions.Shukuchi, 500)) return false;
+
+        if (ActionHelper.GetActionCharges(NinjaActions.Shukuchi) >= 1f)
+            return true;
+
+        return ActionHelper.TryGetActionCooldown(NinjaActions.Shukuchi, out var cooldown)
+            && cooldown <= 0.1f;
+    }
 
     public bool IsActive() => HasCharge();
 
