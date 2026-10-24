@@ -45,7 +45,6 @@ namespace Ninja.PR.Utilities.Settings
 
 		public bool MoveTcj;
 
-		public bool AutoUpdate;
 
 		public float TTK = 1.5f;
 

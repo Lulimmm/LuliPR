@@ -94,7 +94,7 @@ public sealed class NinjaRotation : IRotation, IRotationLifecycle
     {
         priorityBhavacakra = new NinjaPriorityBhavacakraResolver();
         always = new() { new NinjaKassatsuResolver(), trickAttack };
-        // Congratulation order for the oGCD slots:
+        // luli order for the oGCD slots:
         // _100B, Mug, Bunshin, Ten Chi Jin, Meisui, Tenri Jindo,
         // Assassinate, Bhavacakra, True North. Kassatsu and Trick Attack
         // remain in the Always list above, matching AE's SlotMode.Always.

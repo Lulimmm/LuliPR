@@ -55,7 +55,7 @@ namespace Ninja.PR
 
 		private IOpener Zhanji = new ZhanjiBeici();
 
-		public string AuthorName { get; set; } = "Congratulation";
+		public string AuthorName { get; set; } = "luli";
 
 		public static JobViewWindow QT { get; private set; }
 
@@ -190,7 +190,6 @@ namespace Ninja.PR
 					ImGui.EndCombo();
 				}
 				ImGui.SliderFloat(ImU8String.op_Implicit("TTK当血量剩X%"), ref NinjaSettings.Instance.TTK, 1f, 5f, default(ImU8String), (ImGuiSliderFlags)0);
-				ImGui.Checkbox(ImU8String.op_Implicit("自动更新时间轴"), ref NinjaSettings.Instance.AutoUpdate);
 				ImGui.Text(ImU8String.op_Implicit("杂项"));
 				ImGui.Text(ImU8String.op_Implicit("=====ACR选项（除起手爆发药外不要动）====="));
 				ImGui.Checkbox(ImU8String.op_Implicit("起手爆发药（防小孩误食）"), ref NinjaSettings.Instance.OpenerBurst);

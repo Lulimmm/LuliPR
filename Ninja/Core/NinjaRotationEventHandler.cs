@@ -5,7 +5,6 @@ using AEAssist.CombatRoutine;
 using AEAssist.Extension;
 using AEAssist.Helper;
 using AEAssist.MemoryApi;
-using Ninja.PR.Methods;
 using Ninja.PR.Utilities.Data;
 using Ninja.PR.Utilities.Settings;
 using Dalamud.Game.ClientState.Objects.Types;
@@ -84,11 +83,6 @@ namespace Ninja.PR
 
 		public void OnEnterRotation()
 		{
-			if (NinjaSettings.Instance.AutoUpdate)
-			{
-				NinjaUpdater.UpdateFiles();
-			}
-			Core.Resolve<MemApiChatMessage>().Toast2("2025/4/23\n更新时间轴后记得及时删除旧时间轴\n祝大家都能拿到喜欢的颜色", 1, 8000);
 		}
 
 		public void OnExitRotation()
