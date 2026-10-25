@@ -169,6 +169,13 @@ public sealed class NinjaRotation : IRotation, IRotationLifecycle
         // leave 36961 behind that GCD for a full cycle.
         if (tenriJindo.Check().Success)
             return null;
+
+        // During the Kunai's Bane window, a ready Phantom Kamaitachi must be
+        // selected before the normal combo. KBase is intentionally earlier in
+        // the AE resolver list, so keep this exception at the scheduler edge.
+        if (Core.Target?.HasStatus(NinjaActions.KunaisBaneStatus) == true
+            && phantom.Check().Success)
+            return phantom.GetAction();
         return Next(gcd);
     }
 
@@ -457,14 +464,10 @@ internal sealed class NinjaEventHandler : IRotationEventHandler, IDisposable
     {
         if (action.SourceId != Core.Me?.EntityId) return;
         RecoverManualIntervention(action.ActionId);
-        // Instant oGCDs such as Tenri Jindo can be observed through the
-        // start-cast bridge without a subsequent action-effect packet. Feed
-        // both verifier paths here as well; the updater ignores the inactive
-        // path and still applies adjusted-action matching. A successful TCJ
-        // start-cast is also the AE/cloud step-confirmation signal, so it
-        // must advance LastTcjJutsu before the next GCD decision.
+        // StartCast is the UAL-side signal. Do not feed AEP here: the action
+        // has not completed yet, and doing so can advance a queued mudra
+        // before its recast/effect is actually accepted.
         ActionUpdaterRouter.NotifyUAL(action.ActionId);
-        ActionUpdaterRouter.NotifyAEP(action.ActionId);
         if (IsTenChiJinEvent(action.ActionId))
         {
             // A GCD decision queued immediately before TCJ must not run in
@@ -487,13 +490,9 @@ internal sealed class NinjaEventHandler : IRotationEventHandler, IDisposable
     private static void OnActionEffect(ActionEffectEvent action)
     {
         if (action.SourceId != Core.Me?.EntityId) return;
-        RecoverManualIntervention(action.ActionId);
-        // ActionFlowManager normally correlates UAL/AEP internally. Some
-        // instant or adjusted Ninja actions arrive only through the combat
-        // event bridge, so feed both verification paths with the resolved ID
-        // as a fallback. The updater itself filters by the active mode and
-        // adjusted action ID.
-        ActionUpdaterRouter.NotifyUAL(action.ActionId);
+        // ActionEffect is the completion-side signal. Manual interruption is
+        // handled from StartCast only; an effect can arrive later for an old
+        // action while the updater is already attempting the next one.
         ActionUpdaterRouter.NotifyAEP(action.ActionId);
         if (IsTenChiJinEvent(action.ActionId))
         {
@@ -537,8 +536,9 @@ internal sealed class NinjaEventHandler : IRotationEventHandler, IDisposable
     private static void OnActionEffectEntry(ActionEffectEntryEvent action)
     {
         if (action.SourceId != Core.Me?.EntityId) return;
-        RecoverManualIntervention(action.ActionId);
-        ActionUpdaterRouter.NotifyUAL(action.ActionId);
+        // Entry events are effect fragments, not a second action submission.
+        // Feeding UAL here can create a false verification and advance a
+        // sequence twice when both event forms are emitted by the client.
         ActionUpdaterRouter.NotifyAEP(action.ActionId);
         // AE's AfterSpell callback applies the ability budget for every
         // confirmed self action. Entry events are a valid fallback path for
@@ -569,10 +569,21 @@ internal sealed class NinjaEventHandler : IRotationEventHandler, IDisposable
 
     private static void RecoverManualIntervention(uint actionId)
     {
+        // Outside a normal mudra group, a mismatching effect is commonly a
+        // delayed packet from the previous GCD. Reaping/Ninja normal actions
+        // must not be treated as manual interruption in that state.
+        if (!NinjaSequencePolicy.IsNormalMudraActive) return;
         try
         {
             var attempted = NinjaRotation.LastAttemptedActionField?.GetValue(null) as PAction;
-            if (attempted == null || ActionIdsMatch(actionId, attempted.ActionId)) return;
+            var active = NinjaRotation.PeekLockedActionMethod?.Invoke(null, null) as PAction;
+            // The current command is the authoritative rotation-owned action.
+            // A stale LastAttemptedAction from the preceding oGCD must not
+            // cancel a newly-created mudra queue.
+            if (active != null && ActionIdsMatch(actionId, active.ActionId)) return;
+            if (attempted == null || attempted.Type != ActionType.Gcd) return;
+            if (active == null || active.Type != ActionType.Gcd) return;
+            if (ActionIdsMatch(actionId, attempted.ActionId)) return;
 
             // An action from the player arrived while the updater was waiting
             // for a different action. Treat it as an intentional interruption

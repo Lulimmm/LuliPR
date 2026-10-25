@@ -22,6 +22,8 @@ internal static class NinjaCombatState
     public static long PendingTcjJutsuAt { get; private set; }
     public static uint LastObservedActionId { get; private set; }
     public static long LastObservedActionAt { get; private set; }
+    private static uint LastConfirmedActionId { get; set; }
+    private static long LastConfirmedActionAt { get; set; }
     // AE's AfterSpell sets CurrGcdAbilityCount to 1 after the final
     // ninjutsu. Keep the same one-oGCD budget until the next GCD confirms.
     public static int PostNinjutsuOffGcdLimit { get; private set; }
@@ -45,6 +47,8 @@ internal static class NinjaCombatState
         PendingTcjJutsuAt = 0;
         LastObservedActionId = 0;
         LastObservedActionAt = 0;
+        LastConfirmedActionId = 0;
+        LastConfirmedActionAt = 0;
         PostNinjutsuOffGcdLimit = 0;
         PostNinjutsuOffGcdUsed = 0;
         GcdOffGcdUsed = 0;
@@ -90,7 +94,15 @@ internal static class NinjaCombatState
     // consume the AE-equivalent oGCD budget.
     public static void RecordConfirmed(uint id)
     {
+        var now = Environment.TickCount64;
         var canonical = CanonicalActionId(id);
+        // ActionEffect and ActionEffectEntry can describe the same packet.
+        // Count it once so duplicate entries cannot consume two oGCD slots or
+        // repeatedly reopen/reset the per-GCD budget.
+        if (canonical == LastConfirmedActionId
+            && now - LastConfirmedActionAt <= 250) return;
+        LastConfirmedActionId = canonical;
+        LastConfirmedActionAt = now;
         if (IsGcdAction(canonical))
         {
             // A confirmed GCD starts a new PR oGCD budget. The final

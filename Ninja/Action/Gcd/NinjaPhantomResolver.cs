@@ -15,11 +15,6 @@ namespace Ninja.PR.Action.Gcd;
 
 internal sealed class NinjaPhantomResolver : NinjaResolver
 {
-    // A GCD can only be submitted at the end of the current recast. Keep a
-    // small queue/network margin so the 2723 proc is not lost between the
-    // last normal decision and the next available GCD slot.
-    private const float ExpirySafetyWindow = 0.8f;
-
     public bool IsExpiringSoon()
     {
         var me = Core.Me;
@@ -27,41 +22,50 @@ internal sealed class NinjaPhantomResolver : NinjaResolver
         if (me?.HasStatus(NinjaActions.PhantomReady) != true
             || NinjaCombatState.IsTcjSequenceActive
             || target?.CanUseAttackActionOn() != true
-            || !PromeSettings.Instance.GetQt(NinjaQts.Phantom)
-            || JobGaugeHelper.NIN.Ninki > 90) return false;
-
-        var distance = NinjaTarget.Distance;
-        if (distance <= NinjaTarget.AttackRange && NinjaSettings.Instance.PhantomOnlyForRange)
-            return false;
+            || !PromeSettings.Instance.GetQt(NinjaQts.Phantom)) return false;
 
         var remaining = me.GetStatusLeftTime(NinjaActions.PhantomReady);
         if (remaining <= 0f) return false;
 
-        return remaining <= Math.Max(ExpirySafetyWindow, ActionHelper.GetGcdRemain() + ExpirySafetyWindow);
+        // Hold 2723 for the Kunai's Bane window when it will survive until
+        // Trick Attack is ready. If its remaining time is shorter than that
+        // cooldown, consume Kamaitachi before the proc expires.
+        var trickCooldown = Math.Max(0f,
+            ActionHelper.GetActionCooldown(NinjaActions.TrickAttackCurrent));
+        return remaining <= trickCooldown;
     }
 
     public override CheckResult Check()
     {
         var me = Core.Me;
         var target = Core.Target;
-        if (me?.HasStatus(NinjaActions.PhantomReady) != true
-            || NinjaCombatState.IsTcjSequenceActive
-            || target?.CanUseAttackActionOn() != true
-            || !PromeSettings.Instance.GetQt(NinjaQts.Phantom) || JobGaugeHelper.NIN.Ninki > 90) return No;
+        if (me == null) return Blocked("Phantom: player unavailable");
+        if (!me.HasStatus(NinjaActions.PhantomReady)) return Blocked("Phantom: 2723 not ready");
+        if (NinjaCombatState.IsTcjSequenceActive) return Blocked("Phantom: TCJ active");
+        if (target?.CanUseAttackActionOn() != true) return Blocked("Phantom: target unavailable");
+        if (!PromeSettings.Instance.GetQt(NinjaQts.Phantom)) return Blocked("Phantom: QT disabled");
+        // The proc is otherwise lost permanently. Consume it before applying
+        // normal Ninki and range-only preferences.
+        if (IsExpiringSoon()) return Ok;
+        if (JobGaugeHelper.NIN.Ninki > 90) return Blocked("Phantom: Ninki over 90");
 
         var distance = NinjaTarget.Distance;
         if (distance > NinjaTarget.AttackRange) return Ok;
-        if (NinjaSettings.Instance.PhantomOnlyForRange) return No;
-        if (IsExpiringSoon()) return Ok;
-        if (me.HasStatus(NinjaActions.BunshinStatus) && target.HasStatus(NinjaActions.KunaisBaneStatus)) return No;
-        if (PromeSettings.Instance.GetQt("倾斜资源")) return Ok;
-        if (NinjaSettings.Instance.RaitonBackstab)
-            return target.HasStatus(NinjaActions.MugDebuff) && !target.HasStatus(NinjaActions.KunaisBaneStatus)
-                && NinjaCombatState.Recently(NinjaActions.Raiton, 2120) ? Ok : No;
+        if (NinjaSettings.Instance.PhantomOnlyForRange) return Blocked("Phantom: range-only setting");
+        if (me.HasStatus(NinjaActions.BunshinStatus) && target.HasStatus(NinjaActions.KunaisBaneStatus))
+            return Blocked("Phantom: Bunshin hold during 3906");
+        if (PromeSettings.Instance.GetQt("鍊炬枩璧勬簮")) return Ok;
+
+        // A failed backstab check must continue to the 3906 window, matching
+        // AE's fall-through behavior.
+        if (NinjaSettings.Instance.RaitonBackstab
+            && target.HasStatus(NinjaActions.MugDebuff)
+            && !target.HasStatus(NinjaActions.KunaisBaneStatus)
+            && NinjaCombatState.Recently(NinjaActions.Raiton, 2120)) return Ok;
         if (target.HasStatus(NinjaActions.MugDebuff) && !target.HasStatus(NinjaActions.KunaisBaneStatus)) return Ok;
-        // Kunai's Bane (36958 / 3906) is the 百雷铳 window. Keep Phantom
-        // Kamaitachi ahead of the base combo for the whole debuff window;
-        // otherwise the combo resolver can consume the GCD while 2723 is up.
+
+        // Kunai's Bane (3906) is the burst window. Keep Phantom ahead of the
+        // normal combo while the proc is ready.
         if (target.HasStatus(NinjaActions.KunaisBaneStatus)) return Ok;
         if (NinjaCombatState.Recently(NinjaActions.Bunshin, 20000)
             && NinjaCombatState.Recently(NinjaActions.TrickAttackCurrent, 18000)
@@ -70,10 +74,10 @@ internal sealed class NinjaPhantomResolver : NinjaResolver
         return NinjaCombatState.Recently(NinjaActions.Bunshin, 22000)
             && NinjaCombatState.Recently(NinjaActions.TrickAttackCurrent, 22000)
             && NinjaCombatState.Recently(NinjaActions.MugCurrent, 24000)
-            && ActionHelper.GetActionCharges(NinjaActions.Ten) < 1f ? Ok : No;
+            && ActionHelper.GetActionCharges(NinjaActions.Ten) < 1f
+            ? Ok
+            : Blocked("Phantom: no priority window");
     }
 
-    // Phantom Kamaitachi is a normal GCD action. Do not hold the
-    // following oGCD behind a separate UAL verification task here.
     public override PAction GetAction() => BuildNormal(NinjaActions.PhantomKamaitachi, ActionType.Gcd, ActionTargetType.Target);
 }
