@@ -39,21 +39,21 @@ internal sealed class NinjaPhantomResolver : NinjaResolver
     {
         var me = Core.Me;
         var target = Core.Target;
-        if (me == null) return Blocked("Phantom: player unavailable");
-        if (!me.HasStatus(NinjaActions.PhantomReady)) return Blocked("Phantom: 2723 not ready");
-        if (NinjaCombatState.IsTcjSequenceActive) return Blocked("Phantom: TCJ active");
-        if (target?.CanUseAttackActionOn() != true) return Blocked("Phantom: target unavailable");
-        if (!PromeSettings.Instance.GetQt(NinjaQts.Phantom)) return Blocked("Phantom: QT disabled");
+        if (me == null) return Blocked("镰鼬：自身不可用");
+        if (!me.HasStatus(NinjaActions.PhantomReady)) return Blocked("镰鼬：缺少 2723 状态");
+        if (NinjaCombatState.IsTcjSequenceActive) return Blocked("镰鼬：天地人进行中");
+        if (target?.CanUseAttackActionOn() != true) return Blocked("镰鼬：目标不可用");
+        if (!PromeSettings.Instance.GetQt(NinjaQts.Phantom)) return Blocked("镰鼬：QT 未开启");
         // The proc is otherwise lost permanently. Consume it before applying
         // normal Ninki and range-only preferences.
         if (IsExpiringSoon()) return Ok;
-        if (JobGaugeHelper.NIN.Ninki > 90) return Blocked("Phantom: Ninki over 90");
+        if (JobGaugeHelper.NIN.Ninki > 90) return Blocked("镰鼬：忍气超过 90");
 
         var distance = NinjaTarget.Distance;
         if (distance > NinjaTarget.AttackRange) return Ok;
-        if (NinjaSettings.Instance.PhantomOnlyForRange) return Blocked("Phantom: range-only setting");
+        if (NinjaSettings.Instance.PhantomOnlyForRange) return Blocked("镰鼬：仅远程使用设置");
         if (me.HasStatus(NinjaActions.BunshinStatus) && target.HasStatus(NinjaActions.KunaisBaneStatus))
-            return Blocked("Phantom: Bunshin hold during 3906");
+            return Blocked("镰鼬：3906 期间保留分身");
         if (PromeSettings.Instance.GetQt("鍊炬枩璧勬簮")) return Ok;
 
         // A failed backstab check must continue to the 3906 window, matching
@@ -76,7 +76,7 @@ internal sealed class NinjaPhantomResolver : NinjaResolver
             && NinjaCombatState.Recently(NinjaActions.MugCurrent, 24000)
             && ActionHelper.GetActionCharges(NinjaActions.Ten) < 1f
             ? Ok
-            : Blocked("Phantom: no priority window");
+            : Blocked("镰鼬：当前没有优先级窗口");
     }
 
     public override PAction GetAction() => BuildNormal(NinjaActions.PhantomKamaitachi, ActionType.Gcd, ActionTargetType.Target);

@@ -14,7 +14,7 @@ internal static class NinjaMudraDebug
     private static long lastInputAt;
     private static uint lastInputId;
     private static int rabbitCount;
-    private static string lastRabbitReason = "None";
+    private static string lastRabbitReason = "无";
 
     public static int RabbitCount => rabbitCount;
     public static long LastRabbitAgeMs => lastRabbitAt == 0
@@ -22,7 +22,7 @@ internal static class NinjaMudraDebug
         : Math.Max(0, Environment.TickCount64 - lastRabbitAt);
     public static string LastRabbitReason => lastRabbitReason;
     public static string RecentInputs => recentInputs.Count == 0
-        ? "None"
+        ? "无"
         : string.Join(" -> ", recentInputs.ConvertAll(FormatAction));
 
     public static void Record(uint actionId)
@@ -56,7 +56,7 @@ internal static class NinjaMudraDebug
         lastInputAt = 0;
         lastInputId = 0;
         rabbitCount = 0;
-        lastRabbitReason = "None";
+        lastRabbitReason = "无";
     }
 
     private static bool IsMudraInput(uint actionId) => actionId is
@@ -66,17 +66,17 @@ internal static class NinjaMudraDebug
     private static string BuildRabbitReason()
     {
         var policy = NinjaSequencePolicy.IsActive
-            ? $"terminal={FormatAction(NinjaSequencePolicy.TerminalAction)}"
-            : "no active PR mudra sequence";
+            ? $"终结技能={FormatAction(NinjaSequencePolicy.TerminalAction)}"
+            : "没有激活的 PR 忍术序列";
         var mudraStatus = PromeRotation.Core.Core.Me?.HasStatus(NinjaActions.MudraStatus) == true
-            ? "496 active"
-            : "496 missing";
+            ? "496 状态存在"
+            : "496 状态缺失";
         var expected = ExpectedRoute(NinjaSequencePolicy.TerminalAction);
         var duplicate = recentInputs.Count >= 2
             && recentInputs[^1] == recentInputs[^2];
         var cause = !NinjaSequencePolicy.IsActive
             ? "印输入发生在 PR 忍术序列之外，可能是手动输入或残留输入"
-            : mudraStatus == "496 missing"
+            : mudraStatus == "496 状态缺失"
                 ? "上一个印未成功或印状态已消失，后续输入被游戏判定为搓兔子"
                 : duplicate
                     ? $"连续重复输入 {FormatAction(recentInputs[^1])}"
@@ -86,24 +86,24 @@ internal static class NinjaMudraDebug
 
     private static string ExpectedRoute(uint terminalAction) => terminalAction switch
     {
-        NinjaActions.Suiton => "Ten-Chi-Jin-Suiton",
-        NinjaActions.Raiton => "Ten-Chi-Raiton",
-        NinjaActions.HyoshoRanryu => "Ten-Jin-Hyosho",
-        NinjaActions.TcjSuiton => "TCJ-Fuma-Raiton-Suiton",
-        _ => "unknown"
+        NinjaActions.Suiton => "天-地-人-水遁",
+        NinjaActions.Raiton => "天-地-人-雷遁",
+        NinjaActions.HyoshoRanryu => "天-人-冰晶乱流",
+        NinjaActions.TcjSuiton => "天地人-风魔-雷遁-水遁",
+        _ => "未知"
     };
 
     private static string FormatAction(uint actionId) => actionId switch
     {
-        NinjaActions.Ten or NinjaActions.TenCombo => "Ten",
-        NinjaActions.Chi or NinjaActions.ChiCombo => "Chi",
-        NinjaActions.Jin or NinjaActions.JinCombo => "Jin",
-        NinjaActions.Suiton => "Suiton",
-        NinjaActions.Raiton => "Raiton",
-        NinjaActions.HyoshoRanryu => "Hyosho",
-        NinjaActions.TcjSuiton => "TCJ Suiton",
-        NinjaActions.Rabbit => "Rabbit(2272)",
-        0 => "None",
-        _ => actionId.ToString()
+        NinjaActions.Ten or NinjaActions.TenCombo => "天印",
+        NinjaActions.Chi or NinjaActions.ChiCombo => "地印",
+        NinjaActions.Jin or NinjaActions.JinCombo => "人印",
+        NinjaActions.Suiton => "水遁",
+        NinjaActions.Raiton => "雷遁",
+        NinjaActions.HyoshoRanryu => "冰晶乱流之术",
+        NinjaActions.TcjSuiton => "天地人水遁",
+        NinjaActions.Rabbit => "搓兔子（2272）",
+        0 => "无",
+        _ => $"技能 {actionId}"
     };
 }

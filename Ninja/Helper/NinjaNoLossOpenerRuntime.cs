@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using PromeRotation.Core;
 using PromeRotation.Data;
@@ -8,256 +7,150 @@ using PromeRotation.Managers;
 using PromeRotation.Updaters;
 
 using Ninja.PR.Action.Gcd;
+using Ninja.PR.Action.OffGcd;
 using Ninja.PR.Data;
 using Ninja.PR.Opener;
 
 namespace Ninja.PR.Helper;
 
+/// <summary>
+/// Hands the no-loss opener back to the normal PR queue after TCJ.
+///
+/// The regular opener is a fixed action list. Keeping a second per-action
+/// state machine here made the scheduler hold a GCD while it was waiting for
+/// an oGCD, which is the short pause seen immediately after the third TCJ
+/// jutsu. Build the remaining opener tail once, just like an IOpener sequence,
+/// and let normal resolvers handle anything that is not currently available.
+/// </summary>
 internal static class NinjaNoLossOpenerRuntime
 {
     private enum TailStage
     {
         Inactive,
         WaitingForTcj,
-        Meisui,
-        FleetingRaiju,
-        Bhavacakra,
-        Combo3,
-        TenriJindo,
-        Raiton,
-        FinalRaiju
+        HandedToQueue
     }
 
-    private const int StageTimeoutMs = 2500;
     private static bool waiting;
-    private static bool tcjSeen;
     private static bool tcjWasActive;
     private static TailStage stage;
-    private static long stageStartedAt;
-    private static uint stageAction;
+    private static string lastTransition = "未激活";
 
     public static bool ShouldHoldNormalDecisions => waiting;
-    public static string DebugStage => $"{stage} / waiting={waiting} / action={stageAction}";
+    public static string DebugStage => $"{FormatStage()} / 保持={waiting} / {lastTransition}";
 
     public static void OnBattleStarted()
     {
-        waiting = NinjaSettings.Instance.Opener == NinjaOpener.NoLoss9GOpenerName;
-        tcjSeen = false;
-        tcjWasActive = false;
+        Reset();
+        // RotationManager has already marked the selected opener as executed
+        // when the battle callback is raised. Do not activate this bridge for
+        // a normal rotation or for a stale setting outside the opener queue.
+        waiting = PromeSettings.Instance.OpenerHasBeenExecuted
+            && NinjaSettings.Instance.Opener == NinjaOpener.NoLoss9GOpenerName;
         stage = waiting ? TailStage.WaitingForTcj : TailStage.Inactive;
-        stageStartedAt = 0;
-        stageAction = 0;
     }
 
     public static void Update()
     {
-        if (!waiting) return;
+        if (!waiting || stage != TailStage.WaitingForTcj) return;
 
-        var tcjActive = NinjaCombatState.IsTcjSequenceActive;
-        if (!tcjSeen)
+        var tcjActive = NinjaCombatState.HasTcjBuff;
+        tcjWasActive |= tcjActive;
+        if (tcjActive) return;
+        if (!tcjWasActive)
         {
-            tcjSeen = tcjActive || NinjaCombatState.Recently(NinjaActions.TenChiJin, 15000);
-            if (!tcjSeen) return;
-        }
-
-        if (stage == TailStage.WaitingForTcj)
-        {
-            if (tcjActive)
+            if (!HasHostWork())
             {
-                tcjWasActive = true;
-                return;
+                waiting = false;
+                stage = TailStage.Inactive;
+                lastTransition = "天地人未开始，已恢复常规循环";
             }
-
-            if (!tcjWasActive
-                && Core.Me?.HasStatus(NinjaActions.TenriJindoReady) != true
-                && !NinjaCombatState.Recently(NinjaActions.TcjSuiton, 15000)) return;
-
-            SetStage(TailStage.Meisui);
-        }
-
-        if (stageStartedAt != 0)
-        {
-            if (NinjaCombatState.Recently(stageAction, StageTimeoutMs))
-            {
-                AdvanceStage();
-                return;
-            }
-            var timeout = stage == TailStage.Raiton ? 8000 : StageTimeoutMs;
-            if (Environment.TickCount64 - stageStartedAt <= timeout) return;
-
-            // Drop the stale command that timed out with this stage before
-            // moving on, otherwise ActionUpdater can keep retrying it while
-            // the runtime has already queued the next step.
-            ActionUpdaterRouter.Reset();
-            ActionQueueManager.ClearNormalQueues();
-            AdvanceStage();
             return;
         }
 
-        if (ActionQueueManager.HasActionsInQueue()) return;
+        // The final TCJ effect and the updater command can be reported on
+        // adjacent frames. Let the existing command finish before appending
+        // the tail, otherwise the first tail action competes with 7403.
+        if (ActionQueueManager.HasActionsInQueue()
+            || ActionUpdaterRouter.HasActiveCommand()
+            || ActionUpdaterRouter.HasLockedGcdAction()) return;
 
-        switch (stage)
-        {
-            case TailStage.Meisui: SubmitMeisui(); break;
-            case TailStage.FleetingRaiju: SubmitFleetingRaiju(); break;
-            case TailStage.Bhavacakra: SubmitBhavacakra(); break;
-            case TailStage.Combo3: SubmitCombo3(); break;
-            case TailStage.TenriJindo: SubmitTenriJindo(); break;
-            case TailStage.Raiton: SubmitRaiton(); break;
-            case TailStage.FinalRaiju: SubmitFinalRaiju(); break;
-        }
+        QueueTail();
+        waiting = false;
+        stage = TailStage.HandedToQueue;
+        lastTransition = "天地人完成，已加入起手尾段队列";
     }
 
     public static void Reset()
     {
         waiting = false;
-        tcjSeen = false;
         tcjWasActive = false;
         stage = TailStage.Inactive;
-        stageStartedAt = 0;
-        stageAction = 0;
+        lastTransition = "未激活";
     }
 
-    private static void SubmitMeisui()
+    private static void QueueTail()
     {
-        if (!Ready(NinjaActions.Meisui)
-            || JobGaugeHelper.NIN.Ninki >= 50
-            || Core.Me?.HasStatus(NinjaActions.ShadowWalkerStatus) != true
-            || Core.Me.HasStatus(NinjaActions.TcjStatus)
-            || !NinjaCombatState.Recently(NinjaActions.TcjSuiton, 15000)
-            || ActionHelper.GetActionCooldown(NinjaActions.TrickAttackCurrent) < 20f)
-        {
-            AdvanceStage();
-            return;
-        }
-        SubmitOffGcd(NinjaActions.Meisui, NinjaActions.Meisui, ActionTargetType.Self);
-    }
+        var tail = new List<PAction>();
+        var me = Core.Me;
+        var target = Core.Target;
+        if (me == null || target?.CanUseAttackActionOn() != true) return;
 
-    private static void SubmitFleetingRaiju()
-    {
-        if (Core.Me?.HasStatus(NinjaActions.RaijuReady) != true)
-        {
-            AdvanceStage();
-            return;
-        }
-        SubmitGcd(NinjaActions.FleetingRaiju);
-    }
+        // Preserve the regular opener priority. Every action is checked at
+        // handoff; unavailable actions are left to the normal resolver list.
+        var meisui = new NinjaMeisuiResolver();
+        if (meisui.Check().Success)
+            tail.Add(meisui.GetAction());
 
-    private static void SubmitBhavacakra()
-    {
-        if (JobGaugeHelper.NIN.Ninki < 50 || Core.Target?.CanUseAttackActionOn() != true)
-        {
-            AdvanceStage();
-            return;
-        }
-        var adjusted = ActionHelper.GetAdjustedActionId(NinjaActions.Bhavacakra);
-        SubmitOffGcd(adjusted == 0 ? NinjaActions.Bhavacakra : adjusted,
-            NinjaActions.Bhavacakra, ActionTargetType.Target);
-    }
+        if (me.HasStatus(NinjaActions.RaijuReady))
+            tail.Add(G(NinjaActions.FleetingRaiju));
 
-    private static void SubmitCombo3()
-    {
-        if (Core.Target?.CanUseAttackActionOn() != true)
+        if (NinjaBhavacakraPolicy.IsEligible())
         {
-            AdvanceStage();
-            return;
-        }
-        var action = new NinjaComboResolver().GetAction();
-        stageAction = action.ActionId;
-        ActionQueueManager.Enqueue(action);
-        stageStartedAt = Environment.TickCount64;
-    }
-
-    private static void SubmitTenriJindo()
-    {
-        if (Core.Me?.HasStatus(NinjaActions.TenriJindoReady) != true || !Ready(NinjaActions.TenriJindo))
-        {
-            AdvanceStage();
-            return;
-        }
-        var adjusted = ActionHelper.GetAdjustedActionId(NinjaActions.TenriJindo);
-        SubmitOffGcd(adjusted == 0 ? NinjaActions.TenriJindo : adjusted,
-            NinjaActions.TenriJindo, ActionTargetType.Target);
-    }
-
-    private static void SubmitRaiton()
-    {
-        if (ActionHelper.GetActionCharges(NinjaActions.Ten) < 1)
-        {
-            AdvanceStage();
-            return;
+            var bhavacakra = ActionHelper.GetAdjustedActionId(NinjaActions.Bhavacakra);
+            tail.Add(O(bhavacakra == 0 ? NinjaActions.Bhavacakra : bhavacakra));
         }
 
-        NinjaSequencePolicy.Begin(NinjaActions.Raiton);
-        ActionQueueManager.Enqueue(new List<PAction>
+        // Combo3 is intentionally resolved at handoff so positional and
+        // Kazematoi decisions match the ordinary combo resolver.
+        tail.Add(new NinjaComboResolver().GetAction());
+
+        var tenri = new NinjaTenriJindoResolver();
+        if (tenri.Check().Success)
+            tail.Add(tenri.GetAction());
+
+        // Reuse the normal verified mudra group. This is the same sequence
+        // that the regular Raiton resolver queues, without re-entering the
+        // opener runtime or holding the next GCD.
+        if (ActionHelper.GetActionCharges(NinjaActions.Ten) >= 1)
         {
-            new(NinjaActions.Ten, ActionType.Gcd, ActionTargetType.Self) { RequiresVerification = true },
-            new(NinjaActions.ChiCombo, ActionType.Gcd, ActionTargetType.Self) { RequiresVerification = true },
-            new(NinjaActions.Raiton, ActionType.Gcd, ActionTargetType.Target) { RequiresVerification = true }
-        });
-        stageAction = NinjaActions.Raiton;
-        stageStartedAt = Environment.TickCount64;
+            NinjaSequencePolicy.Begin(NinjaActions.Raiton);
+            tail.Add(M(NinjaActions.Ten));
+            tail.Add(M(NinjaActions.ChiCombo));
+            tail.Add(G(NinjaActions.Raiton));
+        }
+
+        if (tail.Count > 0)
+            ActionQueueManager.Enqueue(tail);
     }
 
-    private static void SubmitFinalRaiju()
+    private static bool HasHostWork() => ActionQueueManager.HasActionsInQueue()
+        || ActionUpdaterRouter.HasActiveCommand()
+        || ActionUpdaterRouter.HasLockedGcdAction();
+
+    private static string FormatStage() => stage switch
     {
-        if (Core.Me?.HasStatus(NinjaActions.RaijuReady) == true)
-            SubmitGcd(NinjaActions.FleetingRaiju);
-        else
-            Finish();
-    }
+        TailStage.WaitingForTcj => "等待天地人完成",
+        TailStage.HandedToQueue => "尾段已加入队列",
+        _ => "未激活"
+    };
 
-    private static void SubmitGcd(uint actionId)
-    {
-        stageAction = actionId;
-        ActionQueueManager.Enqueue(new PAction(actionId, ActionType.Gcd, ActionTargetType.Target)
-        {
-            RequiresVerification = true
-        });
-        stageStartedAt = Environment.TickCount64;
-    }
+    private static PAction G(uint id) =>
+        new(id, ActionType.Gcd, ActionTargetType.Target) { RequiresVerification = true };
 
-    private static void SubmitOffGcd(uint actionId, uint trackedActionId, ActionTargetType target)
-    {
-        stageAction = trackedActionId;
-        ActionQueueManager.EnqueueOffGcdList(new List<PAction>
-        {
-            new(actionId, ActionType.OffGcd, target) { RequiresVerification = true }
-        });
-        stageStartedAt = Environment.TickCount64;
-    }
+    private static PAction M(uint id) =>
+        new(id, ActionType.Gcd, ActionTargetType.Self) { RequiresVerification = true };
 
-    private static bool Ready(uint actionId) =>
-        ActionHelper.IsUnlocked(actionId) && ActionHelper.GetActionCooldown(actionId) <= 0.1f;
-
-    private static void SetStage(TailStage next)
-    {
-        stage = next;
-        stageStartedAt = 0;
-        stageAction = 0;
-    }
-
-    private static void AdvanceStage()
-    {
-        SetStage(stage switch
-        {
-            TailStage.Meisui => TailStage.FleetingRaiju,
-            TailStage.FleetingRaiju => TailStage.Bhavacakra,
-            TailStage.Bhavacakra => TailStage.Combo3,
-            TailStage.Combo3 => TailStage.TenriJindo,
-            TailStage.TenriJindo => TailStage.Raiton,
-            TailStage.Raiton => TailStage.FinalRaiju,
-            TailStage.FinalRaiju => TailStage.Inactive,
-            _ => TailStage.Meisui
-        });
-        if (stage == TailStage.Inactive) Finish();
-    }
-
-    private static void Finish()
-    {
-        waiting = false;
-        stage = TailStage.Inactive;
-        stageStartedAt = 0;
-        stageAction = 0;
-    }
+    private static PAction O(uint id) =>
+        new(id, ActionType.OffGcd, ActionTargetType.Target) { RequiresVerification = true };
 }

@@ -19,19 +19,19 @@ internal sealed class NinjaTenriJindoResolver : NinjaResolver
     {
         var me = Core.Me;
         var target = Core.Target;
-        if (!PromeSettings.Instance.GetQt(NinjaQts.TenriJindo)) return Blocked("Tenri Jindo: QT disabled");
+        if (!PromeSettings.Instance.GetQt(NinjaQts.TenriJindo)) return Blocked("天理人道：QT 未开启");
         if (me == null || target?.CanUseAttackActionOn() != true)
-            return Blocked("Tenri Jindo: no valid target");
+            return Blocked("天理人道：没有有效目标");
         if (ActionHelper.GetGcdRemain() < 0.6f)
-            return Blocked("Tenri Jindo: GCD < 600ms");
+            return Blocked("天理人道：GCD 剩余不足 600 毫秒");
         if (NinjaCombatState.IsTcjSequenceActive)
-            return Blocked("Tenri Jindo: TCJ sequence active");
+            return Blocked("天理人道：天地人进行中");
         if (!me.HasStatus(NinjaActions.TenriJindoReady))
-            return Blocked("Tenri Jindo: missing 3851");
+            return Blocked("天理人道：缺少 3851 状态");
         if (!ActionHelper.IsUnlocked(NinjaActions.TenriJindo))
-            return Blocked("Tenri Jindo: action locked");
+            return Blocked("天理人道：技能未解锁");
         if (!Ready(NinjaActions.TenriJindo))
-            return Blocked("Tenri Jindo: action not ready");
+            return Blocked("天理人道：技能未准备好");
         return Ok;
     }
 

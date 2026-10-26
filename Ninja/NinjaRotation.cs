@@ -32,7 +32,7 @@ using Ninja.PR.UI;
 
 namespace Ninja.PR;
 
-[RotationMetadata(30u, "Luli Ninja PR", "Cino", "1.1.9", ContentScope = AcrContentScope.HighEnd)]
+[RotationMetadata(30u, "Luli Ninja PR", "Cino", "1.1.10", ContentScope = AcrContentScope.HighEnd)]
 public sealed class NinjaRotation : IRotation, IRotationLifecycle
 {
     private static readonly HashSet<string> HiddenQtKeys = new(StringComparer.Ordinal)
@@ -55,7 +55,7 @@ public sealed class NinjaRotation : IRotation, IRotationLifecycle
         .GetField("_stuckTimer", BindingFlags.Static | BindingFlags.NonPublic);
     internal static readonly FieldInfo? RetryTimerField = typeof(ActionUpdater)
         .GetField("_retryTimer", BindingFlags.Static | BindingFlags.NonPublic);
-    internal static string LastUpdaterRecovery = "None";
+    internal static string LastUpdaterRecovery = "无";
     internal static long staleGcdLockSince;
 
     public string RotationName => "Luli Ninja PR";
@@ -87,7 +87,8 @@ public sealed class NinjaRotation : IRotation, IRotationLifecycle
     public static IReadOnlyDictionary<string, Type> Openers { get; } = new Dictionary<string, Type>
     {
         [NinjaOpener.StandardOpenerName] = typeof(NinjaStandardOpener),
-        [NinjaOpener.NoLoss9GOpenerName] = typeof(NinjaNoLoss9GOpener)
+        [NinjaOpener.NoLoss9GOpenerName] = typeof(NinjaNoLoss9GOpener),
+        [NinjaOpener.EdenOpenerName] = typeof(NinjaEdenOpener)
     };
 
     public static IJobNodeProvider? NodeProvider { get; } = new NinjaJobNodeProvider();
@@ -281,6 +282,7 @@ public sealed class NinjaRotation : IRotation, IRotationLifecycle
         {
             NinjaOpener.StandardOpenerName => new NinjaStandardOpener(),
             NinjaOpener.NoLoss9GOpenerName => new NinjaNoLoss9GOpener(),
+            NinjaOpener.EdenOpenerName => new NinjaEdenOpener(),
             _ => null
         };
     }
@@ -296,7 +298,7 @@ public sealed class NinjaRotation : IRotation, IRotationLifecycle
         var selected = NinjaSettings.Instance.Opener;
         if (ImGui.BeginCombo("起手选择", selected))
         {
-            foreach (var option in new[] { NinjaOpener.StandardOpenerName, NinjaOpener.NoLoss9GOpenerName, "无" })
+            foreach (var option in new[] { NinjaOpener.StandardOpenerName, NinjaOpener.NoLoss9GOpenerName, NinjaOpener.EdenOpenerName, "无" })
             {
                 var isSelected = selected == option;
                 if (ImGui.Selectable(option, isSelected))
@@ -346,48 +348,54 @@ public sealed class NinjaRotation : IRotation, IRotationLifecycle
     private void DrawDebugPanel()
     {
         UpdateDebugStatus();
-        ImGui.Text($"TCJ active: {NinjaCombatState.IsTcjSequenceActive}");
-        ImGui.Text($"Last TCJ step: {FormatDebugAction(NinjaCombatState.GetLastTcjStep())}");
-        ImGui.Text($"Pending TCJ submit: {FormatDebugAction(NinjaCombatState.PendingTcjJutsu)} ({NinjaCombatState.PendingTcjAgeMs} ms)");
-        ImGui.Text($"Last observed action: {NinjaCombatState.LastObservedActionId}");
-        ImGui.Text($"Last GCD: {FormatDebugAction(NinjaCombatState.LastGcd)}");
-        ImGui.Text($"No-loss opener tail: {NinjaNoLossOpenerRuntime.DebugStage}");
-        ImGui.Text($"Post-ninjutsu oGCD: {NinjaCombatState.PostNinjutsuOffGcdUsed}/{NinjaCombatState.PostNinjutsuOffGcdLimit}");
-        ImGui.Text($"PR oGCD/GCD: {NinjaCombatState.GcdOffGcdUsed}/{NinjaCombatState.MaxGcdOffGcd}");
-        ImGui.Text($"TCJ Suiton recent 15s: {NinjaCombatState.Recently(NinjaActions.TcjSuiton, 15000)}");
+        ImGui.Text($"天地人状态：{NinjaCombatState.IsTcjSequenceActive}");
+        ImGui.Text($"最近天地人忍术：{FormatDebugAction(NinjaCombatState.GetLastTcjStep())}");
+        var pendingTcj = NinjaCombatState.GetPendingTcjForDebug();
+        ImGui.Text($"待提交天地人忍术：{FormatDebugAction(pendingTcj)}{(pendingTcj == 0 ? string.Empty : $"（{NinjaCombatState.PendingTcjAgeMs} 毫秒）")}");
+        ImGui.Text($"最近观测技能：{NinjaAttemptDebug.FormatAction(NinjaCombatState.LastObservedActionId)}（{NinjaCombatState.LastObservedActionId}）");
+        ImGui.Text($"最近 GCD：{FormatDebugAction(NinjaCombatState.LastGcd)}");
+        ImGui.Text($"当前反复尝试：{NinjaAttemptDebug.FormatCurrent()}");
+        ImGui.Text($"尝试类型/重试次数：{NinjaAttemptDebug.FormatType()} / {NinjaAttemptDebug.RetryCount}");
+        ImGui.Text($"尝试持续时间：{(NinjaAttemptDebug.CurrentAgeMs < 0 ? "无" : $"{NinjaAttemptDebug.CurrentAgeMs} 毫秒")}");
+        ImGui.Text($"连续观察次数：{NinjaAttemptDebug.ConsecutiveObservations}");
+        ImGui.Text($"尝试技能历史：{NinjaAttemptDebug.History}");
+        ImGui.Text($"无损起手尾段：{NinjaNoLossOpenerRuntime.DebugStage}");
+        ImGui.Text($"忍术后能力技：{NinjaCombatState.PostNinjutsuOffGcdUsed}/{NinjaCombatState.PostNinjutsuOffGcdLimit}");
+        ImGui.Text($"每 GCD 能力技：{NinjaCombatState.GcdOffGcdUsed}/{NinjaCombatState.MaxGcdOffGcd}");
+        ImGui.Text($"天地人水遁最近 15 秒：{NinjaCombatState.Recently(NinjaActions.TcjSuiton, 15000)}");
         ImGui.Separator();
-        ImGui.Text($"Rabbit / 搓兔子 count: {NinjaMudraDebug.RabbitCount}");
-        ImGui.Text($"Last Rabbit age: {(NinjaMudraDebug.LastRabbitAgeMs < 0 ? "None" : $"{NinjaMudraDebug.LastRabbitAgeMs} ms")}");
-        ImGui.Text($"Rabbit reason: {NinjaMudraDebug.LastRabbitReason}");
-        ImGui.Text($"Recent mudra inputs: {NinjaMudraDebug.RecentInputs}");
-        ImGui.Text($"Mudra policy: {(NinjaSequencePolicy.IsActive ? $"{NinjaSequencePolicy.TerminalAction}" : "inactive")}");
+        ImGui.Text($"搓兔子次数：{NinjaMudraDebug.RabbitCount}");
+        ImGui.Text($"最近搓兔子时间：{(NinjaMudraDebug.LastRabbitAgeMs < 0 ? "无" : $"{NinjaMudraDebug.LastRabbitAgeMs} 毫秒前")}");
+        ImGui.Text($"搓兔子原因：{NinjaMudraDebug.LastRabbitReason}");
+        ImGui.Text($"最近忍术印输入：{NinjaMudraDebug.RecentInputs}");
+        ImGui.Text($"忍术印策略：{(NinjaSequencePolicy.IsActive ? $"终结技能 {NinjaSequencePolicy.TerminalAction}" : "未激活")}");
         ImGui.Separator();
-        ImGui.Text($"GCD gate: {(NinjaCombatState.IsTcjSequenceActive ? "TCJ exclusive" : "normal resolvers")}");
-        ImGui.Text($"oGCD gate: {(NinjaCombatState.IsTcjSequenceActive ? "blocked by TCJ" : "open")}");
-        ImGui.Text($"Always gate: {(NinjaCombatState.IsTcjSequenceActive ? "blocked by TCJ" : "open")}");
-        ImGui.Text($"Active command: {ActionUpdater.HasActiveCommand()}");
-        ImGui.Text($"Locked GCD: {ActionUpdater.HasLockedGcdAction()}");
-        ImGui.Text($"Updater recovery: {LastUpdaterRecovery}");
-        ImGui.Text($"Stale GCD lock age: {NinjaEventHandler.GetStaleGcdLockAgeMs()} ms");
-        ImGui.Text($"Queued actions: {ActionQueueManager.HasActionsInQueue()}");
+        ImGui.Text($"GCD 拦截：{(NinjaCombatState.IsTcjSequenceActive ? "天地人独占" : "常规解析器")}");
+        ImGui.Text($"能力技拦截：{(NinjaCombatState.IsTcjSequenceActive ? "天地人拦截" : "开放")}");
+        ImGui.Text($"Always 拦截：{(NinjaCombatState.IsTcjSequenceActive ? "天地人拦截" : "开放")}");
+        ImGui.Text($"当前活动命令：{ActionUpdater.HasActiveCommand()}");
+        ImGui.Text($"GCD 锁定：{ActionUpdater.HasLockedGcdAction()}");
+        ImGui.Text($"调度器恢复：{LastUpdaterRecovery}");
+        ImGui.Text($"过期 GCD 锁定时长：{NinjaEventHandler.GetStaleGcdLockAgeMs()} 毫秒");
+        ImGui.Text($"队列中有技能：{ActionQueueManager.HasActionsInQueue()}");
         ImGui.Separator();
-        ImGui.Text($"Selected Always: {FirstActive(RotationManager.AlwaysSolverStatus)}");
-        ImGui.Text($"Selected GCD: {FirstActive(RotationManager.GcdSolverStatus)}");
-        ImGui.Text($"Selected oGCD: {FirstActive(RotationManager.OffGcdSolverStatus)}");
+        ImGui.Text($"当前 Always 解析器：{FirstActive(RotationManager.AlwaysSolverStatus)}");
+        ImGui.Text($"当前 GCD 解析器：{FirstActive(RotationManager.GcdSolverStatus)}");
+        ImGui.Text($"当前能力技解析器：{FirstActive(RotationManager.OffGcdSolverStatus)}");
         ImGui.Separator();
-        DrawDebugGroup("Always", RotationManager.AlwaysSolverStatus);
+        DrawDebugGroup("常规能力技", RotationManager.AlwaysSolverStatus);
         DrawDebugGroup("GCD", RotationManager.GcdSolverStatus);
-        DrawDebugGroup("oGCD", RotationManager.OffGcdSolverStatus);
-        if (ImGui.CollapsingHeader("Scheduler / queue interceptors"))
+        DrawDebugGroup("能力技", RotationManager.OffGcdSolverStatus);
+        if (ImGui.CollapsingHeader("调度器/队列拦截器"))
             DrawSchedulerDebug();
     }
 
     private static string FormatDebugAction(uint id) => id switch
     {
-        NinjaActions.TcjFumaShuriken => "TCJ Fuma (18873)",
-        NinjaActions.TcjRaiton => "TCJ Raiton (18877)",
-        NinjaActions.TcjSuiton => "TCJ Suiton (18881)",
-        0 => "None",
+        NinjaActions.TcjFumaShuriken => "天地人风魔手里剑（18873）",
+        NinjaActions.TcjRaiton => "天地人雷遁（18877）",
+        NinjaActions.TcjSuiton => "天地人水遁（18881）",
+        0 => "无",
         _ => id.ToString()
     };
 
@@ -395,26 +403,54 @@ public sealed class NinjaRotation : IRotation, IRotationLifecycle
     {
         ImGui.Text(name);
         foreach (var status in statuses)
-            ImGui.Text($"  {(status.Success ? "ACTIVE" : "blocked")}  {status.Name}: {status.Message}");
+            ImGui.Text($"  {(status.Success ? "生效" : "拦截")}  {FormatResolverName(status.Name)}：{status.Message}");
     }
+
+    private static string FormatResolverName(string name) => name switch
+    {
+        "NinjaKassatsuResolver" => "生杀夺予",
+        "NinjaTrickAttackResolver" => "背刺",
+        "NinjaAlwaysResolver" => "预备水遁",
+        "NinjaTcjResolver" => "天地人忍术",
+        "NinjaKassatsuJutsuResolver" => "生杀冰晶",
+        "NinjaJutsuResolver" => "常规忍术",
+        "NinjaEarlier4Or3Resolver" => "早期忍术",
+        "NinjaKBaseResolver" => "基础连击优先",
+        "NinjaPhantomResolver" => "镰鼬",
+        "NinjaRaijuResolver" => "月影雷兽牙",
+        "NinjaRaitonResolver" => "雷遁",
+        "NinjaComboResolver" => "基础连击",
+        "NinjaPriorityBhavacakraResolver" => "六道轮回优先",
+        "NinjaMugResolver" => "夺取",
+        "NinjaBunshinResolver" => "分身之术",
+        "NinjaTenChiJinResolver" => "天地人",
+        "NinjaMeisuiResolver" => "命水",
+        "NinjaTenriJindoResolver" => "天理人道",
+        "NinjaAssassinateResolver" => "梦幻三段",
+        "NinjaOgcdResolver" => "常规能力技",
+        "NinjaTrueNorthResolver" => "真北",
+        _ => name.StartsWith("Ninja", StringComparison.Ordinal) && name.EndsWith("Resolver", StringComparison.Ordinal)
+            ? name[5..^8]
+            : name
+    };
 
     private static string FirstActive(IList<SolverStatus> statuses)
     {
         foreach (var status in statuses)
-            if (status.Success) return status.Name;
-        return "None";
+            if (status.Success) return FormatResolverName(status.Name);
+        return "无";
     }
 
     private static void DrawSchedulerDebug()
     {
-        ImGui.Text("ActionUpdater");
+        ImGui.Text("技能调度器");
         foreach (var entry in ActionUpdater.DebugInfo)
             ImGui.Text($"  {entry.Key}: {entry.Value}");
 
-        ImGui.Text("Action queues");
+        ImGui.Text("技能队列");
         foreach (var queue in ActionQueueManager.GetQueueStatus())
         {
-            var actions = queue.Value.Count == 0 ? "empty" : string.Join(", ", queue.Value);
+            var actions = queue.Value.Count == 0 ? "空" : string.Join(", ", queue.Value);
             ImGui.Text($"  {queue.Key}: {actions}");
         }
     }
@@ -622,7 +658,7 @@ internal sealed class NinjaEventHandler : IRotationEventHandler, IDisposable
             ActionQueueManager.ClearNormalQueues();
             NinjaSequencePolicy.Reset();
             NinjaRotation.LastUpdaterRecovery =
-                $"manual action {actionId} interrupted {attempted.ActionId}";
+                $"手动技能 {actionId} 中断了 {attempted.ActionId}";
         }
         catch
         {
@@ -642,6 +678,7 @@ internal sealed class NinjaEventHandler : IRotationEventHandler, IDisposable
     public void OnUpdate()
     {
         NinjaHooks.Update();
+        NinjaAttemptDebug.Update();
         ConfirmSubmittedGcdFromRuntimeState();
         DropStaleOffGcdLock();
     }
@@ -664,6 +701,7 @@ internal sealed class NinjaEventHandler : IRotationEventHandler, IDisposable
     public void OnBattleUpdate()
     {
         NinjaHooks.Update();
+        NinjaAttemptDebug.Update();
         NinjaSequencePolicy.Update();
         NinjaNoLossOpenerRuntime.Update();
         ConfirmSubmittedGcdFromRuntimeState();
@@ -703,7 +741,7 @@ internal sealed class NinjaEventHandler : IRotationEventHandler, IDisposable
     {
         var me = Core.Me;
         if (me?.HasStatus(NinjaActions.TenriJindoReady) != true
-            || me.HasStatus(NinjaActions.TcjStatus)) return;
+            || NinjaCombatState.HasTcjBuff) return;
 
         try
         {
@@ -730,7 +768,7 @@ internal sealed class NinjaEventHandler : IRotationEventHandler, IDisposable
             // 36961. Rebuild the normal queues on the next rotation pulse.
             ActionUpdaterRouter.Reset();
             NinjaSequencePolicy.Reset();
-            NinjaRotation.LastUpdaterRecovery = "removed stale TCJ before Tenri Jindo";
+            NinjaRotation.LastUpdaterRecovery = "已清除天理人道前的过期天地人命令";
         }
         catch
         {
@@ -770,12 +808,12 @@ internal sealed class NinjaEventHandler : IRotationEventHandler, IDisposable
         try
         {
             ClearVerificationState();
-            NinjaRotation.LastUpdaterRecovery = "reset stale oGCD lock";
+            NinjaRotation.LastUpdaterRecovery = "已重置过期能力技锁定";
         }
         catch
         {
             ActionUpdaterRouter.Reset();
-            NinjaRotation.LastUpdaterRecovery = "reset stale oGCD lock and queues";
+            NinjaRotation.LastUpdaterRecovery = "已重置过期能力技锁定和队列";
         }
     }
 
@@ -790,13 +828,13 @@ internal sealed class NinjaEventHandler : IRotationEventHandler, IDisposable
             // Once TCJ has started its recast is running. If the 1186 status
             // is already gone, an old verified 7403 command cannot execute
             // again and must not block Tenri Jindo or the normal queue.
-            if (Core.Me?.HasStatus(NinjaActions.TcjStatus) == true
+            if (NinjaCombatState.HasTcjBuff
                 || ActionHelper.GetActionCooldown(NinjaActions.TenChiJin) <= 0f)
                 return false;
 
             ActionUpdaterRouter.Reset();
             ActionQueueManager.ClearNormalQueues();
-            NinjaRotation.LastUpdaterRecovery = "reset completed TCJ command (7403)";
+            NinjaRotation.LastUpdaterRecovery = "已重置完成后的天地人命令（7403）";
             return true;
         }
         catch
@@ -856,12 +894,12 @@ internal sealed class NinjaEventHandler : IRotationEventHandler, IDisposable
             // updater's private _gcdLocked flag is cleared by Reset(). The
             // queue checks above make this reset safe for this recovery path.
             ActionUpdaterRouter.Reset();
-            NinjaRotation.LastUpdaterRecovery = $"reset stale GCD lock ({active.ActionId})";
+            NinjaRotation.LastUpdaterRecovery = $"已重置过期 GCD 锁定（{active.ActionId}）";
         }
         catch
         {
             ActionUpdaterRouter.Reset();
-            NinjaRotation.LastUpdaterRecovery = $"reset stale GCD lock and queues ({active.ActionId})";
+            NinjaRotation.LastUpdaterRecovery = $"已重置过期 GCD 锁定和队列（{active.ActionId}）";
         }
 
         NinjaRotation.staleGcdLockSince = 0;
@@ -879,7 +917,7 @@ internal sealed class NinjaEventHandler : IRotationEventHandler, IDisposable
         if (!preserveQueues)
         {
             ActionUpdaterRouter.Reset();
-            NinjaRotation.LastUpdaterRecovery = "reset stale verification and queues";
+            NinjaRotation.LastUpdaterRecovery = "已重置过期验证和队列";
             return;
         }
 
@@ -889,7 +927,7 @@ internal sealed class NinjaEventHandler : IRotationEventHandler, IDisposable
         try
         {
             ClearVerificationState();
-            NinjaRotation.LastUpdaterRecovery = "cleared stale verification; queues preserved";
+            NinjaRotation.LastUpdaterRecovery = "已清除过期验证，保留队列";
         }
         catch
         {
@@ -897,7 +935,7 @@ internal sealed class NinjaEventHandler : IRotationEventHandler, IDisposable
             // updater state. Fall back to the public reset if its internals
             // change in a future host build.
             ActionUpdaterRouter.Reset();
-            NinjaRotation.LastUpdaterRecovery = "reset stale verification and queues";
+            NinjaRotation.LastUpdaterRecovery = "已重置过期验证和队列";
         }
     }
 

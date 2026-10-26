@@ -41,6 +41,7 @@ internal static class NinjaCombatState
     public static void Reset()
     {
         NinjaMudraDebug.Reset();
+        NinjaAttemptDebug.Reset();
         ActionTimes.Clear();
         LastGcd = 0;
         LastTcjJutsu = 0;
@@ -57,6 +58,7 @@ internal static class NinjaCombatState
 
     public static void Record(uint id, bool confirmTcjStep = true)
     {
+        ClearExpiredPendingTcj();
         var now = Environment.TickCount64;
         LastObservedActionId = id;
         LastObservedActionAt = now;
@@ -96,6 +98,7 @@ internal static class NinjaCombatState
     // consume the AE-equivalent oGCD budget.
     public static void RecordConfirmed(uint id)
     {
+        ClearExpiredPendingTcj();
         var now = Environment.TickCount64;
         var canonical = CanonicalActionId(id);
         // ActionEffect and ActionEffectEntry can describe the same packet.
@@ -155,7 +158,7 @@ internal static class NinjaCombatState
         // action (2271). Keep that packet distinct from a normal Suiton cast
         // so the AE-equivalent 18881 RecentlyUsed condition can pass.
         if (id == NinjaActions.Suiton
-            && (Core.Me?.HasStatus(NinjaActions.TcjStatus) == true
+            && (HasTcjBuff
                 || PendingTcjJutsu == NinjaActions.TcjSuiton))
             return NinjaActions.TcjSuiton;
 
@@ -185,7 +188,7 @@ internal static class NinjaCombatState
     // window these IDs must remain ordinary mudra/ninjutsu actions.
     private static bool TcjPacketWindowActive()
     {
-        if (Core.Me?.HasStatus(NinjaActions.TcjStatus) == true) return true;
+        if (HasTcjBuff) return true;
 
         if (PendingTcjJutsu is NinjaActions.TcjFumaShuriken or NinjaActions.TcjRaiton or NinjaActions.TcjSuiton)
             return PendingTcjAgeMs <= PendingTcjTimeoutMs;
@@ -257,24 +260,40 @@ internal static class NinjaCombatState
 
     public static uint GetTcjStepForDecision()
     {
+        ClearExpiredPendingTcj();
         if (PendingTcjJutsu != 0)
         {
-            if (Environment.TickCount64 - PendingTcjJutsuAt <= PendingTcjTimeoutMs)
-                return PendingTcjJutsu;
-            PendingTcjJutsu = 0;
-            PendingTcjJutsuAt = 0;
+            return PendingTcjJutsu;
         }
         return LastTcjJutsu;
+    }
+
+    public static uint GetPendingTcjForDebug()
+    {
+        ClearExpiredPendingTcj();
+        // 1186 is the authoritative TCJ window. Once it disappears the
+        // three transformed ninjutsu are complete, so a pending packet kept
+        // internally for alias matching must not be shown as an active task.
+        return IsTcjSequenceActive ? PendingTcjJutsu : 0;
     }
 
     public static int PendingTcjAgeMs => PendingTcjJutsu == 0
         ? 0
         : (int)Math.Clamp(Environment.TickCount64 - PendingTcjJutsuAt, 0, int.MaxValue);
 
+    private static void ClearExpiredPendingTcj()
+    {
+        if (PendingTcjJutsu != 0
+            && Environment.TickCount64 - PendingTcjJutsuAt > PendingTcjTimeoutMs)
+        {
+            PendingTcjJutsu = 0;
+            PendingTcjJutsuAt = 0;
+        }
+    }
+
     // 1186 is the authoritative Ten Chi Jin window. The 7403 action is only
     // the activation event; its timestamp must not keep the TCJ resolver
-    // active after the status has been removed by the client. Otherwise an
-    // unknown/stale step falls back to 18873 and is retried outside TCJ.
-    public static bool IsTcjSequenceActive =>
-        Core.Me?.HasStatus(NinjaActions.TcjStatus) == true;
+    // active after the status has been removed by the client.
+    public static bool HasTcjBuff => Core.Me?.HasStatus(NinjaActions.TcjStatus) == true;
+    public static bool IsTcjSequenceActive => HasTcjBuff;
 }

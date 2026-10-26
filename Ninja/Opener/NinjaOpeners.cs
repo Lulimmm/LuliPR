@@ -14,6 +14,7 @@ public abstract class NinjaOpener : IOpener
 {
     public const string StandardOpenerName = "常规起手";
     public const string NoLoss9GOpenerName = "无损9G起手";
+    public const string EdenOpenerName = "伊甸起手";
 
     protected static PAction G(uint id) => new(id, ActionType.Gcd, ActionTargetType.Target) { RequiresVerification = true };
     protected static PAction S(uint id) => new(id, ActionType.Gcd, ActionTargetType.Self) { RequiresVerification = true };

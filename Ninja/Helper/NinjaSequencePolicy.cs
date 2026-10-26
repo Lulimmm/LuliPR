@@ -60,7 +60,7 @@ internal static class NinjaSequencePolicy
         active
         && terminalAction is NinjaActions.Suiton or NinjaActions.Raiton or NinjaActions.HyoshoRanryu
         && Core.Me?.HasStatus(NinjaActions.MudraStatus) == true
-        && Core.Me?.HasStatus(NinjaActions.TcjStatus) != true;
+        && !NinjaCombatState.HasTcjBuff;
 
     public static bool IsActive => active;
     public static uint TerminalAction => terminalAction;
