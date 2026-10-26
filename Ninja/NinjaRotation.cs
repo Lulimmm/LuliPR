@@ -32,7 +32,7 @@ using Ninja.PR.UI;
 
 namespace Ninja.PR;
 
-[RotationMetadata(30u, "Luli Ninja PR", "Cino", "1.1.7", ContentScope = AcrContentScope.HighEnd)]
+[RotationMetadata(30u, "Luli Ninja PR", "Cino", "1.1.8", ContentScope = AcrContentScope.HighEnd)]
 public sealed class NinjaRotation : IRotation, IRotationLifecycle
 {
     private static readonly HashSet<string> HiddenQtKeys = new(StringComparer.Ordinal)

@@ -1,8 +1,7 @@
 using System;
 using System.Numerics;
-using FFXIVClientStructs.FFXIV.Client.System.Framework;
-using FFXIVClientStructs.FFXIV.Client.UI;
-using FFXIVClientStructs.FFXIV.Component.GUI;
+using System.Runtime.InteropServices;
+using FFXIVClientStructs.FFXIV.Client.Game.Control;
 using PromeRotation.Helpers;
 using PromeRotation.UI.HotKey;
 
@@ -15,17 +14,6 @@ namespace Ninja.PR.UI;
 // targeting the current enemy.
 internal sealed class NinjaMovementHotkey : IHotkeyLogic
 {
-    private static unsafe RaptureAtkModule* GetRaptureAtkModule()
-    {
-        var framework = Framework.Instance();
-        if (framework == null) return null;
-
-        var uiModule = framework->GetUIModule();
-        if (uiModule == null) return null;
-
-        return uiModule->GetRaptureAtkModule();
-    }
-
     // Match AE's IsUnlockWithCDCheck: reject the short post-cast duplicate
     // window, accept a ready charge, and allow the 100 ms ability queue window
     // when the last charge is about to become available.
@@ -51,10 +39,12 @@ internal sealed class NinjaMovementHotkey : IHotkeyLogic
         var me = PromeRotation.Core.Core.Me;
         if (me == null) return;
 
+        if (!TryGetCameraRotation(out var cameraRotation)) return;
+
         ActionHelper.UseActionLocation(
             NinjaActions.Shukuchi,
             0,
-            GetForwardPosition(me.Position, GetCameraRotation(), 20f));
+            GetForwardPosition(me.Position, cameraRotation, 20f));
     }
 
     private static Vector3 GetForwardPosition(Vector3 position, float facingRadians, float distance)
@@ -64,17 +54,31 @@ internal sealed class NinjaMovementHotkey : IHotkeyLogic
         return new Vector3(position.X + dx, position.Y + 5f, position.Z + dz);
     }
 
-    private static unsafe float GetCameraRotation()
+    // Read the active camera directly. The old AE port used
+    // RaptureAtkModule.NumberArrays[24].IntArray[3], which is a UI angle
+    // snapshot and can lag or differ from the camera used for world input.
+    private static unsafe bool TryGetCameraRotation(out float rotation)
     {
-        var raptureAtkModule = GetRaptureAtkModule();
-        if (raptureAtkModule == null) return 0f;
+        rotation = 0f;
+        var cameraManager = CameraManager.Instance();
+        if (cameraManager == null) return false;
 
-        var atkModule = (AtkModule*)raptureAtkModule;
-        var numberArray = atkModule->AtkArrayDataHolder.NumberArrays[24];
-        if (numberArray == null) return 0f;
+        var camera = cameraManager->GetActiveCamera();
+        if (camera == null) return false;
 
-        var degrees = numberArray->IntArray[3];
-        var sign = Math.Sign(degrees) == -1 ? -1 : 1;
-        return (float)((Math.Abs(degrees * (Math.PI / 180.0)) - Math.PI) * sign);
+        var dirH = ((CameraEx*)camera)->DirH;
+        var sign = Math.Sign(dirH) == -1 ? -1 : 1;
+        rotation = (float)((Math.Abs(dirH) - Math.PI) * sign);
+        return true;
     }
+
+}
+
+// The horizontal camera direction lives at this offset in the current client
+// Camera object. Keep this local layout small and independent of UI arrays.
+[StructLayout(LayoutKind.Explicit, Size = 688)]
+internal struct CameraEx
+{
+    [FieldOffset(320)]
+    public float DirH;
 }
