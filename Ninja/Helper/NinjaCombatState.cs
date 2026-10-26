@@ -40,6 +40,7 @@ internal static class NinjaCombatState
 
     public static void Reset()
     {
+        NinjaMudraDebug.Reset();
         ActionTimes.Clear();
         LastGcd = 0;
         LastTcjJutsu = 0;
@@ -59,6 +60,7 @@ internal static class NinjaCombatState
         var now = Environment.TickCount64;
         LastObservedActionId = id;
         LastObservedActionAt = now;
+        NinjaMudraDebug.Record(id);
         var canonical = CanonicalActionId(id);
         var tcjEvent = ResolveTcjEventId(id);
         if (tcjEvent != 0) canonical = tcjEvent;

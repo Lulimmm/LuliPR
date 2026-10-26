@@ -13,6 +13,7 @@ namespace Ninja.PR.Opener;
 public abstract class NinjaOpener : IOpener
 {
     public const string StandardOpenerName = "常规起手";
+    public const string NoLoss9GOpenerName = "无损9G起手";
 
     protected static PAction G(uint id) => new(id, ActionType.Gcd, ActionTargetType.Target) { RequiresVerification = true };
     protected static PAction S(uint id) => new(id, ActionType.Gcd, ActionTargetType.Self) { RequiresVerification = true };
@@ -32,6 +33,8 @@ public abstract class NinjaOpener : IOpener
     // strand the opener on a permanent 7403 task.
     protected static PAction SelfOUnverified(uint id) => new(id, ActionType.OffGcd, ActionTargetType.Self);
     protected static PAction WeaveO(uint id, int elapsedMs) => O(id).WithWeaveDelay(elapsedMs);
+    protected static PAction WeaveOSecondHalf(uint id) =>
+        O(id).WithWeaveDelay(NinjaGcdTiming.HalfElapsedMilliseconds);
     protected static PAction? Potion()
     {
         var id = GameData.GetBestPotionId();

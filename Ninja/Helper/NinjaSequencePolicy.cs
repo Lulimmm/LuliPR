@@ -62,6 +62,9 @@ internal static class NinjaSequencePolicy
         && Core.Me?.HasStatus(NinjaActions.MudraStatus) == true
         && Core.Me?.HasStatus(NinjaActions.TcjStatus) != true;
 
+    public static bool IsActive => active;
+    public static uint TerminalAction => terminalAction;
+
     private static void End()
     {
         if (!active) return;

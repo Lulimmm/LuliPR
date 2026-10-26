@@ -32,7 +32,7 @@ using Ninja.PR.UI;
 
 namespace Ninja.PR;
 
-[RotationMetadata(30u, "Luli Ninja PR", "Cino", "1.1.8", ContentScope = AcrContentScope.HighEnd)]
+[RotationMetadata(30u, "Luli Ninja PR", "Cino", "1.1.9", ContentScope = AcrContentScope.HighEnd)]
 public sealed class NinjaRotation : IRotation, IRotationLifecycle
 {
     private static readonly HashSet<string> HiddenQtKeys = new(StringComparer.Ordinal)
@@ -86,7 +86,8 @@ public sealed class NinjaRotation : IRotation, IRotationLifecycle
 
     public static IReadOnlyDictionary<string, Type> Openers { get; } = new Dictionary<string, Type>
     {
-        [NinjaOpener.StandardOpenerName] = typeof(NinjaStandardOpener)
+        [NinjaOpener.StandardOpenerName] = typeof(NinjaStandardOpener),
+        [NinjaOpener.NoLoss9GOpenerName] = typeof(NinjaNoLoss9GOpener)
     };
 
     public static IJobNodeProvider? NodeProvider { get; } = new NinjaJobNodeProvider();
@@ -158,6 +159,8 @@ public sealed class NinjaRotation : IRotation, IRotationLifecycle
         // TCJ condition because the scheduler owns the GCD while TCJ is active.
         if (NinjaCombatState.IsTcjSequenceActive)
             return NextTcjOnly();
+        if (NinjaNoLossOpenerRuntime.ShouldHoldNormalDecisions)
+            return null;
 
         // Do not let an earlier normal GCD resolver consume the slot when the
         // 2723 proc would expire before the next available GCD.
@@ -186,6 +189,7 @@ public sealed class NinjaRotation : IRotation, IRotationLifecycle
         // gate at the scheduler boundary prevents a missed per-resolver
         // condition from interrupting the three ninjutsu sequence.
         if (NinjaCombatState.IsTcjSequenceActive
+            || NinjaNoLossOpenerRuntime.ShouldHoldNormalDecisions
             || !NinjaCombatState.CanUsePostNinjutsuOffGcd
             || !NinjaCombatState.CanUseGcdOffGcd)
             return null;
@@ -197,6 +201,7 @@ public sealed class NinjaRotation : IRotation, IRotationLifecycle
         // confirmed. This prevents an Always resolver from stealing the
         // window between the three GCD packets.
         if (NinjaCombatState.IsTcjSequenceActive
+            || NinjaNoLossOpenerRuntime.ShouldHoldNormalDecisions
             || !NinjaCombatState.CanUsePostNinjutsuOffGcd
             || !NinjaCombatState.CanUseGcdOffGcd)
             return null;
@@ -275,6 +280,7 @@ public sealed class NinjaRotation : IRotation, IRotationLifecycle
         return NinjaSettings.Instance.Opener switch
         {
             NinjaOpener.StandardOpenerName => new NinjaStandardOpener(),
+            NinjaOpener.NoLoss9GOpenerName => new NinjaNoLoss9GOpener(),
             _ => null
         };
     }
@@ -290,7 +296,7 @@ public sealed class NinjaRotation : IRotation, IRotationLifecycle
         var selected = NinjaSettings.Instance.Opener;
         if (ImGui.BeginCombo("起手选择", selected))
         {
-            foreach (var option in new[] { NinjaOpener.StandardOpenerName, "无" })
+            foreach (var option in new[] { NinjaOpener.StandardOpenerName, NinjaOpener.NoLoss9GOpenerName, "无" })
             {
                 var isSelected = selected == option;
                 if (ImGui.Selectable(option, isSelected))
@@ -345,9 +351,16 @@ public sealed class NinjaRotation : IRotation, IRotationLifecycle
         ImGui.Text($"Pending TCJ submit: {FormatDebugAction(NinjaCombatState.PendingTcjJutsu)} ({NinjaCombatState.PendingTcjAgeMs} ms)");
         ImGui.Text($"Last observed action: {NinjaCombatState.LastObservedActionId}");
         ImGui.Text($"Last GCD: {FormatDebugAction(NinjaCombatState.LastGcd)}");
+        ImGui.Text($"No-loss opener tail: {NinjaNoLossOpenerRuntime.DebugStage}");
         ImGui.Text($"Post-ninjutsu oGCD: {NinjaCombatState.PostNinjutsuOffGcdUsed}/{NinjaCombatState.PostNinjutsuOffGcdLimit}");
         ImGui.Text($"PR oGCD/GCD: {NinjaCombatState.GcdOffGcdUsed}/{NinjaCombatState.MaxGcdOffGcd}");
         ImGui.Text($"TCJ Suiton recent 15s: {NinjaCombatState.Recently(NinjaActions.TcjSuiton, 15000)}");
+        ImGui.Separator();
+        ImGui.Text($"Rabbit / 搓兔子 count: {NinjaMudraDebug.RabbitCount}");
+        ImGui.Text($"Last Rabbit age: {(NinjaMudraDebug.LastRabbitAgeMs < 0 ? "None" : $"{NinjaMudraDebug.LastRabbitAgeMs} ms")}");
+        ImGui.Text($"Rabbit reason: {NinjaMudraDebug.LastRabbitReason}");
+        ImGui.Text($"Recent mudra inputs: {NinjaMudraDebug.RecentInputs}");
+        ImGui.Text($"Mudra policy: {(NinjaSequencePolicy.IsActive ? $"{NinjaSequencePolicy.TerminalAction}" : "inactive")}");
         ImGui.Separator();
         ImGui.Text($"GCD gate: {(NinjaCombatState.IsTcjSequenceActive ? "TCJ exclusive" : "normal resolvers")}");
         ImGui.Text($"oGCD gate: {(NinjaCombatState.IsTcjSequenceActive ? "blocked by TCJ" : "open")}");
@@ -556,6 +569,11 @@ internal sealed class NinjaEventHandler : IRotationEventHandler, IDisposable
         // normal Raiton/Suiton/Hyosho packets as well as TCJ aliases, so feed
         // the same counter before the TCJ-only sequence filter below.
         NinjaCombatState.RecordConfirmed(action.ActionId);
+        if (action.ActionId == NinjaActions.Rabbit)
+        {
+            NinjaCombatState.Record(action.ActionId);
+            return;
+        }
         if (IsTenChiJinEvent(action.ActionId))
         {
             ActionUpdaterRouter.Reset();
@@ -641,11 +659,13 @@ internal sealed class NinjaEventHandler : IRotationEventHandler, IDisposable
         // queue has been created, so the handler reset cannot erase it.
         if (PromeSettings.Instance.OpenerHasBeenExecuted)
             NinjaSequencePolicy.Begin(NinjaActions.TenChiJin);
+        NinjaNoLossOpenerRuntime.OnBattleStarted();
     }
     public void OnBattleUpdate()
     {
         NinjaHooks.Update();
         NinjaSequencePolicy.Update();
+        NinjaNoLossOpenerRuntime.Update();
         ConfirmSubmittedGcdFromRuntimeState();
         DropStaleTcjBeforeTenriJindo();
         DropStaleOffGcdLock();
@@ -951,6 +971,7 @@ internal sealed class NinjaEventHandler : IRotationEventHandler, IDisposable
     }
     public void OnBattleEnded()
     {
+        NinjaNoLossOpenerRuntime.Reset();
         NinjaSequencePolicy.Reset();
         NinjaCombatState.Reset();
         NinjaRotation.staleGcdLockSince = 0;
@@ -959,6 +980,7 @@ internal sealed class NinjaEventHandler : IRotationEventHandler, IDisposable
 
     public void OnTerritoryChanged(ushort territoryId)
     {
+        NinjaNoLossOpenerRuntime.Reset();
         NinjaSequencePolicy.Reset();
         NinjaCombatState.Reset();
         NinjaRotation.staleGcdLockSince = 0;

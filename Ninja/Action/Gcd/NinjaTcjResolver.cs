@@ -34,7 +34,15 @@ internal sealed class NinjaTcjResolver : NinjaResolver
         // Submit the concrete follow-up spell directly. These
         // IDs are already the transformed actions, so resolving them again
         // through ActionManager can collapse the sequence back to Fuma.
-        return Build(id, ActionType.Gcd, ActionTargetType.Target);
+        var action = Build(id, ActionType.Gcd, ActionTargetType.Target);
+        // The final TCJ Suiton packet is not emitted consistently by every
+        // client path. Waiting for UAL/AEP verification of 18881 can leave
+        // ActionUpdater in a permanent pending-verification state after the
+        // three TCJ actions are visibly complete. Submission is sufficient;
+        // 1186 removal and the recorded TCJ step hand off to the opener tail.
+        if (id == NinjaActions.TcjSuiton)
+            action.RequiresVerification = false;
+        return action;
     }
 
     private static uint GetNextTcjAction()
