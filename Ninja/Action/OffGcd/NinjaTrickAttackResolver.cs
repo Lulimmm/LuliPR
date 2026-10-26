@@ -38,6 +38,6 @@ internal sealed class NinjaTrickAttackResolver : NinjaResolver
     public override PAction GetAction()
     {
         NinjaSettings.Instance.TrickAttackDelayUntilNextMug = false;
-        return Build(ActionHelper.GetAdjustedActionId(NinjaActions.TrickAttackCurrent), ActionType.OffGcd, ActionTargetType.Target);
+        return BuildNormal(ActionHelper.GetAdjustedActionId(NinjaActions.TrickAttackCurrent), ActionType.OffGcd, ActionTargetType.Target);
     }
 }

@@ -16,4 +16,5 @@ internal static class NinjaQts
     public const string Suiton = "水遁", Raiton = "雷遁", RaitonWhenOutOfRange = "远离雷遁", Phantom = "镰鼬";
     public const string Raiju = "雷牙", TenriJindo = "天理人道";
     public const string AutoTrueNorth = "自动真北", PrepareSuiton = "预备水遁";
+    public const string LongArm = "长臂猿";
 }

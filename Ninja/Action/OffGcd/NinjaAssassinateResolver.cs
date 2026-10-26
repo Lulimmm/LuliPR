@@ -27,7 +27,7 @@ internal sealed class NinjaAssassinateResolver : NinjaResolver
     public override PAction GetAction()
     {
         var adjusted = ActionHelper.GetAdjustedActionId(NinjaActions.Assassinate);
-        return Build(adjusted == 0 ? NinjaActions.Assassinate : adjusted,
+        return BuildNormal(adjusted == 0 ? NinjaActions.Assassinate : adjusted,
             ActionType.OffGcd, ActionTargetType.Target);
     }
 }

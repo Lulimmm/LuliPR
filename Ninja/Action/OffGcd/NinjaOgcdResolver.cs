@@ -64,8 +64,8 @@ internal sealed class NinjaOgcdResolver : NinjaResolver
         if (CanUseBhavacakra())
         {
             var adjusted = ActionHelper.GetAdjustedActionId(NinjaActions.Bhavacakra);
-            return Build(adjusted, ActionType.OffGcd, ActionTargetType.Target);
+            return BuildNormal(adjusted, ActionType.OffGcd, ActionTargetType.Target);
         }
-        return Build(ActionHelper.GetAdjustedActionId(NinjaActions.Bhavacakra), ActionType.OffGcd, ActionTargetType.Target);
+        return BuildNormal(ActionHelper.GetAdjustedActionId(NinjaActions.Bhavacakra), ActionType.OffGcd, ActionTargetType.Target);
     }
 }

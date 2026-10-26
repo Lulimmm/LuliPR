@@ -28,15 +28,15 @@ internal sealed class NinjaMugResolver : NinjaResolver
             // not enqueue Bunshin + Mug as a pair in that single weave slot;
             // submit the first action and let the next GCD reopen the queue.
             if (!NinjaCombatState.CanQueueMultipleOffGcd)
-                return Build(ActionHelper.GetAdjustedActionId(NinjaActions.Bunshin),
+                return BuildNormal(ActionHelper.GetAdjustedActionId(NinjaActions.Bunshin),
                     ActionType.OffGcd, ActionTargetType.Self);
             ActionQueueManager.EnqueueOffGcdList(new List<PAction>
             {
-                Build(ActionHelper.GetAdjustedActionId(NinjaActions.Bunshin), ActionType.OffGcd, ActionTargetType.Self),
-                Build(ActionHelper.GetAdjustedActionId(NinjaActions.MugCurrent), ActionType.OffGcd, ActionTargetType.Target)
+                BuildNormal(ActionHelper.GetAdjustedActionId(NinjaActions.Bunshin), ActionType.OffGcd, ActionTargetType.Self),
+                BuildNormal(ActionHelper.GetAdjustedActionId(NinjaActions.MugCurrent), ActionType.OffGcd, ActionTargetType.Target)
             });
             return null!;
         }
-        return Build(ActionHelper.GetAdjustedActionId(NinjaActions.MugCurrent), ActionType.OffGcd, ActionTargetType.Target);
+        return BuildNormal(ActionHelper.GetAdjustedActionId(NinjaActions.MugCurrent), ActionType.OffGcd, ActionTargetType.Target);
     }
 }

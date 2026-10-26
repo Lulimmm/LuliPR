@@ -35,5 +35,5 @@ internal sealed class NinjaKassatsuResolver : NinjaResolver
     }
 
     public override PAction GetAction() =>
-        Build(ActionHelper.GetAdjustedActionId(NinjaActions.Kassatsu), ActionType.OffGcd, ActionTargetType.Self);
+        BuildNormal(ActionHelper.GetAdjustedActionId(NinjaActions.Kassatsu), ActionType.OffGcd, ActionTargetType.Self);
 }

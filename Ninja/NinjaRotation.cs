@@ -32,7 +32,7 @@ using Ninja.PR.UI;
 
 namespace Ninja.PR;
 
-[RotationMetadata(30u, "Luli Ninja PR", "Cino", "1.1.6", ContentScope = AcrContentScope.HighEnd)]
+[RotationMetadata(30u, "Luli Ninja PR", "Cino", "1.1.7", ContentScope = AcrContentScope.HighEnd)]
 public sealed class NinjaRotation : IRotation, IRotationLifecycle
 {
     private static readonly HashSet<string> HiddenQtKeys = new(StringComparer.Ordinal)
@@ -78,6 +78,7 @@ public sealed class NinjaRotation : IRotation, IRotationLifecycle
         [NinjaQts.Bhavacakra] = true,
         [NinjaQts.TenriJindo] = true,
         [NinjaQts.AutoTrueNorth] = true,
+        [NinjaQts.LongArm] = false,
         ["倾斜资源"] = false,
         ["斩杀"] = false,
         [NinjaQts.PrepareSuiton] = false
@@ -309,6 +310,14 @@ public sealed class NinjaRotation : IRotation, IRotationLifecycle
             NinjaSettings.Instance.Save();
         }
 
+        var extraRange = NinjaSettings.Instance.ExtraRange;
+        if (ImGui.DragFloat("长臂猿额外攻击距离", ref extraRange, 0.1f, 0f, 3f, "%.1f m"))
+        {
+            NinjaSettings.Instance.ExtraRange = Math.Clamp(extraRange, 0f, 3f);
+            NinjaSettings.Instance.Save();
+            NinjaHooks.Update();
+        }
+
     }
 
     private static bool GetQtDefault(string key)
@@ -403,12 +412,14 @@ public sealed class NinjaRotation : IRotation, IRotationLifecycle
     {
         events.Attach();
         NinjaActionInputGuard.Attach();
+        NinjaHooks.Update();
         RegisterCommands();
         ErosUIFramework.Install();
     }
 
     public void OnExitAcr()
     {
+        NinjaHooks.Dispose();
         NinjaActionInputGuard.Dispose();
         events.Dispose();
         UnregisterCommands();
@@ -612,11 +623,13 @@ internal sealed class NinjaEventHandler : IRotationEventHandler, IDisposable
 
     public void OnUpdate()
     {
+        NinjaHooks.Update();
         ConfirmSubmittedGcdFromRuntimeState();
         DropStaleOffGcdLock();
     }
     public void OnOutOfBattleUpdate()
     {
+        NinjaHooks.Update();
         if (Core.Target == null) TryPrepareSuiton();
     }
     public void OnBattleStarted()
@@ -631,6 +644,7 @@ internal sealed class NinjaEventHandler : IRotationEventHandler, IDisposable
     }
     public void OnBattleUpdate()
     {
+        NinjaHooks.Update();
         NinjaSequencePolicy.Update();
         ConfirmSubmittedGcdFromRuntimeState();
         DropStaleTcjBeforeTenriJindo();

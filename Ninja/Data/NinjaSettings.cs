@@ -22,6 +22,7 @@ internal sealed class NinjaSettings
     public bool RaitonWhenOutOfRange;
     public bool PhantomOnlyForRange;
     public bool ForceRaiton;
+    public float ExtraRange = 3f;
     public float TTK = 1.5f;
 
     public void Save()

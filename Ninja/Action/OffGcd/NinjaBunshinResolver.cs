@@ -20,5 +20,5 @@ internal sealed class NinjaBunshinResolver : NinjaResolver
         && Ready(NinjaActions.Bunshin) && JobGaugeHelper.NIN.Ninki >= 50
         && ActionHelper.GetActionCooldown(NinjaActions.MugCurrent) >= 1.06f ? Ok : No;
 
-    public override PAction GetAction() => Build(ActionHelper.GetAdjustedActionId(NinjaActions.Bunshin), ActionType.OffGcd, ActionTargetType.Self);
+    public override PAction GetAction() => BuildNormal(ActionHelper.GetAdjustedActionId(NinjaActions.Bunshin), ActionType.OffGcd, ActionTargetType.Self);
 }

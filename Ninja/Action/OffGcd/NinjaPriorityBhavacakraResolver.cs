@@ -44,5 +44,5 @@ internal sealed class NinjaPriorityBhavacakraResolver : NinjaResolver
     }
 
     public override PAction GetAction() =>
-        Build(ActionHelper.GetAdjustedActionId(NinjaActions.Bhavacakra), ActionType.OffGcd, ActionTargetType.Target);
+        BuildNormal(ActionHelper.GetAdjustedActionId(NinjaActions.Bhavacakra), ActionType.OffGcd, ActionTargetType.Target);
 }

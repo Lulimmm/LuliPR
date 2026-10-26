@@ -49,5 +49,5 @@ internal sealed class NinjaTrueNorthResolver : NinjaResolver
         return No;
     }
 
-    public override PAction GetAction() => Build(NinjaActions.TrueNorth, ActionType.OffGcd, ActionTargetType.Self);
+    public override PAction GetAction() => BuildNormal(NinjaActions.TrueNorth, ActionType.OffGcd, ActionTargetType.Self);
 }
