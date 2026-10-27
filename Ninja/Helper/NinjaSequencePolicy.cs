@@ -57,9 +57,17 @@ internal static class NinjaSequencePolicy
     public static void Reset() => End();
 
     public static bool IsNormalMudraActive =>
+        IsNormalMudraSequenceActive
+        && Core.Me?.HasStatus(NinjaActions.MudraStatus) == true;
+
+    // StartCast is available before the 496 status packet is visible. Keep a
+    // separate sequence-level flag so normal mudra inputs can acknowledge
+    // their own verified command at that boundary. Without this distinction,
+    // the generic AEP verifier can retry an already accepted Ten/Chi/Jin
+    // after its 500ms recast and submit the same mudra twice.
+    public static bool IsNormalMudraSequenceActive =>
         active
-        && terminalAction is NinjaActions.Suiton or NinjaActions.Raiton or NinjaActions.HyoshoRanryu
-        && Core.Me?.HasStatus(NinjaActions.MudraStatus) == true
+        && (terminalAction is NinjaActions.Suiton or NinjaActions.Raiton or NinjaActions.HyoshoRanryu)
         && !NinjaCombatState.HasTcjBuff;
 
     public static bool IsActive => active;

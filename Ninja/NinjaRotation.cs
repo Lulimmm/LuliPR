@@ -32,7 +32,7 @@ using Ninja.PR.UI;
 
 namespace Ninja.PR;
 
-[RotationMetadata(30u, "Luli Ninja PR", "Cino", "1.2.0", ContentScope = AcrContentScope.HighEnd)]
+[RotationMetadata(30u, "Luli Ninja PR", "Cino", "1.2.1", ContentScope = AcrContentScope.HighEnd)]
 public sealed class NinjaRotation : IRotation, IRotationLifecycle
 {
     private static readonly HashSet<string> HiddenQtKeys = new(StringComparer.Ordinal)
@@ -130,10 +130,11 @@ public sealed class NinjaRotation : IRotation, IRotationLifecycle
             qtIsVisibleInMode: (key, _) => !HiddenQtKeys.Contains(key),
             qtDefault: GetQtDefault,
             qtCascadeRules: new Dictionary<string, (string key, bool invert)[]>(),
-            hotkeyNames: new[] { "缩地" },
+            hotkeyNames: new[] { "\u7f29\u5730", "\u80cc\u5bf9\u6444\u50cf\u673a\u7f29\u5730" },
             buildHotkeys: b =>
             {
-                b.Execute("缩地", new NinjaMovementHotkey(), iconActionID: NinjaActions.Shukuchi);
+                b.Execute("\u7f29\u5730", new NinjaMovementHotkey(), iconActionID: NinjaActions.Shukuchi);
+                b.Execute("\u80cc\u5bf9\u6444\u50cf\u673a\u7f29\u5730", new NinjaMovementHotkey(true), iconActionID: NinjaActions.Shukuchi);
             },
             author: "Cino",
             drawGeneralSettings: DrawGeneralSettings,
@@ -161,6 +162,12 @@ public sealed class NinjaRotation : IRotation, IRotationLifecycle
         if (NinjaCombatState.IsTcjSequenceActive)
             return NextTcjOnly();
         if (NinjaNoLossOpenerRuntime.ShouldHoldNormalDecisions)
+            return null;
+
+        // A normal mudra sequence owns the GCD until 496 disappears. The
+        // queued Ten/Chi/Jin actions are consumed by ActionUpdater; no other
+        // ninjutsu resolver may start a second sequence in the same window.
+        if (NinjaSequencePolicy.IsNormalMudraActive)
             return null;
 
         // Do not let an earlier normal GCD resolver consume the slot when the
@@ -480,7 +487,7 @@ public sealed class NinjaRotation : IRotation, IRotationLifecycle
         if (commandRegistered) return;
         Svc.Commands.AddHandler("/lldd", new CommandInfo(HandleLldd)
         {
-            HelpMessage = "使用忍者缩地"
+            HelpMessage = "Use Shukuchi; add 'bd' for the direction opposite the camera"
         });
         commandRegistered = true;
     }
@@ -492,7 +499,13 @@ public sealed class NinjaRotation : IRotation, IRotationLifecycle
         commandRegistered = false;
     }
 
-    private static void HandleLldd(string command, string args) => NinjaMovementHotkey.TryUse();
+    private static void HandleLldd(string command, string args)
+    {
+        if (args.Trim().Equals("bd", StringComparison.OrdinalIgnoreCase))
+            NinjaMovementHotkey.TryUseOppositeCamera();
+        else
+            NinjaMovementHotkey.TryUse();
+    }
 }
 
 internal sealed class NinjaEventHandler : IRotationEventHandler, IDisposable
@@ -524,10 +537,18 @@ internal sealed class NinjaEventHandler : IRotationEventHandler, IDisposable
     {
         if (action.SourceId != Core.Me?.EntityId) return;
         RecoverManualIntervention(action.ActionId);
-        // StartCast is the UAL-side signal. Do not feed AEP here: the action
-        // has not completed yet, and doing so can advance a queued mudra
-        // before its recast/effect is actually accepted.
+        // StartCast is the UAL-side signal. General actions are confirmed
+        // through their effect packet below; normal mudra inputs get a
+        // separate one-shot acknowledgement immediately after this call.
         ActionUpdaterRouter.NotifyUAL(action.ActionId);
+        // Normal mudra actions are accepted at StartCast, while their AEP is
+        // not emitted consistently by every client path. Confirm only these
+        // six inputs here so the generic AEP retry loop cannot submit the same
+        // mudra again after its 500ms recast. The terminal ninjutsu keeps the
+        // normal effect-based verification below.
+        if (NinjaSequencePolicy.IsNormalMudraSequenceActive
+            && IsNormalMudraInput(action.ActionId))
+            ActionUpdaterRouter.NotifyAEP(action.ActionId);
         if (IsTenChiJinEvent(action.ActionId))
         {
             // A GCD decision queued immediately before TCJ must not run in
@@ -545,7 +566,16 @@ internal sealed class NinjaEventHandler : IRotationEventHandler, IDisposable
             ActionQueueManager.ClearNormalQueues();
         }
         NinjaCombatState.Record(action.ActionId);
+        // The cast packet arrives before the action-effect packet on some
+        // client paths. Reserve the single post-ninjutsu weave immediately
+        // so a delayed effect packet cannot allow a second ability in the
+        // same GCD.
+        NinjaCombatState.RecordNinjutsuStarted(action.ActionId);
     }
+
+    private static bool IsNormalMudraInput(uint actionId) => actionId is
+        NinjaActions.Ten or NinjaActions.Chi or NinjaActions.Jin
+        or NinjaActions.TenCombo or NinjaActions.ChiCombo or NinjaActions.JinCombo;
 
     private static void OnActionEffect(ActionEffectEvent action)
     {

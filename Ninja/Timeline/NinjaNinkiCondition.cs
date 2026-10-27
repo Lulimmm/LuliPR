@@ -17,6 +17,11 @@ public sealed class NinjaJobNodeProvider : IJobNodeProvider
         NinjaNinkiCondition.Register(context);
         NinjaSettingAction.Register(context);
         NinjaQtAction.Register(context);
+        NinjaTriggerTrickDelayAction.Register(context);
+        NinjaTriggerForceRaitonAction.Register(context);
+        NinjaTriggerRaitonBackstabAction.Register(context);
+        NinjaTriggerRaitonRangeAction.Register(context);
+        NinjaTriggerP5BunshinAction.Register(context);
     }
 
     public IReadOnlyList<(string DisplayName, string Description, Func<ICondition> Create)> GetConditionDescriptors()
@@ -28,8 +33,14 @@ public sealed class NinjaJobNodeProvider : IJobNodeProvider
     public IReadOnlyList<(string DisplayName, string Description, Func<IAction> Create)> GetActionDescriptors()
         => new (string, string, Func<IAction>)[]
         {
+            // Keep the original aggregate nodes for existing timelines.
             ("Ninja/设置开关", "在时间轴触发时设置 Ninja 循环选项", () => new NinjaSettingAction()),
-            ("Ninja/设置 QT", "在时间轴触发时开关 Ninja QT", () => new NinjaQtAction()),
+            ("Ninja/QT设置", "AE TriggerAction_Qt：在时间轴触发时开关 Ninja QT", () => new NinjaQtAction()),
+            ("Ninja/延后小背刺至大背刺", "AE TriggerAction_Settings：设置下一个小背刺是否延后到大背刺", () => new NinjaTriggerTrickDelayAction()),
+            ("Ninja/硬砸雷遁", "AE TriggerAction_RaitonSettings：设置是否强制使用雷遁", () => new NinjaTriggerForceRaitonAction()),
+            ("Ninja/雷遁背刺", "AE TriggerAction_RaitonBeici：设置雷遁背刺策略", () => new NinjaTriggerRaitonBackstabAction()),
+            ("Ninja/远离雷遁止损", "AE TriggerAction_远离雷遁：设置远程雷遁止损", () => new NinjaTriggerRaitonRangeAction()),
+            ("Ninja/P5完美分身", "AE TriggerAction_P5Pbunshin：设置 P5 完美分身资源保留", () => new NinjaTriggerP5BunshinAction()),
         };
 }
 
@@ -40,7 +51,7 @@ public sealed class NinjaQtAction : IAction, ISerializableAction, IJobNodeDescri
     private int qtIndex;
     private bool enabled = true;
 
-    public string NodeDisplayName => "Ninja/设置 QT";
+    public string NodeDisplayName => "Ninja/QT设置";
     public NodeParamInfo[] Params => new[]
     {
         new NodeParamInfo("qt", "QT", "需要修改的 Ninja QT", "enum",
@@ -215,6 +226,133 @@ public sealed class NinjaSettingAction : IAction, ISerializableAction, IJobNodeD
             return action;
         });
     }
+}
+
+/// <summary>
+/// Shared implementation for the boolean AE Ninja trigger actions.
+/// Each concrete action keeps its own type key so timelines can select the
+/// same setting granularity as the original AE rotation.
+/// </summary>
+public abstract class NinjaTriggerBooleanAction : IAction, ISerializableAction, IJobNodeDescriptor
+{
+    protected bool Enabled;
+
+    protected abstract string TypeKey { get; }
+    protected abstract string SettingLabel { get; }
+    public abstract string NodeDisplayName { get; }
+
+    public NodeParamInfo[] Params => new[]
+    {
+        new NodeParamInfo("enabled", "启用", "开启或关闭该 Ninja Trigger 设置", "bool"),
+    };
+
+    public bool Draw()
+    {
+        var value = Enabled;
+        if (!ImGui.Checkbox(SettingLabel, ref value)) return false;
+        Enabled = value;
+        return true;
+    }
+
+    public string GetParam(string fieldName)
+        => fieldName == "enabled" ? Enabled.ToString() : string.Empty;
+
+    public void SetParam(string fieldName, string value)
+    {
+        if (fieldName == "enabled" && bool.TryParse(value, out var enabled))
+            Enabled = enabled;
+    }
+
+    public void Execute() => Apply(Enabled);
+
+    protected abstract void Apply(bool enabled);
+
+    public ActionDto ToDto() => new()
+    {
+        Type = TypeKey,
+        Enabled = true,
+        Params = new Dictionary<string, string>
+        {
+            ["enabled"] = Enabled.ToString(),
+        },
+    };
+
+    protected static void RegisterType<T>(RotationNodeContext context, string typeKey)
+        where T : NinjaTriggerBooleanAction, new()
+    {
+        ActionFactory.Register(context, typeKey, dto =>
+        {
+            var action = new T();
+            if (dto.Params != null && dto.Params.TryGetValue("enabled", out var value))
+                action.SetParam("enabled", value);
+            return action;
+        });
+    }
+}
+
+public sealed class NinjaTriggerTrickDelayAction : NinjaTriggerBooleanAction
+{
+    protected override string TypeKey => "luli_ninja_trigger_trick_delay";
+    protected override string SettingLabel => "下一个小背刺延后至大背刺";
+    public override string NodeDisplayName => "Ninja/延后小背刺至大背刺";
+
+    protected override void Apply(bool enabled)
+        => NinjaSettings.Instance.TrickAttackDelayUntilNextMug = enabled;
+
+    public static void Register(RotationNodeContext context)
+        => RegisterType<NinjaTriggerTrickDelayAction>(context, "luli_ninja_trigger_trick_delay");
+}
+
+public sealed class NinjaTriggerForceRaitonAction : NinjaTriggerBooleanAction
+{
+    protected override string TypeKey => "luli_ninja_trigger_force_raiton";
+    protected override string SettingLabel => "硬砸雷遁";
+    public override string NodeDisplayName => "Ninja/硬砸雷遁";
+
+    protected override void Apply(bool enabled)
+        => NinjaSettings.Instance.ForceRaiton = enabled;
+
+    public static void Register(RotationNodeContext context)
+        => RegisterType<NinjaTriggerForceRaitonAction>(context, "luli_ninja_trigger_force_raiton");
+}
+
+public sealed class NinjaTriggerRaitonBackstabAction : NinjaTriggerBooleanAction
+{
+    protected override string TypeKey => "luli_ninja_trigger_raiton_backstab";
+    protected override string SettingLabel => "雷遁背刺";
+    public override string NodeDisplayName => "Ninja/雷遁背刺";
+
+    protected override void Apply(bool enabled)
+        => NinjaSettings.Instance.RaitonBackstab = enabled;
+
+    public static void Register(RotationNodeContext context)
+        => RegisterType<NinjaTriggerRaitonBackstabAction>(context, "luli_ninja_trigger_raiton_backstab");
+}
+
+public sealed class NinjaTriggerRaitonRangeAction : NinjaTriggerBooleanAction
+{
+    protected override string TypeKey => "luli_ninja_trigger_raiton_range";
+    protected override string SettingLabel => "远离雷遁止损";
+    public override string NodeDisplayName => "Ninja/远离雷遁止损";
+
+    protected override void Apply(bool enabled)
+        => PromeSettings.Instance.SetQt(NinjaQts.RaitonWhenOutOfRange, enabled);
+
+    public static void Register(RotationNodeContext context)
+        => RegisterType<NinjaTriggerRaitonRangeAction>(context, "luli_ninja_trigger_raiton_range");
+}
+
+public sealed class NinjaTriggerP5BunshinAction : NinjaTriggerBooleanAction
+{
+    protected override string TypeKey => "luli_ninja_trigger_p5_bunshin";
+    protected override string SettingLabel => "P5完美分身";
+    public override string NodeDisplayName => "Ninja/P5完美分身";
+
+    protected override void Apply(bool enabled)
+        => NinjaSettings.Instance.P5PerfectBunshin = enabled;
+
+    public static void Register(RotationNodeContext context)
+        => RegisterType<NinjaTriggerP5BunshinAction>(context, "luli_ninja_trigger_p5_bunshin");
 }
 
 public sealed class NinjaNinkiCondition : ICondition, ISerializableCondition, IJobNodeDescriptor

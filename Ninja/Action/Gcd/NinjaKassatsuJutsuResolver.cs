@@ -21,6 +21,7 @@ internal sealed class NinjaKassatsuJutsuResolver : NinjaResolver
         var target = Core.Target;
         if (me?.HasStatus(NinjaActions.KassatsuStatus) != true
             || NinjaCombatState.IsTcjSequenceActive
+            || NinjaSequencePolicy.IsNormalMudraActive
             || target?.CanUseAttackActionOn() != true) return No;
         if (PromeSettings.Instance.GetQt("倾斜资源")) return Ok;
         if (PromeSettings.Instance.GetQt("斩杀") && target.MaxHp > 0

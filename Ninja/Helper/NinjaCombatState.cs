@@ -24,8 +24,10 @@ internal static class NinjaCombatState
     public static long LastObservedActionAt { get; private set; }
     private static uint LastConfirmedActionId { get; set; }
     private static long LastConfirmedActionAt { get; set; }
-    // AE's AfterSpell sets CurrGcdAbilityCount to 1 after the final
-    // ninjutsu. Keep the same one-oGCD budget until the next GCD confirms.
+    private static uint LastNinjutsuStartedActionId { get; set; }
+    private static long LastNinjutsuStartedActionAt { get; set; }
+    // AE's AfterSpell sets CurrGcdAbilityCount to 1 after a ninjutsu. Keep
+    // the same one-oGCD budget until the next GCD confirms.
     public static int PostNinjutsuOffGcdLimit { get; private set; }
     public static int PostNinjutsuOffGcdUsed { get; private set; }
     public static bool IsPostNinjutsuOffGcdLimited => PostNinjutsuOffGcdLimit > 0;
@@ -51,6 +53,8 @@ internal static class NinjaCombatState
         LastObservedActionAt = 0;
         LastConfirmedActionId = 0;
         LastConfirmedActionAt = 0;
+        LastNinjutsuStartedActionId = 0;
+        LastNinjutsuStartedActionAt = 0;
         PostNinjutsuOffGcdLimit = 0;
         PostNinjutsuOffGcdUsed = 0;
         GcdOffGcdUsed = 0;
@@ -96,6 +100,28 @@ internal static class NinjaCombatState
     // This is called only for confirmed action-effect events. Start-cast
     // events are intentionally excluded so an unsuccessful input cannot
     // consume the AE-equivalent oGCD budget.
+    //
+    // StartCast is still used as an early guard for ninjutsu below. The
+    // client can expose the cast before its effect packet, and that gap is
+    // long enough for the second weave to be selected. The effect path
+    // remains authoritative for normal actions and keeps the same state in
+    // sync when StartCast is missing.
+    public static void RecordNinjutsuStarted(uint id)
+    {
+        ClearExpiredPendingTcj();
+        var now = Environment.TickCount64;
+        var canonical = CanonicalActionId(id);
+        if (!IsNinjutsuAction(canonical)) return;
+        if (canonical == LastNinjutsuStartedActionId
+            && now - LastNinjutsuStartedActionAt <= 250) return;
+
+        LastNinjutsuStartedActionId = canonical;
+        LastNinjutsuStartedActionAt = now;
+        GcdOffGcdUsed = 0;
+        PostNinjutsuOffGcdLimit = 1;
+        PostNinjutsuOffGcdUsed = 0;
+    }
+
     public static void RecordConfirmed(uint id)
     {
         ClearExpiredPendingTcj();
@@ -110,12 +136,13 @@ internal static class NinjaCombatState
         LastConfirmedActionAt = now;
         if (IsGcdAction(canonical))
         {
-            // A confirmed GCD starts a new PR oGCD budget. The final
-            // ninjutsu gets the AE-specific one-oGCD exception below.
+            // A confirmed GCD starts a new PR oGCD budget. Every ninjutsu
+            // gets the AE-specific one-oGCD exception below; this is not
+            // limited to the final spell in a mudra sequence.
             GcdOffGcdUsed = 0;
             PostNinjutsuOffGcdLimit = 0;
             PostNinjutsuOffGcdUsed = 0;
-            if (IsFinalNinjutsu(canonical))
+            if (IsNinjutsuAction(canonical))
                 PostNinjutsuOffGcdLimit = 1;
             return;
         }
@@ -130,8 +157,13 @@ internal static class NinjaCombatState
         }
     }
 
-    private static bool IsFinalNinjutsu(uint id) => id is NinjaActions.Suiton
-        or NinjaActions.Raiton or NinjaActions.TcjSuiton or NinjaActions.HyoshoRanryu;
+    private static bool IsNinjutsuAction(uint id) => id is
+        2260u or NinjaActions.FumaShuriken or 2266u or NinjaActions.Raiton
+        or 2268u or NinjaActions.HyoshoRanryu or 2269u or 2270u
+        or NinjaActions.Suiton or NinjaActions.Rabbit
+        or NinjaActions.TcjFumaShuriken or 18874u or 18875u
+        or 18876u or NinjaActions.TcjRaiton or 18878u or 18879u or 18880u
+        or NinjaActions.TcjSuiton;
 
     private static bool IsGcdAction(uint id) => id is NinjaActions.SpinningEdge
         or NinjaActions.GustSlash or NinjaActions.AeolianEdge or NinjaActions.ArmorCrush
@@ -139,8 +171,10 @@ internal static class NinjaCombatState
         or NinjaActions.Ten or 2260u or 2261u or 2263u
         or 2266u or 2268u or 2269u or 2270u
         or 16491u
-        or NinjaActions.TcjFumaShuriken or NinjaActions.TcjRaiton or NinjaActions.TcjSuiton
-        or 18876u or 18878u or 18880u
+        or NinjaActions.Rabbit
+        or NinjaActions.TcjFumaShuriken or 18874u or 18875u
+        or NinjaActions.TcjRaiton or 18878u or 18879u
+        or NinjaActions.TcjSuiton or 18876u or 18880u
         or NinjaActions.TenCombo or NinjaActions.ChiCombo or NinjaActions.JinCombo
         or NinjaActions.PhantomKamaitachi or NinjaActions.FleetingRaiju
         or NinjaActions.HyoshoRanryu;

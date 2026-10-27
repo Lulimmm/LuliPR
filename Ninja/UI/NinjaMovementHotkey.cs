@@ -14,6 +14,13 @@ namespace Ninja.PR.UI;
 // targeting the current enemy.
 internal sealed class NinjaMovementHotkey : IHotkeyLogic
 {
+    private readonly bool oppositeCamera;
+
+    public NinjaMovementHotkey(bool oppositeCamera = false)
+    {
+        this.oppositeCamera = oppositeCamera;
+    }
+
     // Match AE's IsUnlockWithCDCheck: reject the short post-cast duplicate
     // window, accept a ready charge, and allow the 100 ms ability queue window
     // when the last charge is about to become available.
@@ -31,15 +38,24 @@ internal sealed class NinjaMovementHotkey : IHotkeyLogic
 
     public bool IsActive() => HasCharge();
 
-    public void OnClick() => TryUse();
+    public void OnClick() => TryUse(oppositeCamera);
 
     public static void TryUse()
+        => TryUse(false);
+
+    public static void TryUseOppositeCamera()
+        => TryUse(true);
+
+    private static void TryUse(bool oppositeCamera)
     {
         if (!HasCharge()) return;
         var me = PromeRotation.Core.Core.Me;
         if (me == null) return;
 
         if (!TryGetCameraRotation(out var cameraRotation)) return;
+
+        if (oppositeCamera)
+            cameraRotation += MathF.PI;
 
         ActionHelper.UseActionLocation(
             NinjaActions.Shukuchi,
