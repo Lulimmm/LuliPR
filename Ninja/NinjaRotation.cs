@@ -32,13 +32,17 @@ using Ninja.PR.UI;
 
 namespace Ninja.PR;
 
-[RotationMetadata(30u, "Luli Ninja PR", "Cino", "1.2.1", ContentScope = AcrContentScope.HighEnd)]
+[RotationMetadata(30u, "Luli Ninja PR", "Cino", "1.2.2", ContentScope = AcrContentScope.HighEnd)]
 public sealed class NinjaRotation : IRotation, IRotationLifecycle
 {
     private static readonly HashSet<string> HiddenQtKeys = new(StringComparer.Ordinal)
     {
-        "倾斜资源", "斩杀", NinjaQts.PrepareSuiton
+        "倾斜资源", "斩杀", NinjaQts.PrepareSuiton,
+        NinjaQts.Raiju, NinjaQts.Bunshin, NinjaQts.Phantom,
+        NinjaQts.Bhavacakra, NinjaQts.AutoTrueNorth, NinjaQts.TenriJindo,
+        NinjaQts.Assassinate, NinjaQts.LongArm, NinjaQts.RaitonWhenOutOfRange
     };
+    private const string LegacyPositionalQt = "身位提示";
     internal static readonly MethodInfo? PeekLockedActionMethod = typeof(ActionUpdater)
         .GetMethod("PeekCurrentLockedAction", BindingFlags.Static | BindingFlags.NonPublic);
     internal static readonly FieldInfo? ActiveCommandField = typeof(ActionUpdater)
@@ -67,7 +71,7 @@ public sealed class NinjaRotation : IRotation, IRotationLifecycle
         [NinjaQts.SmallTrick] = true,
         [NinjaQts.TenChiJin] = true,
         ["生杀予夺"] = true,
-        ["梦幻三段"] = true,
+        [NinjaQts.Assassinate] = true,
         [NinjaQts.Suiton] = true,
         [NinjaQts.Raiton] = true,
         [NinjaQts.RaitonWhenOutOfRange] = false,
@@ -122,6 +126,7 @@ public sealed class NinjaRotation : IRotation, IRotationLifecycle
         // Assassinate, Bhavacakra, True North. Kassatsu and Trick Attack
         // remain in the Always list above.
         ogcd = new() { priorityBhavacakra, new NinjaMugResolver(), new NinjaBunshinResolver(), new NinjaTenChiJinResolver(), new NinjaMeisuiResolver(), tenriJindo, new NinjaAssassinateResolver(), new NinjaOgcdResolver(IsComboResolverFirst, IsRaijuResolverFirst), new NinjaTrueNorthResolver(IsComboResolverFirst) };
+        MigrateLegacyPositionalQt();
         ErosUIFramework.Configure(
             jobTag: "NIN",
             jobName: "Ninja",
@@ -130,11 +135,12 @@ public sealed class NinjaRotation : IRotation, IRotationLifecycle
             qtIsVisibleInMode: (key, _) => !HiddenQtKeys.Contains(key),
             qtDefault: GetQtDefault,
             qtCascadeRules: new Dictionary<string, (string key, bool invert)[]>(),
-            hotkeyNames: new[] { "\u7f29\u5730", "\u80cc\u5bf9\u6444\u50cf\u673a\u7f29\u5730" },
+            hotkeyNames: new[] { "\u7f29\u5730", "\u80cc\u5bf9\u6444\u50cf\u673a\u7f29\u5730", "\u5f3a\u5236\u96f7\u9041" },
             buildHotkeys: b =>
             {
                 b.Execute("\u7f29\u5730", new NinjaMovementHotkey(), iconActionID: NinjaActions.Shukuchi);
                 b.Execute("\u80cc\u5bf9\u6444\u50cf\u673a\u7f29\u5730", new NinjaMovementHotkey(true), iconActionID: NinjaActions.Shukuchi);
+                b.Execute("\u5f3a\u5236\u96f7\u9041", new NinjaRaitonHotkey(), iconActionID: NinjaActions.Raiton);
             },
             author: "Cino",
             drawGeneralSettings: DrawGeneralSettings,
@@ -325,6 +331,14 @@ public sealed class NinjaRotation : IRotation, IRotationLifecycle
             NinjaSettings.Instance.Save();
         }
 
+        ImGui.SameLine(0f, 24f);
+        var positional = NinjaSettings.Instance.Positional;
+        if (ImGui.Checkbox("身位提示", ref positional))
+        {
+            NinjaSettings.Instance.Positional = positional;
+            NinjaSettings.Instance.Save();
+        }
+
         var extraRange = NinjaSettings.Instance.ExtraRange;
         if (ImGui.DragFloat("长臂猿额外攻击距离", ref extraRange, 0.1f, 0f, 3f, "%.1f m"))
         {
@@ -337,6 +351,16 @@ public sealed class NinjaRotation : IRotation, IRotationLifecycle
 
     private static bool GetQtDefault(string key)
         => QtList.TryGetValue(key, out var value) && value;
+
+    private static void MigrateLegacyPositionalQt()
+    {
+        if (!PromeSettings.Instance.QuickToggles.TryGetValue(LegacyPositionalQt, out var enabled))
+            return;
+
+        NinjaSettings.Instance.Positional = enabled;
+        PromeSettings.Instance.QuickToggles.Remove(LegacyPositionalQt);
+        NinjaSettings.Instance.Save();
+    }
 
     private static void MigrateQtKey(string key)
     {
@@ -466,6 +490,7 @@ public sealed class NinjaRotation : IRotation, IRotationLifecycle
     public IRotationEventHandler GetEventHandler() => events;
     public void OnEnterAcr()
     {
+        NinjaWeavePolicy.Enter();
         events.Attach();
         NinjaActionInputGuard.Attach();
         NinjaHooks.Update();
@@ -475,6 +500,8 @@ public sealed class NinjaRotation : IRotation, IRotationLifecycle
 
     public void OnExitAcr()
     {
+        NinjaPositionDrawer.ResetLifecycle();
+        NinjaWeavePolicy.Exit();
         NinjaHooks.Dispose();
         NinjaActionInputGuard.Dispose();
         events.Dispose();
@@ -621,6 +648,7 @@ internal sealed class NinjaEventHandler : IRotationEventHandler, IDisposable
             PromeSettings.Instance.SetQt(NinjaQts.PrepareSuiton, false);
         if (action.ActionId is NinjaActions.TrickAttack or NinjaActions.TrickAttackCurrent)
             NinjaSettings.Instance.TrickAttackDelayUntilNextMug = false;
+
     }
 
     private static void OnActionEffectEntry(ActionEffectEntryEvent action)
@@ -708,6 +736,7 @@ internal sealed class NinjaEventHandler : IRotationEventHandler, IDisposable
     public void OnUpdate()
     {
         NinjaHooks.Update();
+        NinjaPositionDrawer.Update();
         NinjaAttemptDebug.Update();
         ConfirmSubmittedGcdFromRuntimeState();
         DropStaleOffGcdLock();
@@ -715,12 +744,14 @@ internal sealed class NinjaEventHandler : IRotationEventHandler, IDisposable
     public void OnOutOfBattleUpdate()
     {
         NinjaHooks.Update();
+        NinjaPositionDrawer.Update();
         if (Core.Target == null) TryPrepareSuiton();
     }
     public void OnBattleStarted()
     {
         NinjaSequencePolicy.Reset();
         NinjaCombatState.Reset();
+        NinjaPositionDrawer.OnBattleStarted();
         // RotationManager enqueues the selected opener before invoking the
         // rotation event handler. Start the strict GCD policy after that
         // queue has been created, so the handler reset cannot erase it.
@@ -1039,6 +1070,7 @@ internal sealed class NinjaEventHandler : IRotationEventHandler, IDisposable
     }
     public void OnBattleEnded()
     {
+        NinjaPositionDrawer.ResetLifecycle();
         NinjaNoLossOpenerRuntime.Reset();
         NinjaSequencePolicy.Reset();
         NinjaCombatState.Reset();
@@ -1048,6 +1080,7 @@ internal sealed class NinjaEventHandler : IRotationEventHandler, IDisposable
 
     public void OnTerritoryChanged(ushort territoryId)
     {
+        NinjaPositionDrawer.ResetLifecycle();
         NinjaNoLossOpenerRuntime.Reset();
         NinjaSequencePolicy.Reset();
         NinjaCombatState.Reset();

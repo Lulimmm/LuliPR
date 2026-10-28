@@ -1,5 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Numerics;
+using System.Text.Json;
 using Dalamud.Bindings.ImGui;
 using PromeRotation.Core;
 using PromeRotation.Data;
@@ -16,7 +19,7 @@ public sealed class NinjaJobNodeProvider : IJobNodeProvider
     {
         NinjaNinkiCondition.Register(context);
         NinjaSettingAction.Register(context);
-        NinjaQtAction.Register(context);
+        NinjaPrQtAction.Register(context);
         NinjaTriggerTrickDelayAction.Register(context);
         NinjaTriggerForceRaitonAction.Register(context);
         NinjaTriggerRaitonBackstabAction.Register(context);
@@ -35,7 +38,7 @@ public sealed class NinjaJobNodeProvider : IJobNodeProvider
         {
             // Keep the original aggregate nodes for existing timelines.
             ("Ninja/设置开关", "在时间轴触发时设置 Ninja 循环选项", () => new NinjaSettingAction()),
-            ("Ninja/QT设置", "AE TriggerAction_Qt：在时间轴触发时开关 Ninja QT", () => new NinjaQtAction()),
+            ("Ninja/PR QT", "按 qt2 模板批量设置 Ninja QT", () => new NinjaPrQtAction()),
             ("Ninja/延后小背刺至大背刺", "AE TriggerAction_Settings：设置下一个小背刺是否延后到大背刺", () => new NinjaTriggerTrickDelayAction()),
             ("Ninja/硬砸雷遁", "AE TriggerAction_RaitonSettings：设置是否强制使用雷遁", () => new NinjaTriggerForceRaitonAction()),
             ("Ninja/雷遁背刺", "AE TriggerAction_RaitonBeici：设置雷遁背刺策略", () => new NinjaTriggerRaitonBackstabAction()),
@@ -44,83 +47,134 @@ public sealed class NinjaJobNodeProvider : IJobNodeProvider
         };
 }
 
-public sealed class NinjaQtAction : IAction, ISerializableAction, IJobNodeDescriptor
+/// <summary>
+/// Batch QT trigger based on the Reaper qt2 template. Each selected QT has
+/// three states: not included, included and enabled, or included and disabled.
+/// </summary>
+public sealed class NinjaPrQtAction : IAction, ISerializableAction, IJobNodeDescriptor
 {
-    private const string TypeKey = "luli_ninja_qt";
+    private const string TypeKey = "luli_ninja_pr_qt";
+    private const string ValuesParam = "qtValues";
+    private readonly Dictionary<string, bool> qtValues = new(StringComparer.Ordinal);
+
     private static string[] QtNames => NinjaRotation.QtList.Keys.ToArray();
-    private int qtIndex;
-    private bool enabled = true;
 
-    public string NodeDisplayName => "Ninja/QT设置";
-    public NodeParamInfo[] Params => new[]
-    {
-        new NodeParamInfo("qt", "QT", "需要修改的 Ninja QT", "enum",
-            QtNames.Select(key => (key, key)).ToArray()),
-        new NodeParamInfo("enabled", "启用", "开启或关闭所选 QT", "bool"),
-    };
+    public string NodeDisplayName => "Ninja/PR QT";
+    public NodeParamInfo[] Params => Array.Empty<NodeParamInfo>();
 
-    public bool Draw()
+    public bool DrawJobNodeEditor()
     {
         var names = QtNames;
-        if (names.Length == 0) return false;
-        qtIndex = Math.Clamp(qtIndex, 0, names.Length - 1);
-        var changed = ImGui.Combo("QT", ref qtIndex, names, names.Length);
-        var value = enabled;
-        if (ImGui.Checkbox("启用", ref value))
+        ImGui.NewLine();
+        ImGui.Separator();
+        ImGui.Text("点击按钮在三种状态间切换：未添加 / 已关闭 / 已启用");
+        ImGui.NewLine();
+
+        var count = 0;
+        foreach (var qt in names)
         {
-            enabled = value;
-            changed = true;
+            ImGui.PushID(qt);
+            if (qtValues.TryGetValue(qt, out var isEnabled))
+                ImGui.PushStyleColor(ImGuiCol.Text, isEnabled
+                    ? new Vector4(0f, 1f, 0f, 1f)
+                    : new Vector4(1f, 0.4f, 0.7f, 1f));
+            else
+                ImGui.PushStyleColor(ImGuiCol.Text, new Vector4(1f, 1f, 1f, 1f));
+
+            if (ImGui.Button(qt))
+            {
+                if (!qtValues.TryGetValue(qt, out var value))
+                    qtValues[qt] = false;
+                else if (!value)
+                    qtValues[qt] = true;
+                else
+                    qtValues.Remove(qt);
+            }
+
+            ImGui.PopStyleColor();
+            ImGui.PopID();
+            if (++count % 5 != 0) ImGui.SameLine();
         }
-        return changed;
+
+        ImGui.NewLine();
+        ImGui.Separator();
+        if (qtValues.Count == 0) return true;
+
+        var toRemove = new List<string>();
+        foreach (var (qt, configuredValue) in qtValues)
+        {
+            var value = configuredValue;
+            ImGui.PushID(qt);
+            if (ImGui.Checkbox(" ", ref value)) qtValues[qt] = value;
+            ImGui.SameLine();
+            ImGui.Text(qt);
+            ImGui.SameLine();
+            var color = value ? new Vector4(0f, 1f, 0f, 1f) : new Vector4(1f, 0f, 0f, 1f);
+            ImGui.TextColored(in color, value ? "（已启用）" : "（已关闭）");
+            ImGui.SameLine();
+            if (ImGui.Button("删除")) toRemove.Add(qt);
+            ImGui.PopID();
+        }
+
+        foreach (var qt in toRemove) qtValues.Remove(qt);
+
+        ImGui.Separator();
+        if (ImGui.Button("全部启用"))
+        {
+            foreach (var qt in qtValues.Keys.ToList()) qtValues[qt] = true;
+        }
+        ImGui.SameLine();
+        if (ImGui.Button("全部关闭"))
+        {
+            foreach (var qt in qtValues.Keys.ToList()) qtValues[qt] = false;
+        }
+        ImGui.SameLine();
+        if (ImGui.Button("清除所有")) qtValues.Clear();
+        return true;
     }
 
-    public string GetParam(string fieldName) => fieldName switch
-    {
-        "qt" => QtNames.ElementAtOrDefault(qtIndex) ?? string.Empty,
-        "enabled" => enabled.ToString(),
-        _ => string.Empty,
-    };
+    public string GetParam(string fieldName)
+        => fieldName == ValuesParam ? JsonSerializer.Serialize(qtValues) : string.Empty;
 
     public void SetParam(string fieldName, string value)
     {
-        if (fieldName == "qt")
+        if (fieldName != ValuesParam || string.IsNullOrWhiteSpace(value)) return;
+        try
         {
-            var index = Array.IndexOf(QtNames, value);
-            if (index >= 0) qtIndex = index;
+            var values = JsonSerializer.Deserialize<Dictionary<string, bool>>(value);
+            if (values == null) return;
+            qtValues.Clear();
+            foreach (var (qt, enabled) in values)
+            {
+                if (NinjaRotation.QtList.ContainsKey(qt)) qtValues[qt] = enabled;
+            }
         }
-        else if (fieldName == "enabled" && bool.TryParse(value, out var parsed))
+        catch (JsonException)
         {
-            enabled = parsed;
+            qtValues.Clear();
         }
     }
 
     public void Execute()
     {
-        var key = GetParam("qt");
-        if (!string.IsNullOrEmpty(key)) PromeSettings.Instance.SetQt(key, enabled);
+        foreach (var (qt, enabled) in qtValues)
+            PromeSettings.Instance.SetQt(qt, enabled);
     }
 
     public ActionDto ToDto() => new()
     {
         Type = TypeKey,
         Enabled = true,
-        Params = new Dictionary<string, string>
-        {
-            ["qt"] = GetParam("qt"),
-            ["enabled"] = enabled.ToString(),
-        },
+        Params = new Dictionary<string, string> { [ValuesParam] = GetParam(ValuesParam) },
     };
 
     public static void Register(RotationNodeContext context)
     {
         ActionFactory.Register(context, TypeKey, dto =>
         {
-            var action = new NinjaQtAction();
-            if (dto.Params != null)
-            {
-                if (dto.Params.TryGetValue("qt", out var key)) action.SetParam("qt", key);
-                if (dto.Params.TryGetValue("enabled", out var value)) action.SetParam("enabled", value);
-            }
+            var action = new NinjaPrQtAction();
+            if (dto.Params?.TryGetValue(ValuesParam, out var values) == true)
+                action.SetParam(ValuesParam, values);
             return action;
         });
     }

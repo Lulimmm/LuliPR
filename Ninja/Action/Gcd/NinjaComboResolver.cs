@@ -24,9 +24,19 @@ internal sealed class NinjaComboResolver : NinjaResolver
 
     public override PAction GetAction()
     {
-        var last = ActionHelper.GetLastComboID();
         var me = Core.Me!;
         var target = Core.Target!;
+        var action = ResolveNextAction(me, target);
+        return BuildNormal(action, ActionType.Gcd, ActionTargetType.Target);
+    }
+
+    // Keep the positional indicator and the actual basic-combo resolver on
+    // exactly the same next-action calculation.
+    internal static uint ResolveNextAction(
+        Dalamud.Game.ClientState.Objects.Types.IBattleChara me,
+        Dalamud.Game.ClientState.Objects.Types.IBattleChara target)
+    {
+        var last = ActionHelper.GetLastComboID();
         var kazematoi = JobGaugeHelper.NIN.Kazematoi;
         var positional = TargetHelper.GetTargetPositional();
         uint action;
@@ -45,6 +55,6 @@ internal sealed class NinjaComboResolver : NinjaResolver
         }
         else action = last == NinjaActions.SpinningEdge && me.Level >= 4 ? NinjaActions.GustSlash : NinjaActions.SpinningEdge;
 
-        return BuildNormal(action, ActionType.Gcd, ActionTargetType.Target);
+        return action;
     }
 }

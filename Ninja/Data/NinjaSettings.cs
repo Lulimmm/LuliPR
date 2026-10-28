@@ -15,6 +15,7 @@ internal sealed class NinjaSettings
     public static NinjaSettings Instance { get; } = Load();
     public string Opener = NinjaOpener.StandardOpenerName;
     public bool OpenerBurst;
+    public bool Positional = true;
     public bool LockTrickAttackIntoMug = true;
     public bool TrickAttackDelayUntilNextMug;
     public bool P5PerfectBunshin;
