@@ -173,6 +173,21 @@ public static class ErosUIFramework
     /// <summary>Replay the embedded website-style loading splash.</summary>
     public static void ReplaySplash() => splash?.Replay();
 
+    /// <summary>
+    /// Persist the loading-animation preference and apply it to the current splash.
+    /// Enabling the option affects the next install/replay; changing it does not
+    /// unexpectedly cover the settings window with a new splash.
+    /// </summary>
+    public static void SetLoadingAnimationEnabled(bool enabled)
+    {
+        var commonSettings = ErosUICommonSettings.Instance;
+        commonSettings.EnableLoadingAnimation = enabled;
+        commonSettings.Save();
+
+        if (!enabled && splash != null)
+            splash.IsOpen = false;
+    }
+
     /// <summary>给宿主 DrawSettings 回调用的入口：绘制一个打开设置窗口的按钮。</summary>
     public static void DrawSettingsEntry()
     {

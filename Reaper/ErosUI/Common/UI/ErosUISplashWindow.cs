@@ -29,11 +29,16 @@ internal sealed class ErosUISplashWindow : Window
     {
         RespectCloseHotkey = false;
         AllowBackgroundBlur = false;
-        IsOpen = true;
+        IsOpen = ErosUICommonSettings.Instance.EnableLoadingAnimation;
     }
 
     public void Replay()
     {
+        if (!ErosUICommonSettings.Instance.EnableLoadingAnimation)
+        {
+            IsOpen = false;
+            return;
+        }
         startedAt = -1d;
         IsOpen = true;
     }

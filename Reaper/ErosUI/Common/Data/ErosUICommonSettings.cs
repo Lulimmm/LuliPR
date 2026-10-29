@@ -20,6 +20,12 @@ public class ErosUICommonSettings
     [JsonPropertyName("UiMode")]
     public SettingsUIMode UIMode = SettingsUIMode.Night;
 
+    // Whether the website-style loading animation is shown when the ACR UI is installed.
+    // Keep this enabled by default so existing users retain the current startup behavior;
+    // missing fields in older Common.json files are populated by the CLR default.
+    [JsonPropertyName("EnableLoadingAnimation")]
+    public bool EnableLoadingAnimation = true;
+
     // 切换 UI 主题并落盘
     public void SetUIMode(SettingsUIMode mode)
     {

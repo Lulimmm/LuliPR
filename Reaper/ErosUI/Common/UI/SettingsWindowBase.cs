@@ -216,7 +216,16 @@ public abstract partial class SettingsWindowBase : Window
         DrawThemeOption("夜间", SettingsUIMode.Night, "侧边栏导航 + 深色纯色底");
         DrawThemeOption("日间", SettingsUIMode.Day, "侧边栏导航 + 米白纯色底");
         ImGui.Spacing();
-        if (SettingRow.Button("重播载入动画", "重新播放网站风格的像素载入动画"))
+
+        SettingRow.SectionTitle("载入动画");
+        var commonSettings = ErosUICommonSettings.Instance;
+        var loadingAnimationEnabled = commonSettings.EnableLoadingAnimation;
+        if (SettingRow.Checkbox("启用载入动画", ref loadingAnimationEnabled,
+                "安装 ACR 界面时播放网站风格的像素载入动画"))
+            ErosUIFramework.SetLoadingAnimationEnabled(loadingAnimationEnabled);
+
+        if (loadingAnimationEnabled &&
+            SettingRow.Button("重播载入动画", "重新播放网站风格的像素载入动画"))
             ErosUIFramework.ReplaySplash();
     }
 
