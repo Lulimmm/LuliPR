@@ -1,5 +1,6 @@
 ﻿using System.Numerics;
 using Dalamud.Bindings.ImGui;
+using Dalamud.Interface.Textures.TextureWraps;
 using Dalamud.Interface.Windowing;
 using PromeRotation.Data;
 
@@ -63,6 +64,10 @@ public sealed partial class CombatControlWindow : Window
     private double lastPetInteractionAt;
     private bool pendingPetClick;
     private double pendingPetClickAt;
+    // Keep names only, never texture-wrap instances. A wrap is owned by Dalamud
+    // and can be replaced/disposed between frames.
+    private string? lastReadyPetFrame;
+    private string? lastReadySealFrame;
     private Vector2 petFlyFrom;
     private Vector2 petFlyTarget;
     private double petFlyEndsAt;
@@ -217,14 +222,36 @@ public sealed partial class CombatControlWindow : Window
         }
         var acrOff = PromeSettings.Instance.EnableAcr == AcrState.Off;
         var frame = acrOff ? GetSealFrame(now) : GetPetFrame(now);
+        var drawFrame = frame;
         var texture = ErosUILayer.GetResourceTextureWrap(frame);
-        if (texture != null)
+        if (!IsReadyTexture(texture))
         {
-            // 网站通过 scaleX(-1) 翻转朝向；对 ImGui 纹理交换 U 坐标即可得到同样效果。
-            var uv0 = petFacingLeft ? new Vector2(1f, 0f) : Vector2.Zero;
-            var uv1 = petFacingLeft ? new Vector2(0f, 1f) : Vector2.One;
-            drawList.AddImage(texture.Handle, pos, pos + PetSize, uv0, uv1,
-                SimplePalette.ToU32(new Vector4(1f, 1f, 1f, hovered ? 1f : 0.96f)));
+            var fallbackFrame = acrOff ? lastReadySealFrame : lastReadyPetFrame;
+            if (fallbackFrame != null)
+            {
+                drawFrame = fallbackFrame;
+                texture = ErosUILayer.GetResourceTextureWrap(fallbackFrame);
+            }
+        }
+
+        if (IsReadyTexture(texture))
+        {
+            if (acrOff) lastReadySealFrame = drawFrame;
+            else lastReadyPetFrame = drawFrame;
+
+            try
+            {
+                // 网站通过 scaleX(-1) 翻转朝向；对 ImGui 纹理交换 U 坐标即可得到同样效果。
+                var uv0 = petFacingLeft ? new Vector2(1f, 0f) : Vector2.Zero;
+                var uv1 = petFacingLeft ? new Vector2(0f, 1f) : Vector2.One;
+                drawList.AddImage(texture!.Handle, pos, pos + PetSize, uv0, uv1,
+                    SimplePalette.ToU32(new Vector4(1f, 1f, 1f, hovered ? 1f : 0.96f)));
+            }
+            catch (ObjectDisposedException)
+            {
+                if (acrOff) lastReadySealFrame = null;
+                else lastReadyPetFrame = null;
+            }
         }
 
         if (hovered)
@@ -241,6 +268,21 @@ public sealed partial class CombatControlWindow : Window
         petState = PetVisualState.Jump;
         petVariant = (petVariant + 1) % JumpPetAnimations.Length;
         petStateStartedAt = ImGui.GetTime();
+    }
+
+    private static bool IsReadyTexture(IDalamudTextureWrap? texture)
+    {
+        if (texture == null) return false;
+        try
+        {
+            // GetWrapOrEmpty returns a valid empty wrap while an embedded frame
+            // is still loading. Do not replace a visible frame with that wrap.
+            return texture.Width > 1 && texture.Height > 1;
+        }
+        catch (ObjectDisposedException)
+        {
+            return false;
+        }
     }
 
     private void UpdatePetState()
