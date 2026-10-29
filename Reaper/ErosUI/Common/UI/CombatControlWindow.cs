@@ -1,6 +1,5 @@
 ﻿using System.Numerics;
 using Dalamud.Bindings.ImGui;
-using Dalamud.Interface.Textures.TextureWraps;
 using Dalamud.Interface.Windowing;
 using PromeRotation.Data;
 
@@ -55,10 +54,6 @@ public sealed partial class CombatControlWindow : Window
     private readonly System.Action<Vector2>? savePosition;
     private bool persistPending;
     private bool petDragging;
-    // Manifest textures upload asynchronously. Keep the last ready frame so a
-    // frame still uploading cannot clear the pet for one render tick.
-    private IDalamudTextureWrap? lastPetTexture;
-    private IDalamudTextureWrap? lastSealTexture;
     private bool petStateInitialized;
     private PetVisualState petState = PetVisualState.Idle;
     private int petVariant;
@@ -66,6 +61,8 @@ public sealed partial class CombatControlWindow : Window
     private double nextIdleVariantAt;
     private double nextFlyAt;
     private double lastPetInteractionAt;
+    private bool pendingPetClick;
+    private double pendingPetClickAt;
     private Vector2 petFlyFrom;
     private Vector2 petFlyTarget;
     private double petFlyEndsAt;
@@ -141,6 +138,15 @@ public sealed partial class CombatControlWindow : Window
         ImGui.InvisibleButton("##cc_pet", PetSize);
         var hovered = ImGui.IsItemHovered();
         var rightClicked = ImGui.IsItemClicked(ImGuiMouseButton.Right);
+        var doubleClicked = hovered && ImGui.IsMouseDoubleClicked(ImGuiMouseButton.Left);
+
+        if (doubleClicked)
+        {
+            // A double click has its own action. Cancel the delayed single-click
+            // action so it cannot also toggle the ACR state.
+            pendingPetClick = false;
+            ErosUIFramework.CloseAuxiliaryPanels();
+        }
 
         if (hovered && (ImGui.IsMouseClicked(ImGuiMouseButton.Left)
                         || ImGui.IsMouseClicked(ImGuiMouseButton.Right)))
@@ -177,11 +183,11 @@ public sealed partial class CombatControlWindow : Window
         {
             if (!petDragging && ImGui.IsMouseReleased(ImGuiMouseButton.Left))
             {
-                var state = PromeSettings.Instance.EnableAcr;
-                PromeSettings.Instance.EnableAcr = state == AcrState.Off ? AcrState.On : AcrState.Off;
-                petState = PetVisualState.Jump;
-                petVariant = (petVariant + 1) % JumpPetAnimations.Length;
-                petStateStartedAt = ImGui.GetTime();
+                if (!doubleClicked)
+                {
+                    pendingPetClick = true;
+                    pendingPetClickAt = ImGui.GetTime();
+                }
             }
             else if (petDragging)
             {
@@ -203,25 +209,15 @@ public sealed partial class CombatControlWindow : Window
         }
 
         var now = ImGui.GetTime();
+        if (pendingPetClick && !ImGui.IsMouseDown(ImGuiMouseButton.Left)
+            && now - pendingPetClickAt >= 0.30d)
+        {
+            pendingPetClick = false;
+            ToggleAcrState();
+        }
         var acrOff = PromeSettings.Instance.EnableAcr == AcrState.Off;
         var frame = acrOff ? GetSealFrame(now) : GetPetFrame(now);
         var texture = ErosUILayer.GetResourceTextureWrap(frame);
-        if (texture != null)
-        {
-            if (acrOff) lastSealTexture = texture;
-            else lastPetTexture = texture;
-        }
-        else
-        {
-            texture = acrOff
-                ? lastSealTexture ?? ErosUILayer.GetResourceTextureWrap("pet.seal_01.png")
-                : lastPetTexture ?? ErosUILayer.GetResourceTextureWrap("pet.nothing_nothing_01.png");
-            if (texture != null)
-            {
-                if (acrOff) lastSealTexture = texture;
-                else lastPetTexture = texture;
-            }
-        }
         if (texture != null)
         {
             // 网站通过 scaleX(-1) 翻转朝向；对 ImGui 纹理交换 U 坐标即可得到同样效果。
@@ -236,8 +232,15 @@ public sealed partial class CombatControlWindow : Window
                 ? "左键：运行\n右键：打开设置\n拖动：移动像素小人"
                 : "左键：关闭\n右键：打开设置\n拖动：移动像素小人");
 
-        if (hovered && ImGui.IsMouseDoubleClicked(ImGuiMouseButton.Left))
-            ErosUIFramework.CloseAuxiliaryPanels();
+    }
+
+    private void ToggleAcrState()
+    {
+        var state = PromeSettings.Instance.EnableAcr;
+        PromeSettings.Instance.EnableAcr = state == AcrState.Off ? AcrState.On : AcrState.Off;
+        petState = PetVisualState.Jump;
+        petVariant = (petVariant + 1) % JumpPetAnimations.Length;
+        petStateStartedAt = ImGui.GetTime();
     }
 
     private void UpdatePetState()

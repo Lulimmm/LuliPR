@@ -14,7 +14,6 @@ namespace ErosUI;
 internal static class ErosUILayer
 {
     private static readonly Dictionary<string, ISharedImmediateTexture> ResourceTextures = new(StringComparer.Ordinal);
-    private static IDalamudTextureWrap? backgroundTexture;
     private static readonly List<Meteor> Meteors = new();
     private static readonly Random MeteorRandom = new();
     private static double nextMeteorAt = -1d;
@@ -49,19 +48,14 @@ internal static class ErosUILayer
         var texture = GetResourceTexture("bg2.jpg");
         if (texture != null)
         {
-            var wrap = texture.GetWrapOrDefault(null);
+            // Get a frame-safe wrap. Dalamud may dispose the previous frame's
+            // UnknownTextureWrap during resource/device changes, so never cache
+            // the returned wrap across draw calls.
+            var wrap = texture.GetWrapOrEmpty();
             if (wrap != null)
             {
-                backgroundTexture = wrap;
                 var (uv0, uv1) = CoverUv(wrap, max - min);
                 drawList.AddImageRounded(wrap.Handle, min, max, uv0, uv1,
-                    SimplePalette.ToU32(new Vector4(1f, 1f, 1f, Math.Clamp(imageAlpha, 0f, 1f))),
-                    rounding, ImDrawFlags.RoundCornersAll);
-            }
-            else if (backgroundTexture != null)
-            {
-                var (uv0, uv1) = CoverUv(backgroundTexture, max - min);
-                drawList.AddImageRounded(backgroundTexture.Handle, min, max, uv0, uv1,
                     SimplePalette.ToU32(new Vector4(1f, 1f, 1f, Math.Clamp(imageAlpha, 0f, 1f))),
                     rounding, ImDrawFlags.RoundCornersAll);
             }
@@ -214,7 +208,7 @@ internal static class ErosUILayer
     }
 
     public static IDalamudTextureWrap? GetResourceTextureWrap(string name)
-        => GetResourceTexture(name)?.GetWrapOrDefault(null);
+        => GetResourceTexture(name)?.GetWrapOrEmpty();
 
     private static ISharedImmediateTexture? GetResourceTexture(string name)
     {
