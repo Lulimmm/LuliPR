@@ -28,6 +28,21 @@
       <!-- The project contains only PR ACR sources. Keep the template's
            convention of compiling the source tree once. -->
       <Compile Include="**\*.cs" Exclude="bin\**\*;obj\**\*;**\bin\**\*;**\obj\**\*" />
+      <EmbeddedResource Include="Reaper\ErosUI\Resources\bg2.jpg">
+        <LogicalName>ErosUI.Resources.bg2.jpg</LogicalName>
+      </EmbeddedResource>
+      <EmbeddedResource Include="Reaper\ErosUI\Resources\start.png">
+        <LogicalName>ErosUI.Resources.start.png</LogicalName>
+      </EmbeddedResource>
+      <EmbeddedResource Include="Reaper\ErosUI\Resources\loading.png">
+        <LogicalName>ErosUI.Resources.loading.png</LogicalName>
+      </EmbeddedResource>
+      <EmbeddedResource Include="Reaper\ErosUI\Resources\cute.webp">
+        <LogicalName>ErosUI.Resources.cute.webp</LogicalName>
+      </EmbeddedResource>
+      <EmbeddedResource Include="Reaper\ErosUI\Resources\pet\*.png">
+        <LogicalName>ErosUI.Resources.pet.%(Filename)%(Extension)</LogicalName>
+      </EmbeddedResource>
     </ItemGroup>
 
     <ItemGroup>

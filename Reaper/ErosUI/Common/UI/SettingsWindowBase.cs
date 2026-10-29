@@ -1,4 +1,4 @@
-using System.Numerics;
+﻿using System.Numerics;
 using Dalamud.Bindings.ImGui;
 using Dalamud.Interface.Utility;
 using Dalamud.Interface.Windowing;
@@ -120,6 +120,12 @@ public abstract partial class SettingsWindowBase : Window
             // 纯色半透明背景
             DrawWindowBackground();
 
+            // 网页背景上的流星层。绘制区域避开原生标题栏，保持背景与现有
+            // 透明度一致，流星本身只使用半透明 draw call。
+            var starMin = ImGui.GetWindowPos() + new Vector2(0f, ImGui.GetFrameHeight());
+            var starMax = ImGui.GetWindowPos() + ImGui.GetWindowSize();
+            ErosUILayer.DrawShootingStars(ImGui.GetWindowDrawList(), starMin, starMax);
+
             DrawSidebarLayout();
 
             // 只捕获落在合理范围内的位置/尺寸（防垃圾值）；待用户拖动/缩放结束后一次性写盘
@@ -209,6 +215,9 @@ public abstract partial class SettingsWindowBase : Window
         ImGui.Spacing();
         DrawThemeOption("夜间", SettingsUIMode.Night, "侧边栏导航 + 深色纯色底");
         DrawThemeOption("日间", SettingsUIMode.Day, "侧边栏导航 + 米白纯色底");
+        ImGui.Spacing();
+        if (SettingRow.Button("重播载入动画", "重新播放网站风格的像素载入动画"))
+            ErosUIFramework.ReplaySplash();
     }
 
     // 主题主色 RGB 调色（主题页最上方）。
@@ -277,16 +286,15 @@ public abstract partial class SettingsWindowBase : Window
 
     private void DrawWindowBackground()
     {
-        // 仅主视口生效；夜间/日间用各自常量纯色半透明底色
-        if (ImGui.GetWindowViewport().ID != ImGui.GetMainViewport().ID) return;
-
-        // 底色画进窗口自身的绘制列表，先垫占位命令防止背景模糊顶掉首条绘制（见 ErosUILayer），
+        // 背景画进当前窗口自己的绘制列表；无论窗口是否被 ImGui 放进独立
+        // viewport，都必须覆盖整块 UI，否则会直接透出游戏画面。
+        // 先垫占位命令防止背景模糊顶掉首条绘制（见 ErosUILayer），
         // 保证两个窗口重叠时背景仍然盖住身后窗口的内容
         var min = ImGui.GetWindowPos() + new Vector2(0.5f);
         var max = min + ImGui.GetWindowSize() - new Vector2(1f);
 
         // 圆角必须与 PreDraw 压入的 WindowRounding(12f) 完全一致，否则底色的角与窗口边框错位
-        var rounding = 12f;
+        var rounding = 10f;
         var tint = mode switch
         {
             SettingsUIMode.Night => NightBackgroundTint,
@@ -294,12 +302,12 @@ public abstract partial class SettingsWindowBase : Window
             _ => NightBackgroundTint,
         };
         var drawList = ImGui.GetWindowDrawList();
-        ErosUILayer.垫牺牲帧(drawList);
         // 背景画满全窗口但让出标题栏: Begin 给窗口 draw list 压的是内容区内层裁剪（减内边距）,
         // 不覆盖会把底色四条边各裁掉一条; 标题栏区不铺底色, 保持原生标题栏可读
         drawList.PushClipRect(new Vector2(ImGui.GetWindowPos().X, ImGui.GetWindowPos().Y + ImGui.GetFrameHeight()),
             ImGui.GetWindowPos() + ImGui.GetWindowSize(), false);
-        drawList.AddRectFilled(min, max, SimplePalette.ToU32(tint), rounding, ImDrawFlags.RoundCornersAll);
+        ErosUILayer.DrawWebsiteSurface(drawList, min, max, tint,
+            SimplePalette.BorderStrong, rounding, mode == SettingsUIMode.Day ? 0.38f : 0.46f);
         drawList.PopClipRect();
     }
 
@@ -350,20 +358,23 @@ public abstract partial class SettingsWindowBase : Window
         else if (mode == SettingsUIMode.Day) PushDayChromeColors();
 
         // 变量
-        ImGui.PushStyleVar(ImGuiStyleVar.WindowRounding, 12f);
-        ImGui.PushStyleVar(ImGuiStyleVar.FrameRounding, 6f);
-        ImGui.PushStyleVar(ImGuiStyleVar.PopupRounding, 6f);
+        ImGui.PushStyleVar(ImGuiStyleVar.WindowRounding, 10f);
+        // 网站按钮是 8px 圆角的半透明像素玻璃，并带清晰的紫色描边。
+        // 只在主设置窗口压入，Hotkey/QT 面板使用各自的 PreDraw 样式。
+        ImGui.PushStyleVar(ImGuiStyleVar.FrameRounding, 8f);
+        ImGui.PushStyleVar(ImGuiStyleVar.FrameBorderSize, 1.5f);
+        ImGui.PushStyleVar(ImGuiStyleVar.PopupRounding, 10f);
         ImGui.PushStyleVar(ImGuiStyleVar.WindowPadding, new Vector2(16f, 12f));
         ImGui.PushStyleVar(ImGuiStyleVar.FramePadding, new Vector2(8f, 4f));
         ImGui.PushStyleVar(ImGuiStyleVar.ItemSpacing, new Vector2(8f, 6f));
         ImGui.PushStyleVar(ImGuiStyleVar.ItemInnerSpacing, new Vector2(6f, 4f));
         ImGui.PushStyleVar(ImGuiStyleVar.ScrollbarSize, 10f);
-        ImGui.PushStyleVar(ImGuiStyleVar.WindowBorderSize, 1f);
+        ImGui.PushStyleVar(ImGuiStyleVar.WindowBorderSize, 2f);
     }
 
     private void PopGlobalStyle()
     {
-        ImGui.PopStyleVar(9);
+        ImGui.PopStyleVar(10);
         ImGui.PopStyleColor(BaseStyleColorCount + SidebarChromeColorCount);
     }
 

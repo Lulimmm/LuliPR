@@ -13,6 +13,7 @@ public static class ErosUIFramework
     private static CombatControlWindow? control;
     private static ErosUISettingsWindow? settings;
     private static ErosUIQtPanelWindow? qtPanel;
+    private static ErosUISplashWindow? splash;
 
     /// <summary>注入本职业的全部环境。在 Rotation 构造函数最前面调用。</summary>
     public static void Configure(
@@ -53,7 +54,7 @@ public static class ErosUIFramework
 
         control = new CombatControlWindow(
             $"{ErosUIJobEnv.作者}{ErosUIJobEnv.JobTag} 控制",
-            ToggleSettings,
+            OpenSettings,
             () => 限制存档位置(ErosUISettings.Instance.控制条位置),
             pos =>
             {
@@ -66,6 +67,8 @@ public static class ErosUIFramework
         qtPanel = new ErosUIQtPanelWindow();
         ws.AddWindow(qtPanel);
         qtPanel.IsOpen = true;   // 默认打开
+        splash = new ErosUISplashWindow();
+        ws.AddWindow(splash);
 
         HidePrPanels(force: true);   // 切职业瞬间宿主会重弹自带面板，强制压制一次
         ErosUIHotkeyUI.Rebuild();
@@ -77,7 +80,7 @@ public static class ErosUIFramework
     {
         ErosUIHotkeyUI.Uninstall();
         var ws = PromeRotation.Plugin.Instance?.WindowSystem;
-        if (ws == null) { control = null; settings = null; qtPanel = null; SaveSettings(); return; }
+        if (ws == null) { control = null; settings = null; qtPanel = null; splash = null; SaveSettings(); return; }
 
         if (control != null)
         {
@@ -93,6 +96,11 @@ public static class ErosUIFramework
         {
             try { ws.RemoveWindow(qtPanel); } catch (ArgumentException) { }
             qtPanel = null;
+        }
+        if (splash != null)
+        {
+            try { ws.RemoveWindow(splash); } catch (ArgumentException) { }
+            splash = null;
         }
         SaveSettings();
     }
@@ -142,6 +150,13 @@ public static class ErosUIFramework
         SetHotkeyPanelVisible(!HotkeyPanelVisible);
     }
 
+    /// <summary>Close both auxiliary panels when the pixel pet is double-clicked.</summary>
+    public static void CloseAuxiliaryPanels()
+    {
+        SetQtPanelVisible(false);
+        SetHotkeyPanelVisible(false);
+    }
+
     /// <summary>打开设置窗口。</summary>
     public static void OpenSettings()
     {
@@ -154,6 +169,9 @@ public static class ErosUIFramework
         if (settings == null) return;
         settings.IsOpen ^= true;
     }
+
+    /// <summary>Replay the embedded website-style loading splash.</summary>
+    public static void ReplaySplash() => splash?.Replay();
 
     /// <summary>给宿主 DrawSettings 回调用的入口：绘制一个打开设置窗口的按钮。</summary>
     public static void DrawSettingsEntry()
@@ -185,10 +203,10 @@ public static class ErosUIFramework
     // 存档位置钳制在屏幕工作区内，防止读取越界存档或切换分辨率后窗口跑出屏幕。
     private static Vector2 限制存档位置(Vector2? saved)
     {
-        if (saved is not Vector2 v) return new Vector2(40f, 220f);
+        if (saved is not Vector2 v) return new Vector2(32f, 320f);
         var vp = ImGui.GetMainViewport();
         var min = vp.WorkPos + new Vector2(4f);
-        var max = vp.WorkPos + vp.WorkSize - new Vector2(364f, 74f);
+        var max = vp.WorkPos + vp.WorkSize - new Vector2(124f, 124f);
         if (max.X < min.X) max.X = min.X;
         if (max.Y < min.Y) max.Y = min.Y;
         return new Vector2(Math.Clamp(v.X, min.X, max.X), Math.Clamp(v.Y, min.Y, max.Y));

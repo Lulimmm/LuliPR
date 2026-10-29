@@ -1,23 +1,83 @@
 ﻿using System.Numerics;
 using Dalamud.Bindings.ImGui;
+using Dalamud.Interface.Textures.TextureWraps;
 using Dalamud.Interface.Windowing;
 using PromeRotation.Data;
 
 namespace ErosUI;
 
-// ACR 战斗控制悬浮条（Dalamud WindowSystem 托管）。
-// 仅一个状态主按钮 + 主动攻击开关 + 设置按钮，无标题栏；纯色半透明底。
-// 主按钮：左键 运行⇄关闭，右键 运行⇄停手；主动攻击为独立开关。
-// 任意空白处按住左键拖动位置（短击空白不触发任何状态切换）。
-// 夜间/日间模式（实心状态按钮 + 竖分隔线 + 按钮化主动攻击）见 CombatControlWindow.Modern.cs。
+// 网站风格的像素小人控制器。尺寸、资源和交互对齐网站 desk-pet：
+// 左键点击切换运行/关闭，右键打开设置，左键拖动移动位置。
 public sealed partial class CombatControlWindow : Window
 {
-    private static readonly Vector2 DefaultPosition = new(40f, 220f);
+    private enum PetVisualState
+    {
+        Idle,
+        Drag,
+        Jump,
+        Fly,
+        Cool,
+    }
+
+    private static readonly Vector2 DefaultPosition = new(32f, 320f);
+    private static readonly Vector2 PetSize = new(120f, 120f);
+    private static readonly Random PetRandom = new();
+    private static readonly string[][] IdlePetAnimations =
+    {
+        Frames("pet.nothing_nothing", 16),
+        Frames("pet.cute_cute", 6),
+        Frames("pet.hu_hu", 25),
+    };
+    private static readonly string[][] DragPetAnimations =
+    {
+        Frames("pet.happy_happy", 7),
+        Frames("pet.happy__2__happy__2_", 8),
+    };
+    private static readonly string[][] JumpPetAnimations =
+    {
+        Frames("pet.jump_jump", 7),
+        Frames("pet.jump__2__jump__2_", 8),
+    };
+    private static readonly string[] FlyPetFrames =
+    {
+        "pet.fly_01.png", "pet.fly_02.png", "pet.fly_03.png", "pet.fly_04.png",
+        "pet.fly_05.png", "pet.fly_06.png", "pet.fly_07.png", "pet.fly_08.png",
+    };
+    private static readonly string[] CoolPetFrames = Frames("pet.cool_cool", 37);
+    private static readonly string[] SealPetFrames =
+    {
+        "pet.seal_01.png", "pet.seal_02.png", "pet.seal_03.png",
+        "pet.seal_04.png", "pet.seal_05.png", "pet.seal_06.png",
+    };
 
     private readonly System.Action toggleSettings;
     private readonly Func<Vector2>? getSavedPosition;
     private readonly System.Action<Vector2>? savePosition;
     private bool persistPending;
+    private bool petDragging;
+    // Manifest textures upload asynchronously. Keep the last ready frame so a
+    // frame still uploading cannot clear the pet for one render tick.
+    private IDalamudTextureWrap? lastPetTexture;
+    private IDalamudTextureWrap? lastSealTexture;
+    private bool petStateInitialized;
+    private PetVisualState petState = PetVisualState.Idle;
+    private int petVariant;
+    private double petStateStartedAt;
+    private double nextIdleVariantAt;
+    private double nextFlyAt;
+    private double lastPetInteractionAt;
+    private Vector2 petFlyFrom;
+    private Vector2 petFlyTarget;
+    private double petFlyEndsAt;
+    private bool petFacingLeft;
+
+    private static string[] Frames(string prefix, int count)
+    {
+        var frames = new string[count];
+        for (var i = 0; i < count; i++)
+            frames[i] = $"{prefix}_{i + 1:00}.png";
+        return frames;
+    }
 
     public CombatControlWindow(
         string title,
@@ -51,32 +111,18 @@ public sealed partial class CombatControlWindow : Window
         // 透明背景：底色直接画在 background drawList，不经 WindowBg
         ImGui.PushStyleColor(ImGuiCol.WindowBg, Vector4.Zero);
         ImGui.PushStyleColor(ImGuiCol.Border, SimplePalette.Border);
-        ImGui.PushStyleVar(ImGuiStyleVar.WindowRounding, 10f);
-        ImGui.PushStyleVar(ImGuiStyleVar.WindowPadding, new Vector2(10f, 8f));
-        ImGui.PushStyleVar(ImGuiStyleVar.WindowBorderSize, 1f);
+        ImGui.PushStyleVar(ImGuiStyleVar.WindowRounding, 0f);
+        ImGui.PushStyleVar(ImGuiStyleVar.WindowPadding, Vector2.Zero);
+        ImGui.PushStyleVar(ImGuiStyleVar.WindowBorderSize, 0f);
         // UI 线程节流压制 PR 本体面板（1 秒一次，防止自动弹回）
         ErosUIFramework.HidePrPanels();
-        // 纵向间距置零：拖动区与按钮行之间不留缝，等高的 6px 空隙挪到按钮行下方
-        // （Draw 末尾的 Dummy），否则顶部 padding8+拖动区6+间距6=20px、底部只有 8px，视觉上偏上
-        ImGui.PushStyleVar(ImGuiStyleVar.ItemSpacing, new Vector2(8f, 0f));
+        ImGui.PushStyleVar(ImGuiStyleVar.ItemSpacing, Vector2.Zero);
         base.PreDraw();
     }
 
     public override void Draw()
     {
-        // 拖动改位先于本帧全部可见绘制: 帧内 SetWindowPos 会平移后续绘制坐标,
-        // 先画背景再改位会让底板停在旧位、按钮落在新位, 拖动时按钮相对底板晃动
-        DrawDragZone();
-
-        // 夜间/日间模式：实心按钮 + 竖分隔线（CombatControlWindow.Modern.cs）
-        DrawBackground();
-        DrawModernBar();
-
-        // 顶部 6px 拖动区会让上侧留白比下侧多 6px；在按钮行下补同高占位，使按钮行上下居中
-        ImGui.Dummy(new Vector2(0f, 6f));
-
-        // 三个按钮保留各自的点击行为；其余窗口区域支持双击同步切换 QT/Hotkey 面板。
-        HandlePanelVisibilityDoubleClick();
+        DrawPet();
     }
 
     public override void PostDraw()
@@ -84,6 +130,236 @@ public sealed partial class CombatControlWindow : Window
         ImGui.PopStyleVar(4);
         ImGui.PopStyleColor(2);
         base.PostDraw();
+    }
+
+    private void DrawPet()
+    {
+        UpdatePetState();
+        var pos = ImGui.GetCursorScreenPos();
+        var drawList = ImGui.GetWindowDrawList();
+
+        ImGui.InvisibleButton("##cc_pet", PetSize);
+        var hovered = ImGui.IsItemHovered();
+        var rightClicked = ImGui.IsItemClicked(ImGuiMouseButton.Right);
+
+        if (hovered && (ImGui.IsMouseClicked(ImGuiMouseButton.Left)
+                        || ImGui.IsMouseClicked(ImGuiMouseButton.Right)))
+        {
+            lastPetInteractionAt = ImGui.GetTime();
+            if (petState == PetVisualState.Cool)
+            {
+                petState = PetVisualState.Idle;
+                petStateStartedAt = lastPetInteractionAt;
+                nextIdleVariantAt = lastPetInteractionAt + 8d;
+            }
+        }
+
+        if (hovered)
+            ImGui.SetMouseCursor(petDragging ? ImGuiMouseCursor.ResizeAll : ImGuiMouseCursor.Hand);
+
+        if (ImGui.IsItemActive() && ImGui.IsMouseDown(ImGuiMouseButton.Left))
+        {
+            if (!petDragging && ImGui.GetIO().MouseDelta.LengthSquared() > 4f)
+            {
+                petDragging = true;
+                petState = PetVisualState.Drag;
+                petVariant = 0;
+                petStateStartedAt = ImGui.GetTime();
+            }
+            if (petDragging)
+            {
+                ImGui.SetWindowPos(限制到屏幕内(ImGui.GetWindowPos() + ImGui.GetIO().MouseDelta));
+                persistPending = true;
+            }
+        }
+
+        if (ImGui.IsItemDeactivated())
+        {
+            if (!petDragging && ImGui.IsMouseReleased(ImGuiMouseButton.Left))
+            {
+                var state = PromeSettings.Instance.EnableAcr;
+                PromeSettings.Instance.EnableAcr = state == AcrState.Off ? AcrState.On : AcrState.Off;
+                petState = PetVisualState.Jump;
+                petVariant = (petVariant + 1) % JumpPetAnimations.Length;
+                petStateStartedAt = ImGui.GetTime();
+            }
+            else if (petDragging)
+            {
+                petState = PetVisualState.Idle;
+                petVariant = Math.Clamp(petVariant, 0, IdlePetAnimations.Length - 1);
+                petStateStartedAt = ImGui.GetTime();
+                nextIdleVariantAt = petStateStartedAt + 8d;
+            }
+            petDragging = false;
+        }
+
+        if (rightClicked)
+            toggleSettings();
+
+        if (persistPending && !ImGui.IsMouseDown(ImGuiMouseButton.Left))
+        {
+            persistPending = false;
+            savePosition?.Invoke(ImGui.GetWindowPos());
+        }
+
+        var now = ImGui.GetTime();
+        var acrOff = PromeSettings.Instance.EnableAcr == AcrState.Off;
+        var frame = acrOff ? GetSealFrame(now) : GetPetFrame(now);
+        var texture = ErosUILayer.GetResourceTextureWrap(frame);
+        if (texture != null)
+        {
+            if (acrOff) lastSealTexture = texture;
+            else lastPetTexture = texture;
+        }
+        else
+        {
+            texture = acrOff
+                ? lastSealTexture ?? ErosUILayer.GetResourceTextureWrap("pet.seal_01.png")
+                : lastPetTexture ?? ErosUILayer.GetResourceTextureWrap("pet.nothing_nothing_01.png");
+            if (texture != null)
+            {
+                if (acrOff) lastSealTexture = texture;
+                else lastPetTexture = texture;
+            }
+        }
+        if (texture != null)
+        {
+            // 网站通过 scaleX(-1) 翻转朝向；对 ImGui 纹理交换 U 坐标即可得到同样效果。
+            var uv0 = petFacingLeft ? new Vector2(1f, 0f) : Vector2.Zero;
+            var uv1 = petFacingLeft ? new Vector2(0f, 1f) : Vector2.One;
+            drawList.AddImage(texture.Handle, pos, pos + PetSize, uv0, uv1,
+                SimplePalette.ToU32(new Vector4(1f, 1f, 1f, hovered ? 1f : 0.96f)));
+        }
+
+        if (hovered)
+            ImGui.SetTooltip(PromeSettings.Instance.EnableAcr == AcrState.Off
+                ? "左键：运行\n右键：打开设置\n拖动：移动像素小人"
+                : "左键：关闭\n右键：打开设置\n拖动：移动像素小人");
+
+        if (hovered && ImGui.IsMouseDoubleClicked(ImGuiMouseButton.Left))
+            ErosUIFramework.CloseAuxiliaryPanels();
+    }
+
+    private void UpdatePetState()
+    {
+        var now = ImGui.GetTime();
+        if (!petStateInitialized)
+        {
+            petStateInitialized = true;
+            petVariant = PetRandom.Next(IdlePetAnimations.Length);
+            petStateStartedAt = now;
+            nextIdleVariantAt = now + 8d;
+            nextFlyAt = now + 20d;
+            lastPetInteractionAt = now;
+        }
+
+        if (petState == PetVisualState.Fly)
+        {
+            var progress = petFlyEndsAt <= petStateStartedAt
+                ? 1f
+                : Math.Clamp((float)((now - petStateStartedAt) / (petFlyEndsAt - petStateStartedAt)), 0f, 1f);
+            // Website uses a 4 second ease-in-out transition. SmoothStep keeps the
+            // same soft start/end while allowing ImGui to update the window position.
+            var eased = progress * progress * (3f - 2f * progress);
+            ImGui.SetWindowPos(限制到屏幕内(Vector2.Lerp(petFlyFrom, petFlyTarget, eased)));
+            if (progress >= 1f)
+            {
+                petState = PetVisualState.Idle;
+                petStateStartedAt = now;
+                nextIdleVariantAt = now + 8d;
+            }
+            return;
+        }
+
+        if (petState == PetVisualState.Jump && now - petStateStartedAt >= 1.2d)
+        {
+            petState = PetVisualState.Idle;
+            petStateStartedAt = now;
+            nextIdleVariantAt = now + 8d;
+        }
+
+        if (petState == PetVisualState.Drag)
+            petVariant = (int)((now - petStateStartedAt) / 0.4d) % DragPetAnimations.Length;
+
+        if (petState == PetVisualState.Idle)
+        {
+            if (now >= nextIdleVariantAt)
+            {
+                petVariant = NextVariant(IdlePetAnimations.Length, petVariant);
+                nextIdleVariantAt = now + 8d;
+            }
+
+            if (!petDragging && !ImGui.IsMouseDown(ImGuiMouseButton.Left) && now >= nextFlyAt)
+                StartPetFlight(now);
+
+            // The website enters its cool animation after three minutes without
+            // pointer/keyboard activity. A pet click wakes it immediately above.
+            if (!petDragging && now - lastPetInteractionAt >= 180d)
+            {
+                petState = PetVisualState.Cool;
+                petVariant = 0;
+                petStateStartedAt = now;
+            }
+        }
+    }
+
+    private void StartPetFlight(double now)
+    {
+        var viewport = ImGui.GetMainViewport();
+        var min = viewport.WorkPos + new Vector2(4f);
+        var max = viewport.WorkPos + viewport.WorkSize - PetSize - new Vector2(4f);
+        if (max.X < min.X) max.X = min.X;
+        if (max.Y < min.Y) max.Y = min.Y;
+
+        petFlyFrom = ImGui.GetWindowPos();
+        petFlyTarget = new Vector2(
+            min.X + (float)PetRandom.NextDouble() * MathF.Max(0f, max.X - min.X),
+            min.Y + (float)PetRandom.NextDouble() * MathF.Max(0f, max.Y - min.Y));
+        petFacingLeft = petFlyTarget.X < petFlyFrom.X;
+        petState = PetVisualState.Fly;
+        petStateStartedAt = now;
+        petFlyEndsAt = now + 4d;
+        nextFlyAt = now + 20d;
+    }
+
+    private string GetPetFrame(double now)
+    {
+        string[] frames;
+        var animationTime = Math.Max(0d, now - petStateStartedAt);
+        switch (petState)
+        {
+            case PetVisualState.Drag:
+                frames = DragPetAnimations[petVariant % DragPetAnimations.Length];
+                break;
+            case PetVisualState.Jump:
+                frames = JumpPetAnimations[petVariant % JumpPetAnimations.Length];
+                break;
+            case PetVisualState.Fly:
+                frames = FlyPetFrames;
+                break;
+            case PetVisualState.Cool:
+                frames = CoolPetFrames;
+                break;
+            default:
+                frames = IdlePetAnimations[petVariant % IdlePetAnimations.Length];
+                break;
+        }
+
+        var frameIndex = (int)(animationTime * 9.09d) % frames.Length;
+        return frames[frameIndex];
+    }
+
+    private string GetSealFrame(double now)
+    {
+        var frameIndex = (int)(Math.Max(0d, now - petStateStartedAt) * 6.67d) % SealPetFrames.Length;
+        return SealPetFrames[frameIndex];
+    }
+
+    private static int NextVariant(int count, int current)
+    {
+        if (count <= 1) return 0;
+        var next = PetRandom.Next(count - 1);
+        return next >= current ? next + 1 : next;
     }
 
     private void DrawBackground()
@@ -99,7 +375,9 @@ public sealed partial class CombatControlWindow : Window
         var rounding = 10f;
         var drawList = ImGui.GetBackgroundDrawList(ImGui.GetWindowViewport());
 
-        drawList.AddRectFilled(min, max, SimplePalette.ToU32(ModernBarTint(ErosUICommonSettings.Instance.UIMode)), rounding, ImDrawFlags.RoundCornersAll);
+        var day = ErosUICommonSettings.Instance.UIMode == SettingsUIMode.Day;
+        ErosUILayer.DrawWebsiteSurface(drawList, min, max, ModernBarTint(ErosUICommonSettings.Instance.UIMode),
+            SimplePalette.BorderStrong, rounding, day ? 0.30f : 0.38f);
     }
 
     // 顶部 6px 拖动区：短击空白不切换状态，仅负责拖动；松手后写盘一次。
@@ -154,7 +432,7 @@ public sealed partial class CombatControlWindow : Window
     {
         var vp = ImGui.GetMainViewport();
         var size = ImGui.GetWindowSize();
-        if (size.X <= 0f || size.Y <= 0f) size = new Vector2(360f, 70f);   // 首帧兜底尺寸
+        if (size.X <= 0f || size.Y <= 0f) size = PetSize;   // 首帧兜底尺寸
 
         var margin = 4f;
         var minX = vp.WorkPos.X + margin;

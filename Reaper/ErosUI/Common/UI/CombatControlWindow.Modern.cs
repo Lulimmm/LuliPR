@@ -11,10 +11,10 @@ namespace ErosUI;
 public sealed partial class CombatControlWindow
 {
     // 夜间模式悬浮条底色：半透明深灰（显式 AddRectFilled 填充，不做模糊）。
-    private static readonly Vector4 NightBarTint = new(0.11f, 0.11f, 0.12f, 0.85f);
+    private static readonly Vector4 NightBarTint = new(0.17f, 0.12f, 0.29f, 0.86f);
 
     // 日间模式悬浮条底色：半透明米白（显式 AddRectFilled 填充，不做模糊）。
-    private static readonly Vector4 DayBarTint = new(0.96f, 0.94f, 0.89f, 0.97f);
+    private static readonly Vector4 DayBarTint = new(0.33f, 0.24f, 0.60f, 0.82f);
 
     // 实心状态按钮上的文字与标记色（彩色底上固定用白）。
     private static readonly Vector4 SolidButtonText = new(1f, 1f, 1f, 1f);

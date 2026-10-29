@@ -63,9 +63,8 @@ public sealed class ErosUIQtPanelWindow : Window
         ImGui.PushStyleColor(ImGuiCol.Text, SimplePalette.TextPrimary);
         ImGui.PushStyleColor(ImGuiCol.TextDisabled, SimplePalette.TextDisabled);
         // Border 色同时是按钮边框色（FrameBorderSize>0 时），改动会影响所有按钮描边——勿删
-        ImGui.PushStyleColor(ImGuiCol.Border, day ? new Vector4(0f, 0f, 0f, 0.10f)
-                                                  : new Vector4(1f, 1f, 1f, 0.10f));
-        ImGui.PushStyleVar(ImGuiStyleVar.WindowRounding, 12f);
+        ImGui.PushStyleColor(ImGuiCol.Border, SimplePalette.Border);
+        ImGui.PushStyleVar(ImGuiStyleVar.WindowRounding, 10f);
         ImGui.PushStyleVar(ImGuiStyleVar.WindowPadding, new Vector2(14f, 12f));
         // 网格格子全部绝对定位、不吃 ItemSpacing；与格距保持一致仅为「无可用开关」提示等流式控件兜底
         ImGui.PushStyleVar(ImGuiStyleVar.ItemSpacing, new Vector2(间距, 间距));
@@ -402,19 +401,11 @@ public sealed class ErosUIQtPanelWindow : Window
         var drawList = ImGui.GetWindowDrawList();
         ErosUILayer.垫牺牲帧(drawList);
         // 覆盖 Begin 压入的内容区内层裁剪, 底色/边框画满全窗口（本窗无标题栏）
-        drawList.PushClipRect(pos, max, false);
-
         var day = ErosUICommonSettings.Instance.UIMode == SettingsUIMode.Day;
-        var tint = day ? new Vector4(0.96f, 0.94f, 0.89f, 0.97f)
-                       : new Vector4(0.11f, 0.11f, 0.12f, 0.85f);
-        var border = day ? new Vector4(0f, 0f, 0f, 0.18f)
-                         : new Vector4(1f, 1f, 1f, 0.10f);
-
-        drawList.AddRectFilled(pos + new Vector2(0.5f), max - new Vector2(0.5f),
-            SimplePalette.ToU32(tint), 12f, ImDrawFlags.RoundCornersAll);
-        drawList.AddRect(pos + new Vector2(1f), max - new Vector2(1f),
-            SimplePalette.ToU32(border), 11f, ImDrawFlags.RoundCornersAll, 1f);
-        drawList.PopClipRect();
+        var tint = day ? new Vector4(0.33f, 0.24f, 0.60f, 0.72f)
+                       : new Vector4(0.17f, 0.12f, 0.29f, 0.80f);
+        ErosUILayer.DrawWebsiteSurface(drawList, pos + new Vector2(0.5f), max - new Vector2(0.5f),
+            tint, SimplePalette.BorderStrong, 10f, day ? 0.34f : 0.42f);
     }
 
     // 空白处按住左键拖动面板；位置钳制在屏幕工作区内。

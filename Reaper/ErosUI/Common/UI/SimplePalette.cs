@@ -87,9 +87,10 @@ public static class SimplePalette
     private static void Recompute()
     {
         // 内置默认主色（hover/active 与自定义覆盖同一套明暗关系: 提亮 20% / 加深 12%）
-        Primary = new(0.686f, 0.318f, 0.914f, 1f); // #AF51E9
-        PrimaryHover = new(0.749f, 0.454f, 0.931f, 1f); // #BF74ED（提亮一档）
-        PrimaryActive = new(0.604f, 0.280f, 0.804f, 1f); // #9A47CD（加深一档）
+        // Fleet-Snowfluff arcade palette: neon pink against a blue-violet glass base.
+        Primary = new(1.000f, 0.608f, 0.855f, 1f); // #FF9BDA
+        PrimaryHover = new(1.000f, 0.718f, 0.902f, 1f); // #FFB7E6
+        PrimaryActive = new(0.855f, 0.360f, 0.675f, 1f); // #DA5CAD
 
         // 自定义主色盖过内置配色：hover 提亮 / active 加深一档，保持相同的明暗关系
         if (primaryOverride is { } custom)
@@ -102,30 +103,30 @@ public static class SimplePalette
 
         if (currentScheme == UIColorScheme.Light)
         {
-            TextPrimary = new(0.15f, 0.15f, 0.17f, 1f);
-            TextSecondary = new(0.30f, 0.30f, 0.34f, 1f);
-            TextDisabled = new(0.48f, 0.48f, 0.52f, 1f);
-            FrameBg = new(1f, 1f, 1f, 0.96f);
-            FrameBgHovered = new(1f, 1f, 1f, 0.99f);
-            FrameBgActive = new(0.94f, 0.94f, 0.96f, 1f);
-            PopupBg = new(1f, 1f, 1f, 0.98f);
-            Border = new(0f, 0f, 0f, 0.18f);
-            BorderStrong = new(0f, 0f, 0f, 0.30f);
-            NavActiveBg = new(1f, 1f, 1f, 0.98f);
+            TextPrimary = new(0.969f, 0.945f, 1.000f, 1f);
+            TextSecondary = new(0.969f, 0.945f, 1.000f, 0.78f);
+            TextDisabled = new(0.969f, 0.945f, 1.000f, 0.50f);
+            FrameBg = new(0.42f, 0.33f, 0.66f, 0.38f);
+            FrameBgHovered = new(0.62f, 0.47f, 0.82f, 0.52f);
+            FrameBgActive = new(0.78f, 0.52f, 0.78f, 0.62f);
+            PopupBg = new(0.18f, 0.12f, 0.34f, 0.96f);
+            Border = new(0.55f, 0.43f, 0.77f, 0.65f);
+            BorderStrong = WithAlpha(Primary, 0.84f);
+            NavActiveBg = WithAlpha(Primary, 0.25f);
             NavActiveText = TextPrimary;
         }
         else
         {
-            TextPrimary = new(0.95f, 0.95f, 0.95f, 1f);
-            TextSecondary = new(0.70f, 0.70f, 0.70f, 1f);
-            TextDisabled = new(0.35f, 0.35f, 0.35f, 1f);
-            FrameBg = new(0.10f, 0.10f, 0.10f, 0.50f);
-            FrameBgHovered = new(0.15f, 0.15f, 0.15f, 0.60f);
-            FrameBgActive = new(0.20f, 0.20f, 0.20f, 0.70f);
-            PopupBg = new(0.06f, 0.06f, 0.06f, 0.98f);
-            Border = new(1f, 1f, 1f, 0.10f);
-            BorderStrong = new(1f, 1f, 1f, 0.20f);
-            NavActiveBg = WithAlpha(Primary, 0.18f);
+            TextPrimary = new(0.957f, 0.925f, 1.000f, 1f);
+            TextSecondary = new(0.839f, 0.784f, 1.000f, 0.72f);
+            TextDisabled = new(0.839f, 0.784f, 1.000f, 0.44f);
+            FrameBg = new(0.20f, 0.15f, 0.36f, 0.64f);
+            FrameBgHovered = new(0.32f, 0.24f, 0.52f, 0.78f);
+            FrameBgActive = new(0.45f, 0.30f, 0.63f, 0.88f);
+            PopupBg = new(0.16f, 0.11f, 0.29f, 0.98f);
+            Border = new(0.35f, 0.28f, 0.55f, 0.78f);
+            BorderStrong = WithAlpha(PrimaryHover, 0.88f);
+            NavActiveBg = WithAlpha(Primary, 0.24f);
             NavActiveText = TextPrimary;
         }
     }

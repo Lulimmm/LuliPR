@@ -8,7 +8,8 @@ namespace ErosUI;
 public abstract partial class SettingsWindowBase
 {
     // 夜间模式底色：半透明深灰（显式 AddRectFilled 填充，不做模糊）。
-    private static readonly Vector4 NightBackgroundTint = new(0.11f, 0.11f, 0.12f, 0.85f);
+    // Website night palette: deep plum glass with the same pink highlight.
+    private static readonly Vector4 NightBackgroundTint = new(0.17f, 0.12f, 0.29f, 0.78f);
 
     // 夜间模式专属全局样式：标题栏与滚动条跟随主题主色。
     // Push 数量必须等于 SidebarChromeColorCount，改动后同步该常量。
