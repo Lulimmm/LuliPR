@@ -30,6 +30,14 @@ public sealed class ErosUIQtPanelWindow : Window
     // 拖拽让位/松手回落时指数阻尼收敛到格位
     private static readonly Dictionary<string, Vector2> 动画格位 = new(StringComparer.Ordinal);
     private static int[] 显示序暂存 = Array.Empty<int>();
+    private readonly HashSet<string> visibleQtKeys = new(StringComparer.Ordinal);
+    private readonly List<string> visibleQtKeyOrder = new();
+    private string[] cachedVisibleQtKeyOrder = Array.Empty<string>();
+    private string[] cachedQtOrder = Array.Empty<string>();
+    private string? cachedJobTag;
+    private bool hasCachedDefinitions;
+    private IReadOnlyList<QtDefinition> cachedDefinitions = Array.Empty<QtDefinition>();
+    private List<分类分组> cachedGroups = new();
 
     // 一个分类分组：组标题 + 组内条目（defs 平铺索引，组内顺序 = 面板显示顺序）。
     // 布局字段（标题高/内容Y/行数）每帧由 布局分组 填充。
@@ -73,34 +81,17 @@ public sealed class ErosUIQtPanelWindow : Window
 
     public override void Draw()
     {
-        IReadOnlyList<QtDefinition> defs;
         try
         {
-            // HiddenQts is also used by the host to hide its native QT page.
-            // Keep that page-level state separate from this custom panel; the
-            // panel only follows its own per-QT visibility settings.
-            var visibleKeys = new HashSet<string>(StringComparer.Ordinal);
-            foreach (var key in PromeSettings.Instance.QuickToggles.Keys)
-                if (ErosUISettings.Instance.IsQtVisible(key))
-                    visibleKeys.Add(key);
-
-            var resolved = QtRegistry.ResolveVisible(
-                visibleKeys,
-                new HashSet<string>(StringComparer.Ordinal));
-            // Keep one stable snapshot for this frame while the host registry
-            // may be rebuilt by a rotation refresh.
-            defs = new List<QtDefinition>(resolved);
+            更新定义快照();
         }
         catch
         {
             return;
         }
 
-        // 按用户自定义顺序排列（面板右键拖拽调整; 未调整过 = 注册原序）
-        defs = 按自定义顺序排序(defs);
-
-        // 按 Category 分组并计算组布局（列数/标题高/组偏移）
-        var groups = 构建分组(defs);
+        var defs = cachedDefinitions;
+        var groups = cachedGroups;
         var cols = 布局分组(groups);
 
         // 每帧显式设置尺寸，让窗口精确贴合按钮网格。
@@ -202,6 +193,45 @@ public sealed class ErosUIQtPanelWindow : Window
         }
 
         HandleWindowDrag();
+    }
+
+    private void 更新定义快照()
+    {
+        var settings = ErosUISettings.Instance;
+        visibleQtKeys.Clear();
+        visibleQtKeyOrder.Clear();
+        foreach (var key in PromeSettings.Instance.QuickToggles.Keys)
+        {
+            if (!settings.IsQtVisible(key)) continue;
+            visibleQtKeys.Add(key);
+            visibleQtKeyOrder.Add(key);
+        }
+
+        if (hasCachedDefinitions
+            && 序列相同(visibleQtKeyOrder, cachedVisibleQtKeyOrder)
+            && 序列相同(settings.QtOrder, cachedQtOrder)
+            && string.Equals(cachedJobTag, ErosUIJobEnv.JobTag, StringComparison.Ordinal))
+            return;
+
+        // Resolve and copy once per registry/visibility/order change so a host
+        // refresh cannot mutate the snapshot during the panel's draw pass.
+        var resolved = QtRegistry.ResolveVisible(
+            visibleQtKeys,
+            new HashSet<string>(StringComparer.Ordinal));
+        cachedDefinitions = 按自定义顺序排序(resolved).ToList();
+        cachedGroups = 构建分组(cachedDefinitions);
+        cachedVisibleQtKeyOrder = visibleQtKeyOrder.ToArray();
+        cachedQtOrder = settings.QtOrder.ToArray();
+        cachedJobTag = ErosUIJobEnv.JobTag;
+        hasCachedDefinitions = true;
+    }
+
+    private static bool 序列相同(IReadOnlyList<string> current, string[] snapshot)
+    {
+        if (current.Count != snapshot.Length) return false;
+        for (var i = 0; i < snapshot.Length; i++)
+            if (!string.Equals(current[i], snapshot[i], StringComparison.Ordinal)) return false;
+        return true;
     }
 
     public override void PostDraw()

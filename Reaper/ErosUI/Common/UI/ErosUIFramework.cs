@@ -54,7 +54,7 @@ public static class ErosUIFramework
 
         control = new CombatControlWindow(
             $"{ErosUIJobEnv.作者}{ErosUIJobEnv.JobTag} 控制",
-            OpenSettings,
+            ToggleSettings,
             () => 限制存档位置(ErosUISettings.Instance.控制条位置),
             pos =>
             {

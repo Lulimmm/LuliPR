@@ -125,6 +125,7 @@ public abstract partial class SettingsWindowBase : Window
             var starMin = ImGui.GetWindowPos() + new Vector2(0f, ImGui.GetFrameHeight());
             var starMax = ImGui.GetWindowPos() + ImGui.GetWindowSize();
             ErosUILayer.DrawShootingStars(ImGui.GetWindowDrawList(), starMin, starMax);
+            DrawThemedCloseButton();
 
             DrawSidebarLayout();
 
@@ -135,6 +136,41 @@ public abstract partial class SettingsWindowBase : Window
         {
             ImGui.TextColored(new Vector4(1, 0, 0, 1), $"绘制错误: {ex.Message}");
         }
+    }
+
+    private static void DrawThemedCloseButton()
+    {
+        var drawList = ImGui.GetWindowDrawList();
+        var windowPos = ImGui.GetWindowPos();
+        var windowMax = windowPos + ImGui.GetWindowSize();
+        var style = ImGui.GetStyle();
+        var size = ImGui.GetFrameHeight();
+        var min = new Vector2(
+            windowMax.X - style.FramePadding.X - size,
+            windowPos.Y + style.FramePadding.Y);
+        var max = min + new Vector2(size);
+        var mouse = ImGui.GetIO().MousePos;
+        var hovered = mouse.X >= min.X && mouse.X <= max.X
+            && mouse.Y >= min.Y && mouse.Y <= max.Y;
+        var pressed = hovered && ImGui.IsMouseDown(ImGuiMouseButton.Left);
+
+        drawList.PushClipRect(windowPos, windowMax, false);
+        var fill = pressed
+            ? SimplePalette.PrimaryActive
+            : hovered
+                ? SimplePalette.PrimaryHover
+                : SimplePalette.WithAlpha(SimplePalette.Accent, 0.22f);
+        var border = hovered ? SimplePalette.Primary : SimplePalette.BorderStrong;
+        drawList.AddRectFilled(min, max, SimplePalette.ToU32(fill), 7f);
+        drawList.AddRect(min, max, SimplePalette.ToU32(border), 7f,
+            ImDrawFlags.RoundCornersAll, 1.5f);
+
+        var center = (min + max) * 0.5f;
+        var half = MathF.Max(3f, size * 0.18f);
+        var xColor = SimplePalette.ToU32(SimplePalette.TextPrimary);
+        drawList.AddLine(center + new Vector2(-half, -half), center + new Vector2(half, half), xColor, 1.8f);
+        drawList.AddLine(center + new Vector2(half, -half), center + new Vector2(-half, half), xColor, 1.8f);
+        drawList.PopClipRect();
     }
 
     // 内容区（滚动, 填满内容高度）。

@@ -48,6 +48,16 @@ public sealed partial class CombatControlWindow : Window
         "pet.seal_01.png", "pet.seal_02.png", "pet.seal_03.png",
         "pet.seal_04.png", "pet.seal_05.png", "pet.seal_06.png",
     };
+    private static readonly string[] OffTooltips =
+    {
+        "左键：运行\n右键：开关设置\n中键：锁定自动移动\n拖动：移动像素小人",
+        "左键：运行\n右键：开关设置\n中键：解锁自动移动\n拖动：移动像素小人",
+    };
+    private static readonly string[] ActiveTooltips =
+    {
+        "左键：关闭\n右键：开关设置\n中键：锁定自动移动\n拖动：移动像素小人",
+        "左键：关闭\n右键：开关设置\n中键：解锁自动移动\n拖动：移动像素小人",
+    };
 
     private readonly System.Action toggleSettings;
     private readonly Func<Vector2>? getSavedPosition;
@@ -65,6 +75,7 @@ public sealed partial class CombatControlWindow : Window
     private double lastPetInteractionAt;
     private bool pendingPetClick;
     private double pendingPetClickAt;
+    private bool suppressNextPetClickRelease;
     // Keep names only, never texture-wrap instances. A wrap is owned by Dalamud
     // and can be replaced/disposed between frames.
     private string? lastReadyPetFrame;
@@ -142,6 +153,8 @@ public sealed partial class CombatControlWindow : Window
     private void DrawPet()
     {
         UpdatePetState();
+        var now = ImGui.GetTime();
+        var doubleClickTime = Math.Max(0.30d, ImGui.GetIO().MouseDoubleClickTime);
         var pos = ImGui.GetCursorScreenPos();
         var drawList = ImGui.GetWindowDrawList();
 
@@ -149,14 +162,25 @@ public sealed partial class CombatControlWindow : Window
         var hovered = ImGui.IsItemHovered();
         var rightClicked = ImGui.IsItemClicked(ImGuiMouseButton.Right);
         var middleClicked = ImGui.IsItemClicked(ImGuiMouseButton.Middle);
-        var doubleClicked = hovered && ImGui.IsMouseDoubleClicked(ImGuiMouseButton.Left);
+        var doubleClicked = hovered && pendingPetClick
+            && now - pendingPetClickAt <= doubleClickTime
+            && ImGui.IsMouseDoubleClicked(ImGuiMouseButton.Left);
+
+        if (hovered && ImGui.IsMouseClicked(ImGuiMouseButton.Left)
+            && pendingPetClick && !doubleClicked
+            && now - pendingPetClickAt > doubleClickTime)
+        {
+            pendingPetClick = false;
+            ToggleAcrState();
+        }
 
         if (doubleClicked)
         {
             // A double click has its own action. Cancel the delayed single-click
             // action so it cannot also toggle the ACR state.
             pendingPetClick = false;
-            ErosUIFramework.CloseAuxiliaryPanels();
+            suppressNextPetClickRelease = true;
+            ErosUIFramework.ToggleAuxiliaryPanels();
         }
 
         if (hovered && (ImGui.IsMouseClicked(ImGuiMouseButton.Left)
@@ -195,10 +219,12 @@ public sealed partial class CombatControlWindow : Window
         {
             if (!petDragging && ImGui.IsMouseReleased(ImGuiMouseButton.Left))
             {
-                if (!doubleClicked)
+                if (suppressNextPetClickRelease)
+                    suppressNextPetClickRelease = false;
+                else if (!doubleClicked)
                 {
                     pendingPetClick = true;
-                    pendingPetClickAt = ImGui.GetTime();
+                    pendingPetClickAt = now;
                 }
             }
             else if (petDragging)
@@ -210,6 +236,9 @@ public sealed partial class CombatControlWindow : Window
             }
             petDragging = false;
         }
+
+        if (suppressNextPetClickRelease && ImGui.IsMouseReleased(ImGuiMouseButton.Left))
+            suppressNextPetClickRelease = false;
 
         if (rightClicked)
             toggleSettings();
@@ -236,9 +265,8 @@ public sealed partial class CombatControlWindow : Window
             savePosition?.Invoke(ImGui.GetWindowPos());
         }
 
-        var now = ImGui.GetTime();
         if (pendingPetClick && !ImGui.IsMouseDown(ImGuiMouseButton.Left)
-            && now - pendingPetClickAt >= 0.30d)
+            && now - pendingPetClickAt >= doubleClickTime + 0.05d)
         {
             pendingPetClick = false;
             ToggleAcrState();
@@ -279,10 +307,24 @@ public sealed partial class CombatControlWindow : Window
         }
 
         if (hovered)
-            ImGui.SetTooltip(PromeSettings.Instance.EnableAcr == AcrState.Off
-                ? $"左键：运行\n右键：打开设置\n中键：{(positionLocked ? "解锁" : "锁定")}自动移动\n拖动：移动像素小人"
-                : $"左键：关闭\n右键：打开设置\n中键：{(positionLocked ? "解锁" : "锁定")}自动移动\n拖动：移动像素小人");
+            DrawPetTooltip((PromeSettings.Instance.EnableAcr == AcrState.Off
+                ? OffTooltips
+                : ActiveTooltips)[positionLocked ? 1 : 0]);
 
+    }
+
+    private static void DrawPetTooltip(string text)
+    {
+        ImGui.PushStyleColor(ImGuiCol.PopupBg, SimplePalette.PopupBg);
+        ImGui.PushStyleColor(ImGuiCol.Text, SimplePalette.TextPrimary);
+        ImGui.PushStyleColor(ImGuiCol.Border, SimplePalette.BorderStrong);
+        ImGui.PushStyleVar(ImGuiStyleVar.PopupRounding, 6f);
+        ImGui.PushStyleVar(ImGuiStyleVar.WindowPadding, new Vector2(10f, 8f));
+        ImGui.BeginTooltip();
+        ImGui.TextUnformatted(text);
+        ImGui.EndTooltip();
+        ImGui.PopStyleVar(2);
+        ImGui.PopStyleColor(3);
     }
 
     private void ToggleAcrState()

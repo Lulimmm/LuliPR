@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Numerics;
 using System.Reflection;
 using System.Diagnostics;
 using Dalamud.Game.Command;
@@ -32,7 +33,7 @@ using Ninja.PR.UI;
 
 namespace Ninja.PR;
 
-[RotationMetadata(30u, "Luli Ninja PR", "Cino", "1.2.7", ContentScope = AcrContentScope.HighEnd)]
+[RotationMetadata(30u, "Luli Ninja PR", "Cino", "1.2.8", ContentScope = AcrContentScope.HighEnd)]
 public sealed class NinjaRotation : IRotation, IRotationLifecycle
 {
     private static readonly HashSet<string> DefaultHiddenQtKeys = new(StringComparer.Ordinal)
@@ -338,6 +339,16 @@ public sealed class NinjaRotation : IRotation, IRotationLifecycle
             ImGui.EndCombo();
         }
 
+        ImGui.AlignTextToFramePadding();
+        ImGui.Text("背刺模式");
+        ImGui.SameLine(0f, 12f);
+        var raitonBackstab = NinjaSettings.Instance.RaitonBackstab;
+        if (DrawBackstabModeButton(raitonBackstab))
+        {
+            NinjaSettings.Instance.RaitonBackstab = !raitonBackstab;
+            NinjaSettings.Instance.Save();
+        }
+
         var openerBurst = NinjaSettings.Instance.OpenerBurst;
         if (ImGui.Checkbox("起手使用爆发药", ref openerBurst))
         {
@@ -354,13 +365,35 @@ public sealed class NinjaRotation : IRotation, IRotationLifecycle
         }
 
         var extraRange = NinjaSettings.Instance.ExtraRange;
-        if (ImGui.DragFloat("长臂猿额外攻击距离", ref extraRange, 0.1f, 0f, 3f, "%.1f m"))
+        if (ImGui.SliderFloat("长臂猿额外攻击距离", ref extraRange, 0f, 3f, "%.0f m"))
         {
-            NinjaSettings.Instance.ExtraRange = Math.Clamp(extraRange, 0f, 3f);
+            NinjaSettings.Instance.ExtraRange = Math.Clamp(
+                MathF.Round(extraRange, MidpointRounding.AwayFromZero), 0f, 3f);
             NinjaSettings.Instance.Save();
             NinjaHooks.Update();
         }
 
+    }
+
+    private static bool DrawBackstabModeButton(bool raitonBackstab)
+    {
+        var fill = raitonBackstab
+            ? SimplePalette.WithAlpha(SimplePalette.Accent, 0.34f)
+            : SimplePalette.FrameBgActive;
+        var border = raitonBackstab ? SimplePalette.Accent : SimplePalette.BorderStrong;
+        ImGui.PushStyleColor(ImGuiCol.Button, fill);
+        ImGui.PushStyleColor(ImGuiCol.ButtonHovered, SimplePalette.FrameBgHovered);
+        ImGui.PushStyleColor(ImGuiCol.ButtonActive, SimplePalette.FrameBgActive);
+        ImGui.PushStyleColor(ImGuiCol.Border, border);
+        ImGui.PushStyleColor(ImGuiCol.Text, SimplePalette.TextPrimary);
+        ImGui.PushStyleVar(ImGuiStyleVar.FrameRounding, 8f);
+        ImGui.PushStyleVar(ImGuiStyleVar.FrameBorderSize, 1.5f);
+        ImGui.PushStyleVar(ImGuiStyleVar.FramePadding, new Vector2(10f, 5f));
+        var clicked = ImGui.Button(raitonBackstab ? "雷遁背刺" : "战技背刺",
+            new Vector2(156f, 32f));
+        ImGui.PopStyleVar(3);
+        ImGui.PopStyleColor(5);
+        return clicked;
     }
 
     private static bool GetQtDefault(string key)

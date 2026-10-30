@@ -12,10 +12,19 @@ namespace ErosUI;
 /// </summary>
 internal sealed class ErosUISplashWindow : Window
 {
+    private const int LoaderSegments = 72;
     private const float StartDuration = 1f;
     private const float TotalDuration = 3.5f;
     private const float FadeDuration = 0.5f;
+    private static readonly Vector2[] LoaderDirections = BuildLoaderDirections();
+    private static readonly string[] SealFrames =
+    {
+        "pet.seal_01.png", "pet.seal_02.png", "pet.seal_03.png",
+        "pet.seal_04.png", "pet.seal_05.png", "pet.seal_06.png",
+    };
     private double startedAt = -1d;
+    private int cachedPercent = -1;
+    private string cachedPercentText = string.Empty;
 
     public ErosUISplashWindow()
         : base("##LuliErosUISplash",
@@ -157,19 +166,16 @@ internal sealed class ErosUISplashWindow : Window
             ImDrawFlags.None, 2f);
     }
 
-    private static void DrawLoader(ImDrawListPtr drawList, Vector2 center, float percentProgress, float ringProgress, float opacity)
+    private void DrawLoader(ImDrawListPtr drawList, Vector2 center, float percentProgress, float ringProgress, float opacity)
     {
-        const int segments = 72;
         const float radius = 80f;
         var pulse = 1f + 0.08f * MathF.Sin((float)(ImGui.GetTime() * Math.PI * 2d / 0.9d));
         var ringRadius = radius * pulse;
-        var visible = Math.Clamp((int)MathF.Round(segments * ringProgress), 1, segments);
-        for (var i = 0; i < segments; i++)
+        var visible = Math.Clamp((int)MathF.Round(LoaderSegments * ringProgress), 1, LoaderSegments);
+        for (var i = 0; i < LoaderSegments; i++)
         {
-            var a0 = -MathF.PI * 0.5f + i / (float)segments * MathF.Tau;
-            var a1 = -MathF.PI * 0.5f + (i + 1) / (float)segments * MathF.Tau;
-            var p0 = center + new Vector2(MathF.Cos(a0), MathF.Sin(a0)) * ringRadius;
-            var p1 = center + new Vector2(MathF.Cos(a1), MathF.Sin(a1)) * ringRadius;
+            var p0 = center + LoaderDirections[i] * ringRadius;
+            var p1 = center + LoaderDirections[i + 1] * ringRadius;
             var alpha = i < visible ? opacity * 0.95f : opacity * 0.12f;
             drawList.AddLine(p0, p1, SimplePalette.ToU32(new Vector4(1f, 0.84f, 0.95f, alpha)), 3f);
         }
@@ -177,13 +183,19 @@ internal sealed class ErosUISplashWindow : Window
         var cuteSize = new Vector2(96f) * pulse;
         // Use the same six decoded frames as the site's animated cute.webp. A
         // native PNG frame avoids backend-dependent animated-WebP uploads.
-        var sealFrame = $"pet.seal_{(int)(ImGui.GetTime() * 6.67d) % 6 + 1:00}.png";
+        var sealFrame = SealFrames[(int)(ImGui.GetTime() * 6.67d) % SealFrames.Length];
         var cute = ErosUILayer.GetResourceTextureWrap(sealFrame);
         if (cute != null)
             drawList.AddImage(cute.Handle, center - cuteSize * 0.5f, center + cuteSize * 0.5f,
                 Vector2.Zero, Vector2.One, SimplePalette.ToU32(new Vector4(1f, 1f, 1f, opacity)));
 
-        var percent = $"{(int)MathF.Round(percentProgress * 100f)}%";
+        var percentValue = (int)MathF.Round(percentProgress * 100f);
+        if (percentValue != cachedPercent)
+        {
+            cachedPercent = percentValue;
+            cachedPercentText = $"{percentValue}%";
+        }
+        var percent = cachedPercentText;
         var fontSize = ImGui.GetFontSize() * 3f;
         var textSize = ImGui.CalcTextSize(percent) * 3f;
         var textPos = center + new Vector2(-textSize.X * 0.5f, -100f);
@@ -193,5 +205,16 @@ internal sealed class ErosUISplashWindow : Window
             SimplePalette.ToU32(new Vector4(0.35f, 0.20f, 0.55f, opacity * 0.7f)), percent);
         drawList.AddText(ImGui.GetFont(), fontSize, textPos,
             SimplePalette.ToU32(new Vector4(1f, 0.96f, 1f, opacity)), percent);
+    }
+
+    private static Vector2[] BuildLoaderDirections()
+    {
+        var directions = new Vector2[LoaderSegments + 1];
+        for (var i = 0; i <= LoaderSegments; i++)
+        {
+            var angle = -MathF.PI * 0.5f + i / (float)LoaderSegments * MathF.Tau;
+            directions[i] = new Vector2(MathF.Cos(angle), MathF.Sin(angle));
+        }
+        return directions;
     }
 }

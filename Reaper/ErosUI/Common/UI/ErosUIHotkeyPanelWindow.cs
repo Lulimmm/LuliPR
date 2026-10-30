@@ -26,6 +26,10 @@ public sealed class ErosUIHotkeyPanelWindow : Window
     private readonly int columns;
     private readonly float tile;
     private readonly float spacing;
+    private IReadOnlyList<(string Name, IHotkey Hotkey, uint GameIcon, bool GameIconHQ, Func<uint>? DynamicIconActionId, Func<(uint Icon, bool Hq)>? DynamicGameIcon)> orderedEntries
+        = Array.Empty<(string, IHotkey, uint, bool, Func<uint>?, Func<(uint, bool)>?)>();
+    private string[] cachedHotkeyOrder = Array.Empty<string>();
+    private bool hasCachedOrder;
 
     // 右键拖拽换位状态（面板级, 一次只拖一格; 左键点击执行热键与拖拽完全解耦）
     private int 拖拽源 = -1;
@@ -92,7 +96,7 @@ public sealed class ErosUIHotkeyPanelWindow : Window
         DrawWindowChrome();
 
         // 按用户自定义顺序排列（悬浮面板右键拖拽调整; 未调整过 = 注册原序）
-        var ordered = 按自定义顺序排序(entries);
+        var ordered = 取自定义顺序条目();
         var count = ordered.Count;
         if (count == 0)
         {
@@ -150,6 +154,26 @@ public sealed class ErosUIHotkeyPanelWindow : Window
         }
 
         HandleWindowDrag();
+    }
+
+    private IReadOnlyList<(string Name, IHotkey Hotkey, uint GameIcon, bool GameIconHQ, Func<uint>? DynamicIconActionId, Func<(uint Icon, bool Hq)>? DynamicGameIcon)> 取自定义顺序条目()
+    {
+        var order = ErosUISettings.Instance.HotkeyOrder;
+        if (hasCachedOrder && 序列相同(order, cachedHotkeyOrder))
+            return orderedEntries;
+
+        orderedEntries = 按自定义顺序排序(entries);
+        cachedHotkeyOrder = order.ToArray();
+        hasCachedOrder = true;
+        return orderedEntries;
+    }
+
+    private static bool 序列相同(IReadOnlyList<string> current, string[] snapshot)
+    {
+        if (current.Count != snapshot.Length) return false;
+        for (var i = 0; i < snapshot.Length; i++)
+            if (!string.Equals(current[i], snapshot[i], StringComparison.Ordinal)) return false;
+        return true;
     }
 
     // ============================================================
