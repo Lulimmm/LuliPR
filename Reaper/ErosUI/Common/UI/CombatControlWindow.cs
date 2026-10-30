@@ -7,7 +7,7 @@ using PromeRotation.Data;
 namespace ErosUI;
 
 // 网站风格的像素小人控制器。尺寸、资源和交互对齐网站 desk-pet：
-// 左键点击切换运行/关闭，右键打开设置，左键拖动移动位置。
+// 左键点击切换运行/关闭，右键打开设置，中键锁定自动移动，左键拖动移动位置。
 public sealed partial class CombatControlWindow : Window
 {
     private enum PetVisualState
@@ -25,7 +25,6 @@ public sealed partial class CombatControlWindow : Window
     private static readonly string[][] IdlePetAnimations =
     {
         Frames("pet.nothing_nothing", 16),
-        Frames("pet.cute_cute", 6),
         Frames("pet.hu_hu", 25),
     };
     private static readonly string[][] DragPetAnimations =
@@ -53,8 +52,10 @@ public sealed partial class CombatControlWindow : Window
     private readonly System.Action toggleSettings;
     private readonly Func<Vector2>? getSavedPosition;
     private readonly System.Action<Vector2>? savePosition;
+    private readonly System.Action<bool>? savePositionLocked;
     private bool persistPending;
     private bool petDragging;
+    private bool positionLocked;
     private bool petStateInitialized;
     private PetVisualState petState = PetVisualState.Idle;
     private int petVariant;
@@ -85,7 +86,9 @@ public sealed partial class CombatControlWindow : Window
         string title,
         System.Action toggleSettings,
         Func<Vector2>? getSavedPosition = null,
-        System.Action<Vector2>? savePosition = null)
+        System.Action<Vector2>? savePosition = null,
+        Func<bool>? getPositionLocked = null,
+        System.Action<bool>? savePositionLocked = null)
         : base(title,
             ImGuiWindowFlags.NoDecoration
             | ImGuiWindowFlags.AlwaysAutoResize
@@ -95,6 +98,8 @@ public sealed partial class CombatControlWindow : Window
         this.toggleSettings = toggleSettings;
         this.getSavedPosition = getSavedPosition;
         this.savePosition = savePosition;
+        this.savePositionLocked = savePositionLocked;
+        positionLocked = getPositionLocked?.Invoke() ?? false;
 
         Position = getSavedPosition?.Invoke() ?? DefaultPosition;
         PositionCondition = ImGuiCond.FirstUseEver;
@@ -143,6 +148,7 @@ public sealed partial class CombatControlWindow : Window
         ImGui.InvisibleButton("##cc_pet", PetSize);
         var hovered = ImGui.IsItemHovered();
         var rightClicked = ImGui.IsItemClicked(ImGuiMouseButton.Right);
+        var middleClicked = ImGui.IsItemClicked(ImGuiMouseButton.Middle);
         var doubleClicked = hovered && ImGui.IsMouseDoubleClicked(ImGuiMouseButton.Left);
 
         if (doubleClicked)
@@ -154,7 +160,8 @@ public sealed partial class CombatControlWindow : Window
         }
 
         if (hovered && (ImGui.IsMouseClicked(ImGuiMouseButton.Left)
-                        || ImGui.IsMouseClicked(ImGuiMouseButton.Right)))
+                        || ImGui.IsMouseClicked(ImGuiMouseButton.Right)
+                        || middleClicked))
         {
             lastPetInteractionAt = ImGui.GetTime();
             if (petState == PetVisualState.Cool)
@@ -207,6 +214,22 @@ public sealed partial class CombatControlWindow : Window
         if (rightClicked)
             toggleSettings();
 
+        if (middleClicked)
+        {
+            positionLocked = !positionLocked;
+            if (positionLocked)
+            {
+                if (petState == PetVisualState.Fly)
+                {
+                    petState = PetVisualState.Idle;
+                    petStateStartedAt = ImGui.GetTime();
+                    nextIdleVariantAt = petStateStartedAt + 8d;
+                }
+                savePosition?.Invoke(ImGui.GetWindowPos());
+            }
+            savePositionLocked?.Invoke(positionLocked);
+        }
+
         if (persistPending && !ImGui.IsMouseDown(ImGuiMouseButton.Left))
         {
             persistPending = false;
@@ -249,15 +272,16 @@ public sealed partial class CombatControlWindow : Window
             }
             catch (ObjectDisposedException)
             {
-                if (acrOff) lastReadySealFrame = null;
-                else lastReadyPetFrame = null;
+                // Keep the frame name. The shared texture may be recreated on
+                // the next UI frame after a device/resource reset; clearing it
+                // here would turn a short reload into visible flicker.
             }
         }
 
         if (hovered)
             ImGui.SetTooltip(PromeSettings.Instance.EnableAcr == AcrState.Off
-                ? "左键：运行\n右键：打开设置\n拖动：移动像素小人"
-                : "左键：关闭\n右键：打开设置\n拖动：移动像素小人");
+                ? $"左键：运行\n右键：打开设置\n中键：{(positionLocked ? "解锁" : "锁定")}自动移动\n拖动：移动像素小人"
+                : $"左键：关闭\n右键：打开设置\n中键：{(positionLocked ? "解锁" : "锁定")}自动移动\n拖动：移动像素小人");
 
     }
 
@@ -298,6 +322,13 @@ public sealed partial class CombatControlWindow : Window
             lastPetInteractionAt = now;
         }
 
+        if (positionLocked && petState == PetVisualState.Fly)
+        {
+            petState = PetVisualState.Idle;
+            petStateStartedAt = now;
+            nextIdleVariantAt = now + 8d;
+        }
+
         if (petState == PetVisualState.Fly)
         {
             var progress = petFlyEndsAt <= petStateStartedAt
@@ -334,7 +365,7 @@ public sealed partial class CombatControlWindow : Window
                 nextIdleVariantAt = now + 8d;
             }
 
-            if (!petDragging && !ImGui.IsMouseDown(ImGuiMouseButton.Left) && now >= nextFlyAt)
+            if (!positionLocked && !petDragging && !ImGui.IsMouseDown(ImGuiMouseButton.Left) && now >= nextFlyAt)
                 StartPetFlight(now);
 
             // The website enters its cool animation after three minutes without

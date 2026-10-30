@@ -42,6 +42,7 @@ public class ErosUISettings
 
     // 战斗控制悬浮条位置（窗口拖动后落盘）
     public System.Numerics.Vector2? 控制条位置;
+    public bool ControlPanelPositionLocked;
 
     // ============================================================
     // === 热键面板（每职业一套布局; 外观默认值各职业一致） ===

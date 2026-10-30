@@ -17,15 +17,7 @@ internal sealed class NinjaAlwaysResolver : NinjaResolver
 {
     public override CheckResult Check()
     {
-        if (!PromeSettings.Instance.GetQt(NinjaQts.PrepareSuiton)) return No;
-
-        // A stale pre-pull flag must never take precedence over the TCJ GCD
-        // sequence. The TCJ resolver owns every GCD while the 1186 aura is
-        // active; otherwise the prep queue (2259/18806/18807/2271) can be
-        // selected first and consume the window without submitting 18873.
-        if (NinjaCombatState.IsTcjSequenceActive) return No;
-
-        return Ok;
+        return PromeSettings.Instance.GetQt(NinjaQts.PrepareSuiton) ? Ok : No;
     }
 
     public override PAction GetAction()

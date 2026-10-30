@@ -60,6 +60,12 @@ public static class ErosUIFramework
             {
                 ErosUISettings.Instance.控制条位置 = pos;
                 ErosUISettings.Instance.Save();
+            },
+            () => ErosUISettings.Instance.ControlPanelPositionLocked,
+            locked =>
+            {
+                ErosUISettings.Instance.ControlPanelPositionLocked = locked;
+                ErosUISettings.Instance.Save();
             });
         settings = new ErosUISettingsWindow();
         ws.AddWindow(control);

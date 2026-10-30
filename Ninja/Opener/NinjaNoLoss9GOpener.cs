@@ -30,7 +30,7 @@ public sealed class NinjaNoLoss9GOpener : NinjaOpener
         get
         {
             NinjaSequencePolicy.Begin(NinjaActions.TenChiJin);
-            return new List<PAction>
+            var actions = new List<PAction>
             {
                 G(NinjaActions.SpinningEdge),
                 G(NinjaActions.GustSlash),
@@ -49,6 +49,9 @@ public sealed class NinjaNoLoss9GOpener : NinjaOpener
                 G(NinjaActions.HyoshoRanryu),
                 SelfOUnverified(NinjaActions.TenChiJin)
             };
+            if (NinjaSettings.Instance.OpenerBurst && Potion() is { } potion)
+                actions.Insert(1, potion);
+            return actions;
         }
     }
 }

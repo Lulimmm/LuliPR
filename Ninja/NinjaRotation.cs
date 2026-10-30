@@ -32,10 +32,10 @@ using Ninja.PR.UI;
 
 namespace Ninja.PR;
 
-[RotationMetadata(30u, "Luli Ninja PR", "Cino", "1.2.6", ContentScope = AcrContentScope.HighEnd)]
+[RotationMetadata(30u, "Luli Ninja PR", "Cino", "1.2.7", ContentScope = AcrContentScope.HighEnd)]
 public sealed class NinjaRotation : IRotation, IRotationLifecycle
 {
-    private static readonly HashSet<string> HiddenQtKeys = new(StringComparer.Ordinal)
+    private static readonly HashSet<string> DefaultHiddenQtKeys = new(StringComparer.Ordinal)
     {
         "倾斜资源", "斩杀", NinjaQts.PrepareSuiton,
         NinjaQts.Raiju, NinjaQts.Bunshin, NinjaQts.Phantom,
@@ -132,7 +132,7 @@ public sealed class NinjaRotation : IRotation, IRotationLifecycle
             jobName: "Ninja",
             qtAll: QtList,
             qtIsMetaKey: _ => false,
-            qtIsVisibleInMode: (key, _) => !HiddenQtKeys.Contains(key),
+            qtIsVisibleInMode: (_, _) => true,
             qtDefault: GetQtDefault,
             qtCascadeRules: new Dictionary<string, (string key, bool invert)[]>(),
             hotkeyNames: new[] { "\u7f29\u5730", "\u80cc\u5bf9\u6444\u50cf\u673a\u7f29\u5730", "\u5f3a\u5236\u96f7\u9041" },
@@ -150,6 +150,14 @@ public sealed class NinjaRotation : IRotation, IRotationLifecycle
             PromeSettings.Instance.AddQt(qt.Key, GetQtDefault(qt.Key));
         }
 
+        var uiSettings = ErosUISettings.Instance;
+        foreach (var key in DefaultHiddenQtKeys)
+        {
+            if (!uiSettings.QtVisibleHighEnd.ContainsKey(key))
+                uiSettings.QtVisibleHighEnd[key] = false;
+        }
+        uiSettings.Save();
+
         // Preserve the old NinjaSettings flag once, then let the QT own the
         // setting so its visible state and the resolver cannot diverge.
         if (NinjaSettings.Instance.RaitonWhenOutOfRange)
@@ -162,13 +170,19 @@ public sealed class NinjaRotation : IRotation, IRotationLifecycle
 
     public PAction? NextGcd()
     {
-        // While TCJ owns the GCD, no ordinary resolver may consume the slot.
-        // This also covers resolvers whose individual checks do not need a
-        // TCJ condition because the scheduler owns the GCD while TCJ is active.
-        if (NinjaCombatState.IsTcjSequenceActive)
-            return NextTcjOnly();
         if (NinjaNoLossOpenerRuntime.ShouldHoldNormalDecisions)
             return null;
+        if (Core.Target?.CanUseAttackActionOn() != true)
+            return null;
+
+        // AE checks the preparation Suiton resolver before TCJ in GCD priority.
+        // Match that ordering at the scheduler edge.
+        if (gcd[0].Check().Success)
+            return gcd[0].GetAction();
+
+        // While TCJ owns the GCD, no other ordinary resolver may consume the slot.
+        if (NinjaCombatState.IsTcjSequenceActive)
+            return NextTcjOnly();
 
         // A normal mudra sequence owns the GCD until 496 disappears. The
         // queued Ten/Chi/Jin actions are consumed by ActionUpdater; no other
@@ -620,6 +634,7 @@ internal sealed class NinjaEventHandler : IRotationEventHandler, IDisposable
         }
         NinjaCombatState.Record(action.ActionId);
         NinjaCombatState.RecordConfirmed(action.ActionId);
+        ClearPrepareSuitonAfterCast(action.ActionId);
         // Record both pre- and post-upgrade action aliases so an effect packet
         // reported with either id observes the same recency window.
         switch (action.ActionId)
@@ -643,9 +658,6 @@ internal sealed class NinjaEventHandler : IRotationEventHandler, IDisposable
                 NinjaCombatState.Record(NinjaActions.Bhavacakra);
                 break;
         }
-        if (action.ActionId == NinjaActions.Suiton
-            && PromeSettings.Instance.GetQt(NinjaQts.PrepareSuiton))
-            PromeSettings.Instance.SetQt(NinjaQts.PrepareSuiton, false);
         if (action.ActionId is NinjaActions.TrickAttack or NinjaActions.TrickAttackCurrent)
             NinjaSettings.Instance.TrickAttackDelayUntilNextMug = false;
 
@@ -688,6 +700,12 @@ internal sealed class NinjaEventHandler : IRotationEventHandler, IDisposable
         if (actionId == NinjaActions.TenChiJin) return true;
         var adjusted = ActionHelper.GetAdjustedActionId(NinjaActions.TenChiJin);
         return adjusted != 0 && actionId == adjusted;
+    }
+
+    private static void ClearPrepareSuitonAfterCast(uint actionId)
+    {
+        if (actionId == NinjaActions.Suiton && PromeSettings.Instance.GetQt(NinjaQts.PrepareSuiton))
+            PromeSettings.Instance.SetQt(NinjaQts.PrepareSuiton, false);
     }
 
     private static void RecoverManualIntervention(uint actionId)
@@ -745,7 +763,6 @@ internal sealed class NinjaEventHandler : IRotationEventHandler, IDisposable
     {
         NinjaHooks.Update();
         NinjaPositionDrawer.Update();
-        if (Core.Target == null) TryPrepareSuiton();
     }
     public void OnBattleStarted()
     {
@@ -1102,8 +1119,7 @@ internal sealed class NinjaEventHandler : IRotationEventHandler, IDisposable
             && !me.HasStatus(2839u)
             && !me.HasStatus(NinjaActions.ShadowWalkerStatus)
             && !PromeSettings.Instance.GetQt(NinjaQts.PrepareSuiton)
-            && ActionHelper.GetActionCooldown(NinjaActions.TrickAttackCurrent) < 3f
-            && !ActionUpdaterRouter.HasActiveCommand())
+            && ActionHelper.GetActionCooldown(NinjaActions.TrickAttackCurrent) < 3f)
             PromeSettings.Instance.SetQt(NinjaQts.PrepareSuiton, true);
     }
 }

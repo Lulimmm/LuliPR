@@ -45,20 +45,13 @@ internal static class ErosUILayer
         // 透出游戏画面的比例，但网页纹理不会被紫色遮罩压到几乎不可见。
         drawList.AddRectFilled(min, max, SimplePalette.ToU32(tint), rounding, ImDrawFlags.RoundCornersAll);
 
-        var texture = GetResourceTexture("bg2.jpg");
-        if (texture != null)
+        var wrap = GetResourceTextureWrap("bg2.jpg");
+        if (wrap != null)
         {
-            // Get a frame-safe wrap. Dalamud may dispose the previous frame's
-            // UnknownTextureWrap during resource/device changes, so never cache
-            // the returned wrap across draw calls.
-            var wrap = texture.GetWrapOrEmpty();
-            if (wrap != null)
-            {
-                var (uv0, uv1) = CoverUv(wrap, max - min);
-                drawList.AddImageRounded(wrap.Handle, min, max, uv0, uv1,
-                    SimplePalette.ToU32(new Vector4(1f, 1f, 1f, Math.Clamp(imageAlpha, 0f, 1f))),
-                    rounding, ImDrawFlags.RoundCornersAll);
-            }
+            var (uv0, uv1) = CoverUv(wrap, max - min);
+            drawList.AddImageRounded(wrap.Handle, min, max, uv0, uv1,
+                SimplePalette.ToU32(new Vector4(1f, 1f, 1f, Math.Clamp(imageAlpha, 0f, 1f))),
+                rounding, ImDrawFlags.RoundCornersAll);
         }
 
         drawList.AddRect(min + new Vector2(1f), max - new Vector2(1f),
@@ -207,8 +200,29 @@ internal static class ErosUILayer
         };
     }
 
+    /// <summary>
+    /// Gets an embedded texture only when it is loaded for the current UI
+    /// frame. GetWrapOrEmpty returns an UnknownTextureWrap while an asset is
+    /// loading; passing that placeholder through to ImGui causes intermittent
+    /// blank frames and disposed-handle flashes for animated sprites.
+    /// </summary>
     public static IDalamudTextureWrap? GetResourceTextureWrap(string name)
-        => GetResourceTexture(name)?.GetWrapOrEmpty();
+    {
+        var texture = GetResourceTexture(name);
+        if (texture == null) return null;
+
+        try
+        {
+            Exception? error;
+            return texture.TryGetWrap(out var wrap, out error) && wrap != null ? wrap : null;
+        }
+        catch
+        {
+            // Texture providers can be torn down during a device reset. The
+            // caller will retain its last successfully drawn frame and retry.
+            return null;
+        }
+    }
 
     private static ISharedImmediateTexture? GetResourceTexture(string name)
     {
