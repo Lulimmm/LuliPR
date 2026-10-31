@@ -12,9 +12,9 @@ public sealed class ErosUIHotkeyBuilder
     /// <summary>构建产物，条目顺序即面板排布顺序。GameIcon 为游戏内原始图标 id（物品等无动作表的条目用），GameIconHQ 表示取 HQ 品质图标。</summary>
     public List<(string Name, IHotkey Hotkey, uint GameIcon, bool GameIconHQ, Func<uint>? DynamicIconActionId, Func<(uint Icon, bool Hq)>? DynamicGameIcon)> Entries { get; } = new();
 
-    public ErosUIHotkeyBuilder(ErosUISettings settings)
+    public ErosUIHotkeyBuilder(ErosUISettings settings, bool includeHidden = false)
     {
-        hidden = new HashSet<string>(settings.HiddenHotkeys);
+        hidden = includeHidden ? new HashSet<string>() : new HashSet<string>(settings.HiddenHotkeys);
     }
 
     /// <summary>注册一个固定技能按钮，点击时把该技能原样放进热键队列，图标自动取游戏内技能图标。</summary>

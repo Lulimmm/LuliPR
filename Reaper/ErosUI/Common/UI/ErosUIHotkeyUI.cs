@@ -15,8 +15,7 @@ internal static class ErosUIHotkeyUI
     {
         Uninstall();
 
-        var b = new ErosUIHotkeyBuilder(ErosUISettings.Instance);
-        ErosUIJobEnv.BuildHotkeys?.Invoke(b);
+        var b = BuildHotkeys(includeHidden: false);
         if (b.Entries.Count == 0) return;
 
         var s = ErosUISettings.Instance;
@@ -27,6 +26,48 @@ internal static class ErosUIHotkeyUI
             s.HotkeySpacing);
         try { PromeRotation.Plugin.Instance?.WindowSystem.AddWindow(window); }
         catch { /* 宿主未就绪 */ }
+    }
+
+    internal static bool ExecuteHotkey(string name)
+    {
+        try
+        {
+            var builder = BuildHotkeys(includeHidden: true);
+            foreach (var entry in builder.Entries)
+            {
+                if (!string.Equals(entry.Name, name, StringComparison.Ordinal)) continue;
+                entry.Hotkey.OnClick();
+                return true;
+            }
+        }
+        catch (Exception ex)
+        {
+            Svc.Log.Error(ex, $"ErosUI hotkey trigger failed: {name}");
+        }
+        return false;
+    }
+
+    internal static string[] GetHotkeyNames()
+    {
+        try
+        {
+            var entries = BuildHotkeys(includeHidden: true).Entries;
+            var names = new string[entries.Count];
+            for (var i = 0; i < entries.Count; i++) names[i] = entries[i].Name;
+            return names;
+        }
+        catch (Exception ex)
+        {
+            Svc.Log.Error(ex, "ErosUI hotkey list build failed");
+            return Array.Empty<string>();
+        }
+    }
+
+    private static ErosUIHotkeyBuilder BuildHotkeys(bool includeHidden)
+    {
+        var builder = new ErosUIHotkeyBuilder(ErosUISettings.Instance, includeHidden);
+        ErosUIJobEnv.BuildHotkeys?.Invoke(builder);
+        return builder;
     }
 
     /// <summary>从宿主 WindowSystem 摘除热键面板。OnExitAcr 调用。</summary>

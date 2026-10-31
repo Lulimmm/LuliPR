@@ -146,6 +146,12 @@ public static class ErosUIFramework
     /// <summary>热键悬浮面板当前是否可见。</summary>
     public static bool HotkeyPanelVisible => ErosUIHotkeyUI.PanelVisible;
 
+    /// <summary>Execute one of the current job's registered hotkeys by name.</summary>
+    public static bool ExecuteHotkey(string name) => ErosUIHotkeyUI.ExecuteHotkey(name);
+
+    /// <summary>List the current job's registered hotkeys, including hidden entries.</summary>
+    public static string[] GetHotkeyNames() => ErosUIHotkeyUI.GetHotkeyNames();
+
     /// <summary>显示/隐藏热键悬浮面板。只切换显隐，不重建窗口。</summary>
     public static void SetHotkeyPanelVisible(bool visible) => ErosUIHotkeyUI.SetPanelVisible(visible);
 

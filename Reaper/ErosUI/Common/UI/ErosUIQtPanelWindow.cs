@@ -36,6 +36,8 @@ public sealed class ErosUIQtPanelWindow : Window
     private string[] cachedQtOrder = Array.Empty<string>();
     private string? cachedJobTag;
     private bool hasCachedDefinitions;
+    private Vector2 cachedWindowSize;
+    private bool hasCachedWindowSize;
     private IReadOnlyList<QtDefinition> cachedDefinitions = Array.Empty<QtDefinition>();
     private List<分类分组> cachedGroups = new();
 
@@ -97,7 +99,13 @@ public sealed class ErosUIQtPanelWindow : Window
         // 每帧显式设置尺寸，让窗口精确贴合按钮网格。
         // 不要改回 AlwaysAutoResize：自适应尺寸会被窗口状态持久化干扰，
         // 导致窗口比内容宽出一截、左右多出透明边。
-        ImGui.SetWindowSize(计算窗口尺寸(groups, cols, defs.Count), ImGuiCond.Always);
+        var windowSize = 计算窗口尺寸(groups, cols, defs.Count);
+        if (!hasCachedWindowSize || cachedWindowSize != windowSize)
+        {
+            ImGui.SetWindowSize(windowSize, ImGuiCond.Always);
+            cachedWindowSize = windowSize;
+            hasCachedWindowSize = true;
+        }
 
         DrawWindowChrome();
 

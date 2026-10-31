@@ -30,6 +30,9 @@ public sealed class ErosUIHotkeyPanelWindow : Window
         = Array.Empty<(string, IHotkey, uint, bool, Func<uint>?, Func<(uint, bool)>?)>();
     private string[] cachedHotkeyOrder = Array.Empty<string>();
     private bool hasCachedOrder;
+    private Vector2 cachedWindowSize;
+    private bool hasCachedWindowSize;
+    private readonly Dictionary<(uint Icon, bool Hq), ISharedImmediateTexture> gameIconTextures = new();
 
     // 右键拖拽换位状态（面板级, 一次只拖一格; 左键点击执行热键与拖拽完全解耦）
     private int 拖拽源 = -1;
@@ -91,7 +94,12 @@ public sealed class ErosUIHotkeyPanelWindow : Window
             cols * tile + (cols - 1) * spacing + pad.X * 2f,
             rows * tile + (rows - 1) * spacing + pad.Y * 2f);
         // 每帧显式尺寸精确贴合网格（勿改回 AlwaysAutoResize，实测会多出透明边）
-        ImGui.SetWindowSize(size, ImGuiCond.Always);
+        if (!hasCachedWindowSize || cachedWindowSize != size)
+        {
+            ImGui.SetWindowSize(size, ImGuiCond.Always);
+            cachedWindowSize = size;
+            hasCachedWindowSize = true;
+        }
 
         DrawWindowChrome();
 
@@ -217,8 +225,15 @@ public sealed class ErosUIHotkeyPanelWindow : Window
         {
             try
             {
-                tex = Svc.Texture.GetFromGameIcon(
-                    new GameIconLookup(gameIcon, itemHq: gameIconHQ)).GetWrapOrDefault(null);
+                var key = (gameIcon, gameIconHQ);
+                if (!gameIconTextures.TryGetValue(key, out var sharedTexture))
+                {
+                    sharedTexture = Svc.Texture.GetFromGameIcon(
+                        new GameIconLookup(gameIcon, itemHq: gameIconHQ));
+                    gameIconTextures.Add(key, sharedTexture);
+                }
+
+                tex = sharedTexture.GetWrapOrDefault(null);
             }
             catch (Exception ex)
             {

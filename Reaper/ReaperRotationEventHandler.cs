@@ -71,12 +71,14 @@ internal sealed class ReaperEventHandler : IRotationEventHandler, IDisposable
     public void OnOutOfBattleUpdate()
     {
         InBattle = false;
+        ReaperPositionDrawer.Clear();
         ReaperHooks.Update();
         QueueOutOfCombatSoulsow();
     }
     public void OnBattleStarted()
     {
         InBattle = false;
+        ReaperPositionDrawer.Clear();
         soulsowAttemptAt = 0;
         CurrGcdAbilityCount = 2;
         confirmedActionAt.Clear();
@@ -86,6 +88,7 @@ internal sealed class ReaperEventHandler : IRotationEventHandler, IDisposable
     }
     public void OnNoTarget()
     {
+        ReaperPositionDrawer.Clear();
         ReaperHooks.Update();
         ErosUIFramework.RestoreQtIfHostCleared();
     }
@@ -94,10 +97,12 @@ internal sealed class ReaperEventHandler : IRotationEventHandler, IDisposable
         InBattle = true;
         OpenerPositionalRuntime.Update();
         ReaperHooks.Update();
+        ReaperPositionDrawer.Update();
     }
     public void OnBattleEnded()
     {
         InBattle = false;
+        ReaperPositionDrawer.Clear();
         soulsowAttemptAt = 0;
         CurrGcdAbilityCount = 2;
         confirmedActionAt.Clear();
@@ -108,6 +113,7 @@ internal sealed class ReaperEventHandler : IRotationEventHandler, IDisposable
     public void OnTerritoryChanged(ushort territoryId)
     {
         InBattle = false;
+        ReaperPositionDrawer.Clear();
         soulsowAttemptAt = 0;
         OpenerPositionalRuntime.Reset();
         PromeSettings.Instance.OpenerHasBeenExecuted = false;
