@@ -20,6 +20,7 @@ internal sealed class NinjaEarlier4Or3Resolver : NinjaResolver
         var me = Core.Me;
         var target = Core.Target;
         return NinjaSettings.Instance.RaitonBackstab
+            && me != null && !me.HasStatus(NinjaActions.RaijuReady)
             && target?.CanUseAttackActionOn() == true
             && NinjaTarget.Distance <= NinjaTarget.AttackRange
             && !NinjaCombatState.IsTcjSequenceActive

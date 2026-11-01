@@ -24,6 +24,7 @@ internal static class NinjaCombatState
     public static long LastObservedActionAt { get; private set; }
     private static uint LastConfirmedActionId { get; set; }
     private static long LastConfirmedActionAt { get; set; }
+    private static readonly Dictionary<uint, long> RestrictedGcdConfirmations = new();
     private static uint LastNinjutsuStartedActionId { get; set; }
     private static long LastNinjutsuStartedActionAt { get; set; }
     // AE's AfterSpell sets CurrGcdAbilityCount to 1 after a ninjutsu. Keep
@@ -37,8 +38,10 @@ internal static class NinjaCombatState
     public static int MaxGcdOffGcd => Math.Clamp(PromeSettings.Instance.Hacks.MaxOgcdsPerGcd, 1, 5);
     public static bool CanUseGcdOffGcd => GcdOffGcdUsed < MaxGcdOffGcd;
     public static bool CanQueueMultipleOffGcd =>
-        !IsPostNinjutsuOffGcdLimited && GcdOffGcdUsed + 2 <= MaxGcdOffGcd;
+        !IsPostNinjutsuOffGcdLimited && NinjaEventHandler.CanQueueMultipleOffGcd
+        && GcdOffGcdUsed + 2 <= MaxGcdOffGcd;
     private const int PendingTcjTimeoutMs = 2500;
+    private const int RestrictedGcdEventDedupMs = 2500;
 
     public static void Reset()
     {
@@ -53,6 +56,7 @@ internal static class NinjaCombatState
         LastObservedActionAt = 0;
         LastConfirmedActionId = 0;
         LastConfirmedActionAt = 0;
+        RestrictedGcdConfirmations.Clear();
         LastNinjutsuStartedActionId = 0;
         LastNinjutsuStartedActionAt = 0;
         PostNinjutsuOffGcdLimit = 0;
@@ -122,7 +126,7 @@ internal static class NinjaCombatState
         PostNinjutsuOffGcdUsed = 0;
     }
 
-    public static void RecordConfirmed(uint id)
+    public static bool RecordConfirmed(uint id)
     {
         ClearExpiredPendingTcj();
         var now = Environment.TickCount64;
@@ -131,7 +135,19 @@ internal static class NinjaCombatState
         // Count it once so duplicate entries cannot consume two oGCD slots or
         // repeatedly reopen/reset the per-GCD budget.
         if (canonical == LastConfirmedActionId
-            && now - LastConfirmedActionAt <= 250) return;
+            && now - LastConfirmedActionAt <= 250) return false;
+
+        // ActionEffectEntry may arrive after an intervening oGCD event. Keep
+        // a separate GCD dedup window so that late fragments cannot reopen a
+        // one-weave budget for Suiton or Hyosho Ranryu.
+        if (IsSingleWeaveLimitedGcd(id, canonical))
+        {
+            var restrictedAction = GetSingleWeaveLimitKey(id, canonical);
+            if (RestrictedGcdConfirmations.TryGetValue(restrictedAction, out var lastAt)
+                && now - lastAt <= RestrictedGcdEventDedupMs) return false;
+            RestrictedGcdConfirmations[restrictedAction] = now;
+        }
+
         LastConfirmedActionId = canonical;
         LastConfirmedActionAt = now;
         if (IsGcdAction(canonical))
@@ -144,7 +160,7 @@ internal static class NinjaCombatState
             PostNinjutsuOffGcdUsed = 0;
             if (IsNinjutsuAction(canonical))
                 PostNinjutsuOffGcdLimit = 1;
-            return;
+            return true;
         }
 
         // Some clients report an adjusted action ID for an oGCD. Count both
@@ -155,7 +171,17 @@ internal static class NinjaCombatState
             GcdOffGcdUsed = Math.Min(GcdOffGcdUsed + 1, MaxGcdOffGcd);
             PostNinjutsuOffGcdUsed = Math.Min(PostNinjutsuOffGcdUsed + 1, PostNinjutsuOffGcdLimit);
         }
+        return true;
     }
+
+    private static bool IsSingleWeaveLimitedGcd(uint id, uint canonical) =>
+        id is NinjaActions.Suiton or NinjaActions.HyoshoRanryu
+        || canonical is NinjaActions.Suiton or NinjaActions.HyoshoRanryu or NinjaActions.TcjSuiton;
+
+    private static uint GetSingleWeaveLimitKey(uint id, uint canonical) =>
+        id == NinjaActions.HyoshoRanryu || canonical == NinjaActions.HyoshoRanryu
+            ? NinjaActions.HyoshoRanryu
+            : NinjaActions.Suiton;
 
     private static bool IsNinjutsuAction(uint id) => id is
         2260u or NinjaActions.FumaShuriken or 2266u or NinjaActions.Raiton
@@ -165,7 +191,7 @@ internal static class NinjaCombatState
         or 18876u or NinjaActions.TcjRaiton or 18878u or 18879u or 18880u
         or NinjaActions.TcjSuiton;
 
-    private static bool IsGcdAction(uint id) => id is NinjaActions.SpinningEdge
+    internal static bool IsGcdAction(uint id) => id is NinjaActions.SpinningEdge
         or NinjaActions.GustSlash or NinjaActions.AeolianEdge or NinjaActions.ArmorCrush
         or NinjaActions.FumaShuriken or NinjaActions.Raiton or NinjaActions.Suiton
         or NinjaActions.Ten or 2260u or 2261u or 2263u
@@ -186,7 +212,7 @@ internal static class NinjaCombatState
         or NinjaActions.TenriJindo or NinjaActions.Meisui or NinjaActions.Assassinate
         or NinjaActions.AssassinateCooldown or NinjaActions.TrueNorth;
 
-    private static uint CanonicalActionId(uint id)
+    internal static uint CanonicalActionId(uint id)
     {
         // Some clients report the final TCJ packet as the ordinary Suiton
         // action (2271). Keep that packet distinct from a normal Suiton cast

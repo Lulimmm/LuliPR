@@ -33,7 +33,7 @@ using Ninja.PR.UI;
 
 namespace Ninja.PR;
 
-[RotationMetadata(30u, "Luli Ninja PR", "Cino", "1.2.9", ContentScope = AcrContentScope.HighEnd)]
+[RotationMetadata(30u, "Luli Ninja PR", "Cino", "1.2.10", ContentScope = AcrContentScope.HighEnd)]
 public sealed class NinjaRotation : IRotation, IRotationLifecycle
 {
     private static readonly HashSet<string> DefaultHiddenQtKeys = new(StringComparer.Ordinal)
@@ -220,7 +220,8 @@ public sealed class NinjaRotation : IRotation, IRotationLifecycle
         if (NinjaCombatState.IsTcjSequenceActive
             || NinjaNoLossOpenerRuntime.ShouldHoldNormalDecisions
             || !NinjaCombatState.CanUsePostNinjutsuOffGcd
-            || !NinjaCombatState.CanUseGcdOffGcd)
+            || !NinjaCombatState.CanUseGcdOffGcd
+            || !NinjaEventHandler.CanUseCurrentGcdAbility)
             return null;
         return Next(ogcd);
     }
@@ -232,7 +233,8 @@ public sealed class NinjaRotation : IRotation, IRotationLifecycle
         if (NinjaCombatState.IsTcjSequenceActive
             || NinjaNoLossOpenerRuntime.ShouldHoldNormalDecisions
             || !NinjaCombatState.CanUsePostNinjutsuOffGcd
-            || !NinjaCombatState.CanUseGcdOffGcd)
+            || !NinjaCombatState.CanUseGcdOffGcd
+            || !NinjaEventHandler.CanUseCurrentGcdAbility)
             return null;
         return Next(always);
     }
@@ -437,6 +439,8 @@ public sealed class NinjaRotation : IRotation, IRotationLifecycle
         ImGui.Text($"尝试持续时间：{(NinjaAttemptDebug.CurrentAgeMs < 0 ? "无" : $"{NinjaAttemptDebug.CurrentAgeMs} 毫秒")}");
         ImGui.Text($"连续观察次数：{NinjaAttemptDebug.ConsecutiveObservations}");
         ImGui.Text($"尝试技能历史：{NinjaAttemptDebug.History}");
+        ImGui.Text($"36958 拦截当前：{NinjaTrickAttackDebug.Current}");
+        ImGui.Text($"36958 拦截历史：{NinjaTrickAttackDebug.History}");
         ImGui.Text($"无损起手尾段：{NinjaNoLossOpenerRuntime.DebugStage}");
         ImGui.Text($"忍术后能力技：{NinjaCombatState.PostNinjutsuOffGcdUsed}/{NinjaCombatState.PostNinjutsuOffGcdLimit}");
         ImGui.Text($"每 GCD 能力技：{NinjaCombatState.GcdOffGcdUsed}/{NinjaCombatState.MaxGcdOffGcd}");
@@ -585,6 +589,25 @@ public sealed class NinjaRotation : IRotation, IRotationLifecycle
 internal sealed class NinjaEventHandler : IRotationEventHandler, IDisposable
 {
     private bool attached;
+    internal static int CurrGcdAbilityCount { get; private set; } = 2;
+    internal static bool CanUseCurrentGcdAbility => CurrGcdAbilityCount != 1
+        || NinjaCombatState.GcdOffGcdUsed < 1;
+    internal static bool CanQueueMultipleOffGcd => CurrGcdAbilityCount > 1;
+
+    private static void ResetGcdAbilityCount() => CurrGcdAbilityCount = 2;
+
+    private static void UpdateGcdAbilityCount(uint actionId, bool wasNewConfirmation)
+    {
+        if (!wasNewConfirmation) return;
+
+        var canonical = NinjaCombatState.CanonicalActionId(actionId);
+        if (!NinjaCombatState.IsGcdAction(canonical)) return;
+
+        CurrGcdAbilityCount = actionId is NinjaActions.Suiton or NinjaActions.HyoshoRanryu
+            || canonical is NinjaActions.Suiton or NinjaActions.HyoshoRanryu or NinjaActions.TcjSuiton
+            ? 1
+            : 2;
+    }
 
     public void Attach()
     {
@@ -666,7 +689,8 @@ internal sealed class NinjaEventHandler : IRotationEventHandler, IDisposable
             ActionQueueManager.ClearNormalQueues();
         }
         NinjaCombatState.Record(action.ActionId);
-        NinjaCombatState.RecordConfirmed(action.ActionId);
+        var newConfirmation = NinjaCombatState.RecordConfirmed(action.ActionId);
+        UpdateGcdAbilityCount(action.ActionId, newConfirmation);
         ClearPrepareSuitonAfterCast(action.ActionId);
         // Record both pre- and post-upgrade action aliases so an effect packet
         // reported with either id observes the same recency window.
@@ -707,7 +731,8 @@ internal sealed class NinjaEventHandler : IRotationEventHandler, IDisposable
         // confirmed self action. Entry events are a valid fallback path for
         // normal Raiton/Suiton/Hyosho packets as well as TCJ aliases, so feed
         // the same counter before the TCJ-only sequence filter below.
-        NinjaCombatState.RecordConfirmed(action.ActionId);
+        var newConfirmation = NinjaCombatState.RecordConfirmed(action.ActionId);
+        UpdateGcdAbilityCount(action.ActionId, newConfirmation);
         if (action.ActionId == NinjaActions.Rabbit)
         {
             NinjaCombatState.Record(action.ActionId);
@@ -801,6 +826,8 @@ internal sealed class NinjaEventHandler : IRotationEventHandler, IDisposable
     {
         NinjaSequencePolicy.Reset();
         NinjaCombatState.Reset();
+        ResetGcdAbilityCount();
+        NinjaTrickAttackDebug.Reset();
         NinjaPositionDrawer.OnBattleStarted();
         // RotationManager enqueues the selected opener before invoking the
         // rotation event handler. Start the strict GCD policy after that
@@ -815,6 +842,7 @@ internal sealed class NinjaEventHandler : IRotationEventHandler, IDisposable
         NinjaAttemptDebug.Update();
         NinjaSequencePolicy.Update();
         NinjaNoLossOpenerRuntime.Update();
+        NinjaTrickAttackDebug.Update();
         ConfirmSubmittedGcdFromRuntimeState();
         DropStaleTcjBeforeTenriJindo();
         DropStaleOffGcdLock();
@@ -1122,8 +1150,10 @@ internal sealed class NinjaEventHandler : IRotationEventHandler, IDisposable
     {
         NinjaPositionDrawer.ResetLifecycle();
         NinjaNoLossOpenerRuntime.Reset();
+        NinjaTrickAttackDebug.Reset();
         NinjaSequencePolicy.Reset();
         NinjaCombatState.Reset();
+        ResetGcdAbilityCount();
         NinjaRotation.staleGcdLockSince = 0;
         PromeSettings.Instance.OpenerHasBeenExecuted = false;
     }
@@ -1132,8 +1162,10 @@ internal sealed class NinjaEventHandler : IRotationEventHandler, IDisposable
     {
         NinjaPositionDrawer.ResetLifecycle();
         NinjaNoLossOpenerRuntime.Reset();
+        NinjaTrickAttackDebug.Reset();
         NinjaSequencePolicy.Reset();
         NinjaCombatState.Reset();
+        ResetGcdAbilityCount();
         NinjaRotation.staleGcdLockSince = 0;
         PromeSettings.Instance.OpenerHasBeenExecuted = false;
     }

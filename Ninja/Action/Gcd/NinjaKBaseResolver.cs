@@ -22,6 +22,7 @@ internal sealed class NinjaKBaseResolver : NinjaResolver
         if (!NinjaSettings.Instance.RaitonBackstab
             || me == null || target?.CanUseAttackActionOn() != true
             || NinjaTarget.Distance > NinjaTarget.AttackRange
+            || me.HasStatus(NinjaActions.RaijuReady)
             || NinjaCombatState.IsTcjSequenceActive) return No;
 
         return (target.HasStatus(NinjaActions.KunaisBaneStatus)

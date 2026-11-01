@@ -58,11 +58,14 @@ internal sealed class NinjaPhantomResolver : NinjaResolver
 
         // A failed backstab check must continue to the 3906 window, matching
         // AE's fall-through behavior.
-        if (NinjaSettings.Instance.RaitonBackstab
-            && target.HasStatus(NinjaActions.MugDebuff)
-            && !target.HasStatus(NinjaActions.KunaisBaneStatus)
-            && NinjaCombatState.Recently(NinjaActions.Raiton, 2120)) return Ok;
-        if (target.HasStatus(NinjaActions.MugDebuff) && !target.HasStatus(NinjaActions.KunaisBaneStatus)) return Ok;
+        if (NinjaSettings.Instance.RaitonBackstab)
+        {
+            if (target.HasStatus(NinjaActions.MugDebuff)
+                && !target.HasStatus(NinjaActions.KunaisBaneStatus)
+                && NinjaCombatState.Recently(NinjaActions.Raiton, 2120)) return Ok;
+        }
+        else if (target.HasStatus(NinjaActions.MugDebuff)
+                 && !target.HasStatus(NinjaActions.KunaisBaneStatus)) return Ok;
 
         // Kunai's Bane (3906) is the burst window. Keep Phantom ahead of the
         // normal combo while the proc is ready.
