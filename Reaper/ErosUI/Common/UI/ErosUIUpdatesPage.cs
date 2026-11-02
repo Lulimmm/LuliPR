@@ -1,0 +1,118 @@
+using System.Numerics;
+using Dalamud.Bindings.ImGui;
+
+namespace ErosUI;
+
+internal static class ErosUIUpdatesPage
+{
+    private static readonly HashSet<int> Collapsed = new();
+    // Add one Notice per release. Each entry draws as its own card, newest first.
+    private static readonly Notice[] Notices =
+    [
+        new(
+            "1.3.1", "2026-11-02", "字体崩溃修复与体积优化",
+            "移除导致字体图集崩溃的自定义字体和鼠标样式。\n\n" +
+            "压缩启动画面、背景和像素小人资源，大幅缩小 DLL 体积。\n\n" +
+            "更新通告改为内置只读卡片，每次更新独立显示。",
+            "#UI #FIX #SIZE"),
+        new(
+            "1.3.0", "2026-11-02", "QT 控制与时间轴修复",
+            "Ninja：关闭技能 QT 后，其他技能中对应的等待和资源保留条件同步停用。\n\n" +
+            "Ninja：关闭命水 QT 后，不再释放命水（16489）。\n\n" +
+            "Reaper：修复 newQT 与 QT Trigger 只显示 JSON 文本、无法显示专用编辑控件的问题。",
+            "#NIN #RPR #QT #TRIGGER"),
+    ];
+
+    internal static void Draw()
+    {
+        ImGui.TextColored(SimplePalette.PrimaryHover, "LATEST POSTS / ACR 更新通告");
+        ImGui.Spacing();
+
+        var width = ImGui.GetContentRegionAvail().X;
+        var columns = Math.Clamp((int)((width + 20f) / 260f), 1, 4);
+        ImGui.PushStyleVar(ImGuiStyleVar.CellPadding, new Vector2(10f, 10f));
+        if (ImGui.BeginTable("##update_cards", columns, ImGuiTableFlags.SizingStretchSame))
+        {
+            for (var i = 0; i < Notices.Length; i++)
+            {
+                ImGui.TableNextColumn();
+                ImGui.PushID(i);
+                DrawCard(Notices[i], i, MathF.Max(1f, ImGui.GetContentRegionAvail().X - 6f));
+                ImGui.PopID();
+            }
+            ImGui.EndTable();
+        }
+        ImGui.PopStyleVar();
+    }
+
+    private static void DrawCard(Notice notice, int index, float width)
+    {
+        const float padding = 16f;
+        var headerHeight = ImGui.GetFrameHeight() + 8f;
+        var wrapWidth = MathF.Max(1f, width - padding * 2f);
+        var titleHeight = ImGui.CalcTextSize(notice.Title, false, wrapWidth).Y;
+        var bodyHeight = ImGui.CalcTextSize(notice.Body, false, wrapWidth).Y;
+        var tagHeight = notice.TagText.Length == 0 ? 0f : ImGui.CalcTextSize(notice.TagText, false, wrapWidth).Y + 12f;
+        var dateHeight = notice.Date.Length == 0 ? 0f : ImGui.GetTextLineHeightWithSpacing();
+        var collapsed = Collapsed.Contains(index);
+        var height = collapsed
+            ? headerHeight
+            : MathF.Max(210f, headerHeight + padding * 2f + titleHeight + bodyHeight + tagHeight + dateHeight + 16f);
+
+        var pos = ImGui.GetCursorScreenPos();
+        var max = pos + new Vector2(width, height);
+        var day = ErosUICommonSettings.Instance.UIMode == SettingsUIMode.Day;
+        var panel = day ? new Vector4(0.55f, 0.47f, 0.77f, 0.50f) : new Vector4(0.20f, 0.16f, 0.36f, 0.75f);
+        var header = day ? new Vector4(0.44f, 0.36f, 0.68f, 0.85f) : new Vector4(0.16f, 0.12f, 0.29f, 0.90f);
+        var border = day ? new Vector4(0.49f, 0.36f, 0.71f, 1f) : new Vector4(0.35f, 0.27f, 0.55f, 1f);
+        var dl = ImGui.GetWindowDrawList();
+        dl.AddRectFilled(pos + new Vector2(6f), max + new Vector2(6f), 0x7368263cu);
+        dl.AddRectFilled(pos, max, SimplePalette.ToU32(panel));
+        dl.AddRectFilled(pos, new Vector2(max.X, pos.Y + headerHeight), SimplePalette.ToU32(header));
+        dl.AddRect(pos, max, SimplePalette.ToU32(border), 0f, ImDrawFlags.None, 2f);
+        dl.AddLine(new Vector2(pos.X, pos.Y + headerHeight),
+            new Vector2(max.X, pos.Y + headerHeight), SimplePalette.ToU32(border), 2f);
+
+        ImGui.BeginGroup();
+        ImGui.SetCursorScreenPos(pos + new Vector2(14f, (headerHeight - 9f) * 0.5f));
+        dl.AddRectFilled(ImGui.GetCursorScreenPos(), ImGui.GetCursorScreenPos() + new Vector2(9f),
+            SimplePalette.ToU32(SimplePalette.Primary));
+        ImGui.SetCursorScreenPos(pos + new Vector2(34f, (headerHeight - ImGui.GetTextLineHeight()) * 0.5f));
+        dl.PushClipRect(pos, new Vector2(max.X - 30f, pos.Y + headerHeight), true);
+        ImGui.TextUnformatted(notice.Caption);
+        dl.PopClipRect();
+        ImGui.SetCursorScreenPos(new Vector2(max.X - 27f, pos.Y + 4f));
+        if (ImGui.SmallButton(collapsed ? "+" : "-"))
+        {
+            if (!Collapsed.Add(index)) Collapsed.Remove(index);
+        }
+
+        if (!collapsed)
+        {
+            ImGui.SetCursorScreenPos(pos + new Vector2(padding, headerHeight + padding));
+            ImGui.BeginGroup();
+            ImGui.PushTextWrapPos(ImGui.GetCursorPosX() + wrapWidth);
+            ImGui.TextUnformatted(notice.Title);
+            if (notice.Date.Length > 0) ImGui.TextDisabled(notice.Date);
+            ImGui.Spacing();
+            ImGui.PushStyleColor(ImGuiCol.Text, SimplePalette.TextSecondary);
+            ImGui.TextUnformatted(notice.Body);
+            ImGui.PopStyleColor();
+            if (notice.TagText.Length > 0)
+            {
+                ImGui.Spacing();
+                ImGui.TextColored(SimplePalette.PrimaryHover, notice.TagText);
+            }
+            ImGui.PopTextWrapPos();
+            ImGui.EndGroup();
+        }
+        ImGui.SetCursorScreenPos(pos);
+        ImGui.Dummy(new Vector2(width + 6f, height + 6f));
+        ImGui.EndGroup();
+    }
+
+    private sealed record Notice(string Version, string Date, string Title, string Body, string TagText)
+    {
+        public string Caption => "UPDATE " + Version;
+    }
+}

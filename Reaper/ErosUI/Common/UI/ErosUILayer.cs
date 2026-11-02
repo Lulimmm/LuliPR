@@ -45,7 +45,7 @@ internal static class ErosUILayer
         // 透出游戏画面的比例，但网页纹理不会被紫色遮罩压到几乎不可见。
         drawList.AddRectFilled(min, max, SimplePalette.ToU32(tint), rounding, ImDrawFlags.RoundCornersAll);
 
-        var wrap = GetResourceTextureWrap("bg2.jpg");
+        var wrap = GetResourceTextureWrap("bg2.webp");
         if (wrap != null)
         {
             var (uv0, uv1) = CoverUv(wrap, max - min);

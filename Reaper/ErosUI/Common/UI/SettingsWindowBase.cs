@@ -60,7 +60,7 @@ public abstract partial class SettingsWindowBase : Window
     protected virtual WindowLayoutState? Layout => null;
 
     protected SettingsWindowBase(string title)
-        : base(title, ImGuiWindowFlags.NoCollapse)
+        : base(title, ImGuiWindowFlags.NoCollapse | ImGuiWindowFlags.NoTitleBar)
     {
         // 最小尺寸兜底：防止历史损坏的持久化尺寸或 ImGui 异常把窗口锁死
         SizeConstraints = new WindowSizeConstraints
@@ -83,9 +83,7 @@ public abstract partial class SettingsWindowBase : Window
         // 避免同一帧内 Push/Pop 样式数量不一致。
         mode = ErosUICommonSettings.Instance.UIMode;
 
-        Flags &= ~ImGuiWindowFlags.NoTitleBar;
-
-        // 标题栏正常显示; 色彩方案同步写入 SimplePalette
+        // 色彩方案同步写入 SimplePalette。
         SimplePalette.ApplyScheme(mode == SettingsUIMode.Day
             ? SimplePalette.UIColorScheme.Light
             : SimplePalette.UIColorScheme.Dark);
@@ -117,17 +115,17 @@ public abstract partial class SettingsWindowBase : Window
     {
         try
         {
+            DrawWindowDragHandle();
+
             // 纯色半透明背景
             DrawWindowBackground();
 
-            // 网页背景上的流星层。绘制区域避开原生标题栏，保持背景与现有
-            // 透明度一致，流星本身只使用半透明 draw call。
-            var starMin = ImGui.GetWindowPos() + new Vector2(0f, ImGui.GetFrameHeight());
+            // 网页背景上的流星层覆盖整个无标题栏窗口。
+            var starMin = ImGui.GetWindowPos();
             var starMax = ImGui.GetWindowPos() + ImGui.GetWindowSize();
             ErosUILayer.DrawShootingStars(ImGui.GetWindowDrawList(), starMin, starMax);
-            DrawThemedCloseButton();
-
             DrawSidebarLayout();
+            DrawThemedCloseButton();
 
             // 只捕获落在合理范围内的位置/尺寸（防垃圾值）；待用户拖动/缩放结束后一次性写盘
             CaptureLayout();
@@ -138,9 +136,30 @@ public abstract partial class SettingsWindowBase : Window
         }
     }
 
-    private static void DrawThemedCloseButton()
+    private static void DrawWindowDragHandle()
     {
-        var drawList = ImGui.GetWindowDrawList();
+        var style = ImGui.GetStyle();
+        var windowPos = ImGui.GetWindowPos();
+        var cursor = ImGui.GetCursorScreenPos();
+        var delta = Vector2.Zero;
+
+        // 顶部原有内边距作为透明拖动区域，不额外占用一行。
+        ImGui.PushClipRect(windowPos, windowPos + ImGui.GetWindowSize(), false);
+        ImGui.SetCursorScreenPos(windowPos + new Vector2(style.WindowBorderSize));
+        ImGui.InvisibleButton("##settings_drag", new Vector2(
+            ImGui.GetWindowSize().X - ImGui.GetFrameHeight() - style.FramePadding.X - style.WindowBorderSize,
+            MathF.Max(1f, style.WindowPadding.Y - style.WindowBorderSize)));
+        if (ImGui.IsItemActive() && ImGui.IsMouseDragging(ImGuiMouseButton.Left))
+        {
+            delta = ImGui.GetIO().MouseDelta;
+            ImGui.SetWindowPos(windowPos + delta);
+        }
+        ImGui.PopClipRect();
+        ImGui.SetCursorScreenPos(cursor + delta);
+    }
+
+    private void DrawThemedCloseButton()
+    {
         var windowPos = ImGui.GetWindowPos();
         var windowMax = windowPos + ImGui.GetWindowSize();
         var style = ImGui.GetStyle();
@@ -149,28 +168,41 @@ public abstract partial class SettingsWindowBase : Window
             windowMax.X - style.FramePadding.X - size,
             windowPos.Y + style.FramePadding.Y);
         var max = min + new Vector2(size);
-        var mouse = ImGui.GetIO().MousePos;
-        var hovered = mouse.X >= min.X && mouse.X <= max.X
-            && mouse.Y >= min.Y && mouse.Y <= max.Y;
-        var pressed = hovered && ImGui.IsMouseDown(ImGuiMouseButton.Left);
+        var cursor = ImGui.GetCursorScreenPos();
 
-        drawList.PushClipRect(windowPos, windowMax, false);
-        var fill = pressed
-            ? SimplePalette.PrimaryActive
-            : hovered
-                ? SimplePalette.PrimaryHover
-                : SimplePalette.WithAlpha(SimplePalette.Accent, 0.22f);
-        var border = hovered ? SimplePalette.Primary : SimplePalette.BorderStrong;
-        drawList.AddRectFilled(min, max, SimplePalette.ToU32(fill), 7f);
-        drawList.AddRect(min, max, SimplePalette.ToU32(border), 7f,
-            ImDrawFlags.RoundCornersAll, 1.5f);
+        // 独立 child 排在内容区之后，避免无标题栏时右上角被内容区遮挡或截走鼠标。
+        ImGui.PushClipRect(windowPos, windowMax, false);
+        ImGui.SetCursorScreenPos(min);
+        ImGui.PushStyleVar(ImGuiStyleVar.WindowPadding, Vector2.Zero);
+        var visible = ImGui.BeginChild("##settings_close_area", new Vector2(size), false,
+            ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse);
+        ImGui.PopStyleVar();
+        if (visible)
+        {
+            ImGui.SetCursorScreenPos(min);
+            if (ImGui.InvisibleButton("##settings_close", new Vector2(size))) IsOpen = false;
+            var hovered = ImGui.IsItemHovered();
+            var pressed = ImGui.IsItemActive();
+            var drawList = ImGui.GetWindowDrawList();
+            var fill = pressed
+                ? SimplePalette.PrimaryActive
+                : hovered
+                    ? SimplePalette.PrimaryHover
+                    : SimplePalette.WithAlpha(SimplePalette.Accent, 0.22f);
+            var border = hovered ? SimplePalette.Primary : SimplePalette.BorderStrong;
+            drawList.AddRectFilled(min, max, SimplePalette.ToU32(fill), 7f);
+            drawList.AddRect(min, max, SimplePalette.ToU32(border), 7f,
+                ImDrawFlags.RoundCornersAll, 1.5f);
 
-        var center = (min + max) * 0.5f;
-        var half = MathF.Max(3f, size * 0.18f);
-        var xColor = SimplePalette.ToU32(SimplePalette.TextPrimary);
-        drawList.AddLine(center + new Vector2(-half, -half), center + new Vector2(half, half), xColor, 1.8f);
-        drawList.AddLine(center + new Vector2(half, -half), center + new Vector2(-half, half), xColor, 1.8f);
-        drawList.PopClipRect();
+            var center = (min + max) * 0.5f;
+            var half = MathF.Max(3f, size * 0.18f);
+            var xColor = SimplePalette.ToU32(SimplePalette.TextPrimary);
+            drawList.AddLine(center + new Vector2(-half, -half), center + new Vector2(half, half), xColor, 1.8f);
+            drawList.AddLine(center + new Vector2(half, -half), center + new Vector2(-half, half), xColor, 1.8f);
+        }
+        ImGui.EndChild();
+        ImGui.PopClipRect();
+        ImGui.SetCursorScreenPos(cursor);
     }
 
     // 内容区（滚动, 填满内容高度）。
@@ -347,10 +379,8 @@ public abstract partial class SettingsWindowBase : Window
             _ => NightBackgroundTint,
         };
         var drawList = ImGui.GetWindowDrawList();
-        // 背景画满全窗口但让出标题栏: Begin 给窗口 draw list 压的是内容区内层裁剪（减内边距）,
-        // 不覆盖会把底色四条边各裁掉一条; 标题栏区不铺底色, 保持原生标题栏可读
-        drawList.PushClipRect(new Vector2(ImGui.GetWindowPos().X, ImGui.GetWindowPos().Y + ImGui.GetFrameHeight()),
-            ImGui.GetWindowPos() + ImGui.GetWindowSize(), false);
+        // 背景覆盖完整窗口，顶部不再为标题栏预留色带。
+        drawList.PushClipRect(ImGui.GetWindowPos(), ImGui.GetWindowPos() + ImGui.GetWindowSize(), false);
         ErosUILayer.DrawWebsiteSurface(drawList, min, max, tint,
             SimplePalette.BorderStrong, rounding, mode == SettingsUIMode.Day ? 0.38f : 0.46f);
         drawList.PopClipRect();
@@ -398,7 +428,7 @@ public abstract partial class SettingsWindowBase : Window
         ImGui.PushStyleColor(ImGuiCol.ResizeGripHovered, SimplePalette.WithAlpha(SimplePalette.Primary, 0.4f));
         ImGui.PushStyleColor(ImGuiCol.ResizeGripActive, SimplePalette.Primary);
 
-        // 侧边栏模式增量样式（标题栏/滚动条）：夜间/日间实现在 .Night.cs / .Day.cs
+        // 侧边栏模式增量样式（滚动条）：夜间/日间实现在 .Night.cs / .Day.cs
         if (mode == SettingsUIMode.Night) PushNightChromeColors();
         else if (mode == SettingsUIMode.Day) PushDayChromeColors();
 

@@ -19,8 +19,8 @@ internal sealed class ErosUISplashWindow : Window
     private static readonly Vector2[] LoaderDirections = BuildLoaderDirections();
     private static readonly string[] SealFrames =
     {
-        "pet.seal_01.png", "pet.seal_02.png", "pet.seal_03.png",
-        "pet.seal_04.png", "pet.seal_05.png", "pet.seal_06.png",
+        "pet.seal_01.webp", "pet.seal_02.webp", "pet.seal_03.webp",
+        "pet.seal_04.webp", "pet.seal_05.webp", "pet.seal_06.webp",
     };
     private double startedAt = -1d;
     private int cachedPercent = -1;
@@ -91,9 +91,9 @@ internal sealed class ErosUISplashWindow : Window
         // loading frame in over the next two seconds. Keep both layers separate
         // so the transition matches the CSS steps/opacity timing.
         if (elapsed < StartDuration)
-            DrawImageCover(drawList, "start.png", min, max, fade);
+            DrawImageCover(drawList, "start.webp", min, max, fade);
         else
-            DrawImageCover(drawList, "loading.png", min, max,
+            DrawImageCover(drawList, "loading.webp", min, max,
                 fade * Math.Clamp((elapsed - StartDuration) / 2f, 0f, 1f));
 
         if (elapsed >= StartDuration)
@@ -181,8 +181,8 @@ internal sealed class ErosUISplashWindow : Window
         }
 
         var cuteSize = new Vector2(96f) * pulse;
-        // Use the same six decoded frames as the site's animated cute.webp. A
-        // native PNG frame avoids backend-dependent animated-WebP uploads.
+        // Use the same six decoded frames as the site's animated cute.webp.
+        // Static lossless WebP frames avoid animated-WebP upload differences.
         var sealFrame = SealFrames[(int)(ImGui.GetTime() * 6.67d) % SealFrames.Length];
         var cute = ErosUILayer.GetResourceTextureWrap(sealFrame);
         if (cute != null)

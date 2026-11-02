@@ -39,14 +39,14 @@ public sealed partial class CombatControlWindow : Window
     };
     private static readonly string[] FlyPetFrames =
     {
-        "pet.fly_01.png", "pet.fly_02.png", "pet.fly_03.png", "pet.fly_04.png",
-        "pet.fly_05.png", "pet.fly_06.png", "pet.fly_07.png", "pet.fly_08.png",
+        "pet.fly_01.webp", "pet.fly_02.webp", "pet.fly_03.webp", "pet.fly_04.webp",
+        "pet.fly_05.webp", "pet.fly_06.webp", "pet.fly_07.webp", "pet.fly_08.webp",
     };
     private static readonly string[] CoolPetFrames = Frames("pet.cool_cool", 37);
     private static readonly string[] SealPetFrames =
     {
-        "pet.seal_01.png", "pet.seal_02.png", "pet.seal_03.png",
-        "pet.seal_04.png", "pet.seal_05.png", "pet.seal_06.png",
+        "pet.seal_01.webp", "pet.seal_02.webp", "pet.seal_03.webp",
+        "pet.seal_04.webp", "pet.seal_05.webp", "pet.seal_06.webp",
     };
     private static readonly string[] OffTooltips =
     {
@@ -89,7 +89,7 @@ public sealed partial class CombatControlWindow : Window
     {
         var frames = new string[count];
         for (var i = 0; i < count; i++)
-            frames[i] = $"{prefix}_{i + 1:00}.png";
+            frames[i] = $"{prefix}_{i + 1:00}.webp";
         return frames;
     }
 
