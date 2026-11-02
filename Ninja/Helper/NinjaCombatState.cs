@@ -356,4 +356,11 @@ internal static class NinjaCombatState
     // active after the status has been removed by the client.
     public static bool HasTcjBuff => Core.Me?.HasStatus(NinjaActions.TcjStatus) == true;
     public static bool IsTcjSequenceActive => HasTcjBuff;
+
+    // A ready Raiju proc only blocks other GCD decisions while the Raiju QT
+    // is enabled. Turning that QT off must return control to the normal GCD
+    // resolver instead of leaving the proc as a hidden global lock.
+    public static bool HasRaijuReadyForRotation =>
+        PromeSettings.Instance.GetQt(NinjaQts.Raiju)
+        && Core.Me?.HasStatus(NinjaActions.RaijuReady) == true;
 }

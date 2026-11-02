@@ -26,11 +26,14 @@ internal sealed class NinjaTenChiJinResolver : NinjaResolver
             // 3851 means the previous TCJ sequence has granted 36961. Do
             // not enqueue another 7403 while Tenri Jindo is waiting.
             || me.HasStatus(NinjaActions.TenriJindoReady)
-            || me.HasStatus(NinjaActions.KassatsuStatus)
+            || (PromeSettings.Instance.GetQt("鐢熸潃浜堝ず")
+                && ActionHelper.GetActionCooldown(NinjaActions.Kassatsu) < 2.12f)
             || me.HasStatus(NinjaActions.ShadowWalkerStatus)
-            || ActionHelper.GetActionCooldown(NinjaActions.MugCurrent) < 2.12f
-            || ActionHelper.GetActionCooldown(NinjaActions.Kassatsu) < 2.12f
-            || !target.HasStatus(3849u)
+            || (PromeSettings.Instance.GetQt("鐢熸潃浜堝ず")
+                && me.HasStatus(NinjaActions.KassatsuStatus))
+            || (PromeSettings.Instance.GetQt(NinjaQts.BigTrick)
+                && (ActionHelper.GetActionCooldown(NinjaActions.MugCurrent) < 2.12f
+                    || !target.HasStatus(3849u)))
             || ActionHelper.GetActionCooldown(NinjaActions.Ten) < 4f) return No;
         return Ok;
     }

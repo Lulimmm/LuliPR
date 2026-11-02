@@ -46,8 +46,10 @@ internal sealed class NinjaOgcdResolver : NinjaResolver
         }
         if (bunshinActive && ((comboFinisher && ninki > 80) || (comboIsFirst() && ninki > 90))) return true;
         if ((comboFinisher && ninki > 85) || (comboIsFirst() && ninki > 95)) return true;
-        if (ActionHelper.GetActionCooldown(NinjaActions.TrickAttackCurrent) < 2.12f
-            || ActionHelper.GetActionCooldown(NinjaActions.Kassatsu) < 2.12f) return false;
+        if ((PromeSettings.Instance.GetQt(NinjaQts.SmallTrick)
+                && ActionHelper.GetActionCooldown(NinjaActions.TrickAttackCurrent) < 2.12f)
+            || (PromeSettings.Instance.GetQt("鐢熸潃浜堝ず")
+                && ActionHelper.GetActionCooldown(NinjaActions.Kassatsu) < 2.12f)) return false;
         return target.HasStatus(NinjaActions.KunaisBaneStatus);
     }
 

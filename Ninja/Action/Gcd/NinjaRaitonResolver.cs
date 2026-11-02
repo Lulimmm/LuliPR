@@ -35,14 +35,17 @@ internal sealed class NinjaRaitonResolver : NinjaResolver
         // This hold applies while Shadow Walker is absent. During the
         // Shadow Walker window Raiton is still allowed to satisfy the later
         // execution conditions (for example a forced or ranged cast).
-        if (ActionHelper.GetActionCooldown(NinjaActions.TrickAttackCurrent) < 19.5f
+        if (PromeSettings.Instance.GetQt(NinjaQts.SmallTrick)
+            && ActionHelper.GetActionCooldown(NinjaActions.TrickAttackCurrent) < 19.5f
             && !me.HasStatus(NinjaActions.ShadowWalkerStatus)) return No;
         if (PromeSettings.Instance.GetQt(NinjaQts.RaitonWhenOutOfRange)
             && NinjaTarget.Distance > NinjaTarget.AttackRange) return Ok;
         if (PromeSettings.Instance.GetQt("斩杀") && target.MaxHp > 0
             && target.CurrentHp * 100f / target.MaxHp < NinjaSettings.Instance.TTK) return Ok;
         if (target.HasStatus(NinjaActions.KunaisBaneStatus)) return Ok;
-        if (NinjaSettings.Instance.RaitonBackstab && target.HasStatus(NinjaActions.MugDebuff)
+        if (NinjaSettings.Instance.RaitonBackstab
+            && PromeSettings.Instance.GetQt(NinjaQts.SmallTrick)
+            && target.HasStatus(NinjaActions.MugDebuff)
             && ActionHelper.GetActionCharges(NinjaActions.Ten) > 1f)
         {
             if (JobGaugeHelper.NIN.Ninki == 100 && me.HasStatus(NinjaActions.PhantomReady)) return Ok;

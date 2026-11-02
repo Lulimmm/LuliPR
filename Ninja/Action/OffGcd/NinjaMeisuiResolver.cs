@@ -18,9 +18,9 @@ internal sealed class NinjaMeisuiResolver : NinjaResolver
     public override CheckResult Check()
     {
         var me = Core.Me;
-        // The direct Meisui resolver does not gate on the Meisui QT. The QT
-        // is only part of the _100B overflow-priority branch above, so keep
-        // that distinction when migrating the 16489 resolver.
+        if (!PromeSettings.Instance.GetQt(NinjaQts.Meisui))
+            return Blocked("\u547d\u6c34 QT \u672a\u5f00\u542f");
+        // The Meisui QT disables this resolver before action availability checks.
         if (me == null) return Blocked("命水：自身不可用");
 
         // Keep the success path in the same order as the action requirements.
@@ -42,7 +42,7 @@ internal sealed class NinjaMeisuiResolver : NinjaResolver
             return Blocked("命水：最近 15 秒没有天地人水遁");
 
         var trickCooldown = ActionHelper.GetActionCooldown(NinjaActions.TrickAttackCurrent);
-        return trickCooldown >= 20f
+        return !PromeSettings.Instance.GetQt(NinjaQts.SmallTrick) || trickCooldown >= 20f
             ? Ok
             : Blocked($"命水：背刺冷却 {trickCooldown:F2} 秒 < 20 秒");
     }

@@ -20,8 +20,10 @@ internal sealed class NinjaAssassinateResolver : NinjaResolver
         && ActionHelper.GetGcdRemain() >= .6f && !NinjaCombatState.IsTcjSequenceActive
         && ActionHelper.IsUnlocked(NinjaActions.Assassinate)
         && ActionHelper.GetActionCooldown(NinjaActions.AssassinateCooldown) <= 0f
-        && ActionHelper.GetActionCooldown(NinjaActions.TrickAttackCurrent) >= 2.12f
-        && ActionHelper.GetActionCooldown(NinjaActions.MugCurrent) >= 2.12f
+        && (!PromeSettings.Instance.GetQt(NinjaQts.SmallTrick)
+            || ActionHelper.GetActionCooldown(NinjaActions.TrickAttackCurrent) >= 2.12f)
+        && (!PromeSettings.Instance.GetQt(NinjaQts.BigTrick)
+            || ActionHelper.GetActionCooldown(NinjaActions.MugCurrent) >= 2.12f)
         && !NinjaCombatState.IsTcjSequenceActive ? Ok : No;
 
     public override PAction GetAction()

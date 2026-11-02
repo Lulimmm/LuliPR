@@ -43,8 +43,11 @@ internal sealed class NinjaTrueNorthResolver : NinjaResolver
         if (kazematoi == 0 && positional != Positional.Flank) return Ok;
         if (kazematoi > 3 && positional != Positional.Rear) return Ok;
         if (positional != Positional.Flank && positional != Positional.Rear) return Ok;
-        if (((ActionHelper.GetActionCooldown(NinjaActions.MugCurrent) < 8f && kazematoi <= 1)
-                || (ActionHelper.GetActionCooldown(NinjaActions.TrickAttackCurrent) < 8f && kazematoi <= 1))
+        if (((PromeSettings.Instance.GetQt(NinjaQts.BigTrick)
+                    && ActionHelper.GetActionCooldown(NinjaActions.MugCurrent) < 8f)
+                || (PromeSettings.Instance.GetQt(NinjaQts.SmallTrick)
+                    && ActionHelper.GetActionCooldown(NinjaActions.TrickAttackCurrent) < 8f))
+            && kazematoi <= 1
             && positional != Positional.Flank) return Ok;
         return No;
     }

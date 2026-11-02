@@ -26,8 +26,11 @@ internal sealed class NinjaKassatsuJutsuResolver : NinjaResolver
         if (PromeSettings.Instance.GetQt("倾斜资源")) return Ok;
         if (PromeSettings.Instance.GetQt("斩杀") && target.MaxHp > 0
             && target.CurrentHp * 100f / target.MaxHp < NinjaSettings.Instance.TTK) return Ok;
-        if (target.HasStatus(NinjaActions.KunaisBaneStatus)
-            || NinjaCombatState.Recently(NinjaActions.TrickAttackCurrent, 2120)
+        var trickWindowEnabled = PromeSettings.Instance.GetQt(NinjaQts.SmallTrick);
+        var mugWindowEnabled = PromeSettings.Instance.GetQt(NinjaQts.BigTrick);
+        if ((!trickWindowEnabled && !mugWindowEnabled)
+            || (mugWindowEnabled && target.HasStatus(NinjaActions.KunaisBaneStatus))
+            || (trickWindowEnabled && NinjaCombatState.Recently(NinjaActions.TrickAttackCurrent, 2120))
             || me.GetStatusLeftTime(NinjaActions.KassatsuStatus) < 3f) return Ok;
         return No;
     }

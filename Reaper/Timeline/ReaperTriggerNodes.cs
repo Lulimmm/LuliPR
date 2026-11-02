@@ -28,14 +28,10 @@ public sealed class ReaperLegacyQtAction : IAction, ISerializableAction, IJobNod
     private readonly List<QtSetting> settings = new();
 
     public string NodeDisplayName => "Reaper/newQT";
-    public NodeParamInfo[] Params => new[]
-    {
-        new NodeParamInfo(ValuesParam, "QT 设置", "按配置顺序批量设置 Reaper QT", "json"),
-    };
+    public NodeParamInfo[] Params => Array.Empty<NodeParamInfo>();
 
-    public bool Draw()
+    public bool DrawJobNodeEditor()
     {
-        var changed = false;
         var names = ReaperTriggerNodeData.QtNames;
         var removeIndex = -1;
         for (var i = 0; i < settings.Count; i++)
@@ -47,14 +43,12 @@ public sealed class ReaperLegacyQtAction : IAction, ISerializableAction, IJobNod
             if (names.Length > 0 && ImGui.Combo("QT", ref selected, names, names.Length))
             {
                 setting.Key = names[selected];
-                changed = true;
             }
 
             var enabled = setting.Value;
             if (ImGui.Checkbox("开启", ref enabled))
             {
                 setting.Value = enabled;
-                changed = true;
             }
             ImGui.SameLine();
             if (ImGui.SmallButton("移除")) removeIndex = i;
@@ -62,17 +56,11 @@ public sealed class ReaperLegacyQtAction : IAction, ISerializableAction, IJobNod
         }
 
         if (removeIndex >= 0)
-        {
             settings.RemoveAt(removeIndex);
-            changed = true;
-        }
 
         if (ImGui.Button("添加 QT") && names.Length > 0)
-        {
             settings.Add(new QtSetting { Key = names[0] });
-            changed = true;
-        }
-        return changed;
+        return true;
     }
 
     public string GetParam(string fieldName)
@@ -134,14 +122,10 @@ public sealed class ReaperQtAction : IAction, ISerializableAction, IJobNodeDescr
     private readonly Dictionary<string, bool> values = new(StringComparer.Ordinal);
 
     public string NodeDisplayName => "Reaper/QT";
-    public NodeParamInfo[] Params => new[]
-    {
-        new NodeParamInfo(ValuesParam, "QT 状态", "点击按钮切换未添加、关闭、启用三种状态", "json"),
-    };
+    public NodeParamInfo[] Params => Array.Empty<NodeParamInfo>();
 
-    public bool Draw()
+    public bool DrawJobNodeEditor()
     {
-        var changed = false;
         var names = ReaperTriggerNodeData.QtNames;
         ImGui.Text("点击 QT 名称切换：未添加 / 已关闭 / 已启用");
         for (var i = 0; i < names.Length; i++)
@@ -157,14 +141,13 @@ public sealed class ReaperQtAction : IAction, ISerializableAction, IJobNodeDescr
                 if (!values.TryGetValue(key, out enabled)) values[key] = false;
                 else if (!enabled) values[key] = true;
                 else values.Remove(key);
-                changed = true;
             }
             ImGui.PopStyleColor();
             ImGui.PopID();
             if ((i + 1) % 5 != 0 && i + 1 < names.Length) ImGui.SameLine();
         }
 
-        if (values.Count == 0) return changed;
+        if (values.Count == 0) return true;
         ImGui.Separator();
         List<string>? remove = null;
         foreach (var entry in values.ToArray())
@@ -174,7 +157,6 @@ public sealed class ReaperQtAction : IAction, ISerializableAction, IJobNodeDescr
             if (ImGui.Checkbox("##enabled", ref enabled))
             {
                 values[entry.Key] = enabled;
-                changed = true;
             }
             ImGui.SameLine();
             ImGui.Text(entry.Key);
@@ -186,29 +168,20 @@ public sealed class ReaperQtAction : IAction, ISerializableAction, IJobNodeDescr
         }
 
         if (remove != null)
-        {
             foreach (var key in remove) values.Remove(key);
-            changed = true;
-        }
 
         if (ImGui.Button("全部启用"))
         {
             foreach (var key in values.Keys.ToArray()) values[key] = true;
-            changed = true;
         }
         ImGui.SameLine();
         if (ImGui.Button("全部关闭"))
         {
             foreach (var key in values.Keys.ToArray()) values[key] = false;
-            changed = true;
         }
         ImGui.SameLine();
-        if (ImGui.Button("清除所有"))
-        {
-            values.Clear();
-            changed = true;
-        }
-        return changed;
+        if (ImGui.Button("清除所有")) values.Clear();
+        return true;
     }
 
     public string GetParam(string fieldName)

@@ -25,7 +25,9 @@ internal sealed class NinjaMugResolver : NinjaResolver
 
     public override PAction GetAction()
     {
-        if (NinjaSettings.Instance.P5PerfectBunshin && JobGaugeHelper.NIN.Ninki >= 50)
+        if (PromeSettings.Instance.GetQt(NinjaQts.Bunshin)
+            && NinjaSettings.Instance.P5PerfectBunshin
+            && JobGaugeHelper.NIN.Ninki >= 50)
         {
             // AE's CurrGcdAbilityCount is 1 after a completed ninjutsu. Do
             // not enqueue Bunshin + Mug as a pair in that single weave slot;

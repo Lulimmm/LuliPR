@@ -53,7 +53,8 @@ internal static class NinjaBhavacakraPolicy
         }
 
         if (ninki == 100) return true;
-        return !NinjaSettings.Instance.P5PerfectBunshin
+        return PromeSettings.Instance.GetQt(NinjaQts.BigTrick)
+            && !NinjaSettings.Instance.P5PerfectBunshin
             && ActionHelper.GetActionCooldown(NinjaActions.MugCurrent) < 1.06f
             && ninki > 60;
     }

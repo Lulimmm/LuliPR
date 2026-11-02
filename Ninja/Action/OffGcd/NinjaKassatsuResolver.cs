@@ -29,7 +29,9 @@ internal sealed class NinjaKassatsuResolver : NinjaResolver
         if (PromeSettings.Instance.GetQt(NinjaQts.SmallTrick)
             && !me.HasStatus(NinjaActions.ShadowWalkerStatus)
             && !target.HasStatus(NinjaActions.KunaisBaneStatus)) return No;
-        if (NinjaSettings.Instance.RaitonBackstab
+        if (PromeSettings.Instance.GetQt(NinjaQts.SmallTrick)
+            && PromeSettings.Instance.GetQt(NinjaQts.Raiton)
+            && NinjaSettings.Instance.RaitonBackstab
             && !target.HasStatus(NinjaActions.KunaisBaneStatus)) return No;
         return Ok;
     }

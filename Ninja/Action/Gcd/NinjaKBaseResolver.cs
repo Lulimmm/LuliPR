@@ -19,10 +19,12 @@ internal sealed class NinjaKBaseResolver : NinjaResolver
     {
         var me = Core.Me;
         var target = Core.Target;
-        if (!NinjaSettings.Instance.RaitonBackstab
+        if (!PromeSettings.Instance.GetQt(NinjaQts.Raiton)
+            || !PromeSettings.Instance.GetQt(NinjaQts.SmallTrick)
+            || !NinjaSettings.Instance.RaitonBackstab
             || me == null || target?.CanUseAttackActionOn() != true
             || NinjaTarget.Distance > NinjaTarget.AttackRange
-            || me.HasStatus(NinjaActions.RaijuReady)
+            || NinjaCombatState.HasRaijuReadyForRotation
             || NinjaCombatState.IsTcjSequenceActive) return No;
 
         return (target.HasStatus(NinjaActions.KunaisBaneStatus)

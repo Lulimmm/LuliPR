@@ -102,7 +102,7 @@ internal static class NinjaNoLossOpenerRuntime
         if (meisui.Check().Success)
             tail.Add(meisui.GetAction());
 
-        if (me.HasStatus(NinjaActions.RaijuReady))
+        if (NinjaCombatState.HasRaijuReadyForRotation)
             tail.Add(G(NinjaActions.FleetingRaiju));
 
         if (NinjaBhavacakraPolicy.IsEligible())
@@ -122,7 +122,8 @@ internal static class NinjaNoLossOpenerRuntime
         // Reuse the normal verified mudra group. This is the same sequence
         // that the regular Raiton resolver queues, without re-entering the
         // opener runtime or holding the next GCD.
-        if (ActionHelper.GetActionCharges(NinjaActions.Ten) >= 1)
+        if (PromeSettings.Instance.GetQt(NinjaQts.Raiton)
+            && ActionHelper.GetActionCharges(NinjaActions.Ten) >= 1)
         {
             NinjaSequencePolicy.Begin(NinjaActions.Raiton);
             tail.Add(M(NinjaActions.Ten));

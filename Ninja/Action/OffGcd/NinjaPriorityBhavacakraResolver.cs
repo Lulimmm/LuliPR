@@ -38,7 +38,8 @@ internal sealed class NinjaPriorityBhavacakraResolver : NinjaResolver
             && PromeSettings.Instance.GetQt(NinjaQts.Meisui)
             && ActionHelper.GetActionCooldown(NinjaActions.Meisui) < 2.12f) return Ok;
         if (JobGaugeHelper.NIN.Ninki == 100) return Ok;
-        return !NinjaSettings.Instance.P5PerfectBunshin
+        return PromeSettings.Instance.GetQt(NinjaQts.BigTrick)
+            && !NinjaSettings.Instance.P5PerfectBunshin
             && ActionHelper.GetActionCooldown(NinjaActions.MugCurrent) < 1.06f
             && JobGaugeHelper.NIN.Ninki > 60 ? Ok : No;
     }

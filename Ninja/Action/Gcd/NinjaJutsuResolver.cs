@@ -22,12 +22,14 @@ internal sealed class NinjaJutsuResolver : NinjaResolver
         if (me == null || target?.CanUseAttackActionOn() != true) return No;
         if (NinjaSequencePolicy.IsNormalMudraActive) return No;
         if (!PromeSettings.Instance.GetQt(NinjaQts.Suiton) || !PromeSettings.Instance.GetQt(NinjaQts.SmallTrick)) return No;
-        if (me.HasStatus(NinjaActions.RaijuReady) || NinjaCombatState.IsTcjSequenceActive) return No;
+        if (NinjaCombatState.HasRaijuReadyForRotation || NinjaCombatState.IsTcjSequenceActive) return No;
         if (ActionHelper.GetActionCharges(NinjaActions.Ten) < 1 || NinjaCombatState.Recently(NinjaActions.Ten, 2120)) return No;
         if (me.HasStatus(NinjaActions.KassatsuStatus) || NinjaCombatState.Recently(NinjaActions.Kassatsu, 2120)) return No;
         if (me.HasStatus(NinjaActions.ShadowWalkerStatus) || NinjaCombatState.Recently(NinjaActions.Suiton, 15000)) return No;
         if (ActionHelper.GetActionCooldown(NinjaActions.TrickAttackCurrent) > 19.5f) return No;
-        if (NinjaSettings.Instance.TrickAttackDelayUntilNextMug && ActionHelper.GetActionCooldown(NinjaActions.MugCurrent) > 15f) return No;
+        if (NinjaSettings.Instance.TrickAttackDelayUntilNextMug
+            && PromeSettings.Instance.GetQt(NinjaQts.BigTrick)
+            && ActionHelper.GetActionCooldown(NinjaActions.MugCurrent) > 15f) return No;
 
         var distance = NinjaTarget.Distance;
         var meleeRange = NinjaTarget.AttackRange;
