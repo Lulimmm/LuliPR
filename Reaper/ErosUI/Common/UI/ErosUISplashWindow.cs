@@ -12,19 +12,18 @@ namespace ErosUI;
 /// </summary>
 internal sealed class ErosUISplashWindow : Window
 {
-    private const int LoaderSegments = 72;
+    private const int LoaderSegments = 240;
     private const float StartDuration = 1f;
     private const float TotalDuration = 3.5f;
     private const float FadeDuration = 0.5f;
     private static readonly Vector2[] LoaderDirections = BuildLoaderDirections();
-    private static readonly string[] SealFrames =
+    private static readonly string[] CuteFrames =
     {
-        "pet.seal_01.webp", "pet.seal_02.webp", "pet.seal_03.webp",
-        "pet.seal_04.webp", "pet.seal_05.webp", "pet.seal_06.webp",
+        "loader.cute_01.webp", "loader.cute_02.webp",
+        "loader.cute_03.webp", "loader.cute_04.webp",
     };
     private double startedAt = -1d;
-    private int cachedPercent = -1;
-    private string cachedPercentText = string.Empty;
+    private double waitingForImagesAt = -1d;
 
     public ErosUISplashWindow()
         : base("##LuliErosUISplash",
@@ -39,6 +38,7 @@ internal sealed class ErosUISplashWindow : Window
         RespectCloseHotkey = false;
         AllowBackgroundBlur = false;
         IsOpen = ErosUICommonSettings.Instance.EnableLoadingAnimation;
+        if (IsOpen) PreloadImages();
     }
 
     public void Replay()
@@ -49,6 +49,8 @@ internal sealed class ErosUISplashWindow : Window
             return;
         }
         startedAt = -1d;
+        waitingForImagesAt = -1d;
+        PreloadImages();
         IsOpen = true;
     }
 
@@ -70,7 +72,14 @@ internal sealed class ErosUISplashWindow : Window
     public override void Draw()
     {
         if (startedAt < 0d)
-            startedAt = ImGui.GetTime();
+        {
+            var now = ImGui.GetTime();
+            if (waitingForImagesAt < 0d) waitingForImagesAt = now;
+            // The website preloads these images. Avoid a purple placeholder
+            // flash while Dalamud uploads them, but never wait indefinitely.
+            if (!ImagesReady() && now - waitingForImagesAt < 3d) return;
+            startedAt = now;
+        }
 
         var elapsed = (float)(ImGui.GetTime() - startedAt);
         if (elapsed >= TotalDuration)
@@ -84,27 +93,23 @@ internal sealed class ErosUISplashWindow : Window
         var max = min + windowSize;
         var fade = elapsed <= TotalDuration - FadeDuration
             ? 1f
-            : 1f - (elapsed - (TotalDuration - FadeDuration)) / FadeDuration;
+            : 1f - CssBezier((elapsed - (TotalDuration - FadeDuration)) / FadeDuration,
+                0.25f, 0.1f, 0.25f, 1f);
         var drawList = ImGui.GetWindowDrawList();
 
-        // The site keeps the start frame for the first second, then fades the
-        // loading frame in over the next two seconds. Keep both layers separate
-        // so the transition matches the CSS steps/opacity timing.
+        // The classic site's steps(1) animations swap the two backgrounds at 1s.
         if (elapsed < StartDuration)
             DrawImageCover(drawList, "start.webp", min, max, fade);
         else
-            DrawImageCover(drawList, "loading.webp", min, max,
-                fade * Math.Clamp((elapsed - StartDuration) / 2f, 0f, 1f));
+            DrawImageCover(drawList, "loading.webp", min, max, fade);
 
         if (elapsed >= StartDuration)
         {
             var barProgress = Math.Clamp((elapsed - StartDuration) / 2f, 0f, 1f);
-            var percentProgress = Math.Clamp(elapsed / 3f, 0f, 1f);
-            var ringProgress = (elapsed % 3f) / 3f;
             DrawBars(drawList, min, max, barProgress,
                 fade * BarOpacity(barProgress));
-            DrawLoader(drawList, min + windowSize * 0.5f, percentProgress, ringProgress, fade);
         }
+        DrawLoader(drawList, min + windowSize * 0.5f, elapsed, fade);
     }
 
     public override void PostDraw()
@@ -128,13 +133,36 @@ internal sealed class ErosUISplashWindow : Window
             ErosUI.SimplePalette.ToU32(new Vector4(1f, 1f, 1f, opacity)));
     }
 
+    private static void PreloadImages()
+    {
+        ErosUILayer.GetResourceTextureWrap("start.webp");
+        ErosUILayer.GetResourceTextureWrap("loading.webp");
+        ErosUILayer.GetResourceTextureWrap("loader.percent_atlas.webp");
+        ErosUILayer.GetResourceTextureWrap("loader.ring_glow.webp");
+        foreach (var frame in CuteFrames)
+            ErosUILayer.GetResourceTextureWrap(frame);
+    }
+
+    private static bool ImagesReady()
+    {
+        if (ErosUILayer.GetResourceTextureWrap("start.webp") == null
+            || ErosUILayer.GetResourceTextureWrap("loading.webp") == null
+            || ErosUILayer.GetResourceTextureWrap("loader.percent_atlas.webp") == null
+            || ErosUILayer.GetResourceTextureWrap("loader.ring_glow.webp") == null)
+            return false;
+        foreach (var frame in CuteFrames)
+            if (ErosUILayer.GetResourceTextureWrap(frame) == null)
+                return false;
+        return true;
+    }
+
     private static void DrawBars(ImDrawListPtr drawList, Vector2 min, Vector2 max, float progress, float opacity)
     {
         var width = max.X - min.X;
         var centerY = min.Y + (max.Y - min.Y) * 0.5f;
         var barWidth = width * 0.32f;
         var left = min.X - width * 0.40f + width * 0.40f * progress;
-        var right = max.X + width * 0.08f - width * 0.40f * progress;
+        var right = max.X + width * 0.40f * (1f - progress);
         DrawPixelBar(drawList, left, left + barWidth, centerY - 6f, opacity);
         DrawPixelBar(drawList, right - barWidth, right, centerY - 6f, opacity);
     }
@@ -148,6 +176,9 @@ internal sealed class ErosUISplashWindow : Window
     private static void DrawPixelBar(ImDrawListPtr drawList, float left, float right, float top, float opacity)
     {
         const float height = 12f;
+        drawList.AddRectFilled(new Vector2(left + 2f, top + 2f),
+            new Vector2(right + 2f, top + height + 2f),
+            SimplePalette.ToU32(new Vector4(0f, 0f, 0f, opacity * 0.20f)));
         for (var x = left; x < right; x += 12f)
         {
             var segmentEnd = MathF.Min(x + 8f, right);
@@ -161,50 +192,102 @@ internal sealed class ErosUISplashWindow : Window
         drawList.AddRect(new Vector2(left, top), new Vector2(right, top + height),
             SimplePalette.ToU32(new Vector4(0.424f, 0.388f, 1f, opacity)), 0f,
             ImDrawFlags.None, 2f);
-        drawList.AddRect(new Vector2(left + 2f, top + 2f), new Vector2(right + 2f, top + height + 2f),
-            SimplePalette.ToU32(new Vector4(0f, 0f, 0f, opacity * 0.20f)), 0f,
-            ImDrawFlags.None, 2f);
     }
 
-    private void DrawLoader(ImDrawListPtr drawList, Vector2 center, float percentProgress, float ringProgress, float opacity)
+    private void DrawLoader(ImDrawListPtr drawList, Vector2 center, float elapsed, float opacity)
     {
-        const float radius = 80f;
-        var pulse = 1f + 0.08f * MathF.Sin((float)(ImGui.GetTime() * Math.PI * 2d / 0.9d));
-        var ringRadius = radius * pulse;
-        var visible = Math.Clamp((int)MathF.Round(LoaderSegments * ringProgress), 1, LoaderSegments);
+        var pulsePosition = elapsed % 0.9f / 0.9f;
+        var pulse = CssEaseInOut(pulsePosition <= 0.5f ? pulsePosition * 2f : (1f - pulsePosition) * 2f);
+        var scale = 1f + 0.08f * pulse;
+        var outerRadius = 80f * scale;
+        var innerRadius = 46.8f * scale;
+        var progress = elapsed % 3f / 3f;
+        var glow = 4f + 12f * pulse;
+        var glowAtlas = ErosUILayer.GetResourceTextureWrap("loader.ring_glow.webp");
+        if (glowAtlas != null)
+        {
+            var first = Math.Clamp((int)MathF.Floor(glow) - 4, 0, 12);
+            var second = Math.Min(first + 1, 12);
+            var fraction = glow - MathF.Floor(glow);
+            var extent = new Vector2(128f * scale);
+            var glowAlpha = opacity * (0.5f + 0.45f * pulse);
+            for (var layer = 0; layer < 2; layer++)
+            {
+                var index = layer == 0 ? first : second;
+                var weight = layer == 0 ? 1f - fraction : fraction;
+                if (weight <= 0f) continue;
+                drawList.AddImage(glowAtlas.Handle, center - extent, center + extent,
+                    new Vector2(index / 13f, 0f), new Vector2((index + 1) / 13f, 1f),
+                    SimplePalette.ToU32(new Vector4(1f, 182f / 255f, 232f / 255f, glowAlpha * weight)));
+            }
+        }
         for (var i = 0; i < LoaderSegments; i++)
         {
-            var p0 = center + LoaderDirections[i] * ringRadius;
-            var p1 = center + LoaderDirections[i + 1] * ringRadius;
-            var alpha = i < visible ? opacity * 0.95f : opacity * 0.12f;
-            drawList.AddLine(p0, p1, SimplePalette.ToU32(new Vector4(1f, 0.84f, 0.95f, alpha)), 3f);
+            var angle = (i + 0.5f) / LoaderSegments;
+            Vector4 color;
+            if (angle < progress)
+            {
+                var blend = angle / MathF.Max(progress, 0.0001f);
+                color = Vector4.Lerp(new Vector4(1f, 214f / 255f, 242f / 255f, 0.95f),
+                    new Vector4(1f, 182f / 255f, 232f / 255f, 0.92f), blend);
+            }
+            else
+            {
+                color = new Vector4(1f, 1f, 1f, 0.12f);
+            }
+            color.W *= opacity;
+            drawList.AddQuadFilled(center + LoaderDirections[i] * outerRadius,
+                center + LoaderDirections[i + 1] * outerRadius,
+                center + LoaderDirections[i + 1] * innerRadius,
+                center + LoaderDirections[i] * innerRadius,
+                SimplePalette.ToU32(color));
         }
 
-        var cuteSize = new Vector2(96f) * pulse;
-        // Use the same six decoded frames as the site's animated cute.webp.
-        // Static lossless WebP frames avoid animated-WebP upload differences.
-        var sealFrame = SealFrames[(int)(ImGui.GetTime() * 6.67d) % SealFrames.Length];
-        var cute = ErosUILayer.GetResourceTextureWrap(sealFrame);
+        // Pixelated 96px frames preserve the source WebP's four-frame timing.
+        var frameTime = elapsed % 0.6f;
+        var frameIndex = frameTime < 0.2f ? 0 : frameTime < 0.3f ? 1 : frameTime < 0.4f ? 2 : 3;
+        var cute = ErosUILayer.GetResourceTextureWrap(CuteFrames[frameIndex]);
         if (cute != null)
-            drawList.AddImage(cute.Handle, center - cuteSize * 0.5f, center + cuteSize * 0.5f,
-                Vector2.Zero, Vector2.One, SimplePalette.ToU32(new Vector4(1f, 1f, 1f, opacity)));
-
-        var percentValue = (int)MathF.Round(percentProgress * 100f);
-        if (percentValue != cachedPercent)
         {
-            cachedPercent = percentValue;
-            cachedPercentText = $"{percentValue}%";
+            var topLeft = new Vector2(MathF.Round(center.X - 48f), MathF.Round(center.Y - 48f));
+            drawList.AddImage(cute.Handle, topLeft, topLeft + new Vector2(96f),
+                Vector2.Zero, Vector2.One, SimplePalette.ToU32(new Vector4(1f, 1f, 1f, opacity)));
         }
-        var percent = cachedPercentText;
-        var fontSize = ImGui.GetFontSize() * 3f;
-        var textSize = ImGui.CalcTextSize(percent) * 3f;
-        var textPos = center + new Vector2(-textSize.X * 0.5f, -100f);
-        drawList.AddRect(textPos - new Vector2(10f, 4f), textPos + textSize + new Vector2(10f, 4f),
-            SimplePalette.ToU32(new Vector4(0.424f, 0.388f, 1f, opacity)), 0f, ImDrawFlags.None, 2f);
-        drawList.AddText(ImGui.GetFont(), fontSize, textPos + new Vector2(2f, 2f),
-            SimplePalette.ToU32(new Vector4(0.35f, 0.20f, 0.55f, opacity * 0.7f)), percent);
-        drawList.AddText(ImGui.GetFont(), fontSize, textPos,
-            SimplePalette.ToU32(new Vector4(1f, 0.96f, 1f, opacity)), percent);
+
+        // Pre-rendered Pixelcraft/monospace labels match the site's CSS without
+        // registering a runtime font with Dalamud's font atlas.
+        var percentValue = Math.Clamp((int)MathF.Floor(Math.Clamp(elapsed / 3f, 0f, 1f) * 100f), 0, 100);
+        var percentAtlas = ErosUILayer.GetResourceTextureWrap("loader.percent_atlas.webp");
+        if (percentAtlas != null)
+        {
+            var column = percentValue % 10;
+            var row = percentValue / 10;
+            var uv0 = new Vector2(column / 10f, row / 11f);
+            var uv1 = new Vector2((column + 1) / 10f, (row + 1) / 11f);
+            var topLeft = center + new Vector2(-90f, -168f);
+            drawList.AddImage(percentAtlas.Handle, topLeft, topLeft + new Vector2(180f, 90f),
+                uv0, uv1, SimplePalette.ToU32(new Vector4(1f, 1f, 1f, opacity)));
+        }
+    }
+
+    private static float CssEaseInOut(float progress) => CssBezier(progress, 0.42f, 0f, 0.58f, 1f);
+
+    private static float CssBezier(float progress, float x1, float y1, float x2, float y2)
+    {
+        // Solve the CSS cubic-bezier x coordinate to get the matching y value.
+        var t = Math.Clamp(progress, 0f, 1f);
+        for (var i = 0; i < 6; i++)
+        {
+            var oneMinusT = 1f - t;
+            var x = 3f * oneMinusT * oneMinusT * t * x1
+                + 3f * oneMinusT * t * t * x2 + t * t * t;
+            var derivative = 3f * oneMinusT * oneMinusT * x1
+                + 6f * oneMinusT * t * (x2 - x1)
+                + 3f * t * t * (1f - x2);
+            t = Math.Clamp(t - (x - progress) / MathF.Max(derivative, 0.0001f), 0f, 1f);
+        }
+        var rest = 1f - t;
+        return 3f * rest * rest * t * y1 + 3f * rest * t * t * y2 + t * t * t;
     }
 
     private static Vector2[] BuildLoaderDirections()

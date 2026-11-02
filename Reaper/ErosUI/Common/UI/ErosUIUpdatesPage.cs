@@ -10,6 +10,11 @@ internal static class ErosUIUpdatesPage
     private static readonly Notice[] Notices =
     [
         new(
+            "1.3.2", "2026-11-03", "更新载入动画",
+            "按网页原版对齐载入动画的背景切换、圆环、横条和进度显示。\n\n" +
+            "同步角色动画帧与播放节奏，并使用无损背景素材。",
+            "#UI #LOADING"),
+        new(
             "1.3.1", "2026-11-02", "字体崩溃修复与体积优化",
             "移除导致字体图集崩溃的自定义字体和鼠标样式。\n\n" +
             "压缩启动画面、背景和像素小人资源，大幅缩小 DLL 体积。\n\n" +

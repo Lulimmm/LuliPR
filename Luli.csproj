@@ -40,6 +40,9 @@
       <EmbeddedResource Include="Reaper\ErosUI\Resources\pet\*.webp">
         <LogicalName>ErosUI.Resources.pet.%(Filename)%(Extension)</LogicalName>
       </EmbeddedResource>
+      <EmbeddedResource Include="Reaper\ErosUI\Resources\loader\*.webp">
+        <LogicalName>ErosUI.Resources.loader.%(Filename)%(Extension)</LogicalName>
+      </EmbeddedResource>
     </ItemGroup>
 
     <ItemGroup>
