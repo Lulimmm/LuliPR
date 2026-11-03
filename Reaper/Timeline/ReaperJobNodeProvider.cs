@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using PromeRotation.CustomTimeline;
 using PromeRotation.Timeline.Core;
 
 namespace Reaper.PR.Timeline;
@@ -18,6 +19,7 @@ public sealed class ReaperJobNodeProvider : IJobNodeProvider
         ReaperLegacySoulGaugeCondition.Register(context);
         ReaperLemureShroudCondition.Register(context);
         ReaperNearbyEnemyCountCondition.Register(context);
+        GeneralTargetCondition.Register(context);
         ReaperLegacyQtAction.Register(context);
         ReaperQtAction.Register(context);
         ReaperHotkeyAction.Register(context);
@@ -40,6 +42,7 @@ public sealed class ReaperJobNodeProvider : IJobNodeProvider
             ("Reaper/红量谱", "检测灵魂量谱达到指定下限", () => new ReaperLegacySoulGaugeCondition()),
             ("Reaper/夜游魂量谱", "检测夜游魂量谱等于指定数值", () => new ReaperLemureShroudCondition()),
             ("Reaper/敌人数量检测（自身为中心5米）", "检测玩家周围5米内敌人数达到指定下限", () => new ReaperNearbyEnemyCountCondition()),
+            ("检测目标条件", "筛选目标类型并组合目标条件", () => new GeneralTargetCondition()),
         };
 
     public IReadOnlyList<(string DisplayName, string Description, Func<IAction> Create)> GetActionDescriptors()

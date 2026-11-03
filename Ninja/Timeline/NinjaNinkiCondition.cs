@@ -4,9 +4,11 @@ using System.Linq;
 using System.Numerics;
 using System.Text.Json;
 using Dalamud.Bindings.ImGui;
+using ErosUI;
 using PromeRotation.Core;
 using PromeRotation.Data;
 using PromeRotation.Helpers;
+using PromeRotation.CustomTimeline;
 using PromeRotation.Timeline.Core;
 
 using Ninja.PR.Data;
@@ -18,6 +20,7 @@ public sealed class NinjaJobNodeProvider : IJobNodeProvider
     public void RegisterNodes(RotationNodeContext context)
     {
         NinjaNinkiCondition.Register(context);
+        GeneralTargetCondition.Register(context);
         NinjaSettingAction.Register(context);
         NinjaPrQtAction.Register(context);
         NinjaTriggerTrickDelayAction.Register(context);
@@ -25,12 +28,14 @@ public sealed class NinjaJobNodeProvider : IJobNodeProvider
         NinjaTriggerRaitonBackstabAction.Register(context);
         NinjaTriggerRaitonRangeAction.Register(context);
         NinjaTriggerP5BunshinAction.Register(context);
+        NinjaHotkeyAction.Register(context);
     }
 
     public IReadOnlyList<(string DisplayName, string Description, Func<ICondition> Create)> GetConditionDescriptors()
         => new (string, string, Func<ICondition>)[]
         {
             ("Ninja/忍气检测", "忍气达到指定值时通过", () => new NinjaNinkiCondition()),
+            ("检测目标条件", "筛选目标类型并组合目标条件", () => new GeneralTargetCondition()),
         };
 
     public IReadOnlyList<(string DisplayName, string Description, Func<IAction> Create)> GetActionDescriptors()
@@ -39,12 +44,60 @@ public sealed class NinjaJobNodeProvider : IJobNodeProvider
             // Keep the original aggregate nodes for existing timelines.
             ("Ninja/设置开关", "在时间轴触发时设置 Ninja 循环选项", () => new NinjaSettingAction()),
             ("Ninja/PR QT", "按 qt2 模板批量设置 Ninja QT", () => new NinjaPrQtAction()),
-            ("Ninja/延后小背刺至大背刺", "AE TriggerAction_Settings：设置下一个小背刺是否延后到大背刺", () => new NinjaTriggerTrickDelayAction()),
-            ("Ninja/硬砸雷遁", "AE TriggerAction_RaitonSettings：设置是否强制使用雷遁", () => new NinjaTriggerForceRaitonAction()),
-            ("Ninja/雷遁背刺", "AE TriggerAction_RaitonBeici：设置雷遁背刺策略", () => new NinjaTriggerRaitonBackstabAction()),
-            ("Ninja/远离雷遁止损", "AE TriggerAction_远离雷遁：设置远程雷遁止损", () => new NinjaTriggerRaitonRangeAction()),
+            ("Ninja/HotKey", "执行 Ninja 热键面板中的指定动作", () => new NinjaHotkeyAction()),
             ("Ninja/P5完美分身", "AE TriggerAction_P5Pbunshin：设置 P5 完美分身资源保留", () => new NinjaTriggerP5BunshinAction()),
         };
+}
+
+public sealed class NinjaHotkeyAction : IAction, ISerializableAction, IJobNodeDescriptor
+{
+    private const string TypeKey = "luli_ninja_trigger_hotkey";
+    private string hotkey = string.Empty;
+
+    private static string[] HotkeyNames => ErosUIFramework.GetHotkeyNames();
+
+    public string NodeDisplayName => "Ninja/HotKey";
+    public NodeParamInfo[] Params => new[]
+    {
+        new NodeParamInfo("hotkey", "热键", "执行 Ninja 热键面板中的指定动作", "enum",
+            HotkeyNames.Select(name => (name, name)).ToArray()),
+    };
+
+    public bool Draw()
+    {
+        var names = HotkeyNames;
+        if (names.Length == 0) return false;
+        var selected = Array.IndexOf(names, hotkey);
+        if (selected < 0) selected = 0;
+        if (!ImGui.Combo("选择使用 HotKey", ref selected, names, names.Length)) return false;
+        hotkey = names[selected];
+        return true;
+    }
+
+    public string GetParam(string fieldName) => fieldName == "hotkey" ? hotkey : string.Empty;
+
+    public void SetParam(string fieldName, string value)
+    {
+        if (fieldName == "hotkey") hotkey = value;
+    }
+
+    public void Execute() => ErosUIFramework.ExecuteHotkey(hotkey);
+
+    public ActionDto ToDto() => new()
+    {
+        Type = TypeKey,
+        Enabled = true,
+        Params = new Dictionary<string, string> { ["hotkey"] = hotkey },
+    };
+
+    public static void Register(RotationNodeContext context)
+        => ActionFactory.Register(context, TypeKey, dto =>
+        {
+            var action = new NinjaHotkeyAction();
+            if (dto.Params?.TryGetValue("hotkey", out var key) == true)
+                action.SetParam("hotkey", key);
+            return action;
+        });
 }
 
 /// <summary>
