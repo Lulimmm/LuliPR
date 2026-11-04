@@ -14,7 +14,8 @@ namespace Reaper.PR;
 
 public sealed partial class ReaperRotation
 {
-    // 职业专属设置绘制到 ErosUI 的「基础设置」页，配置仍沿用 opener.json。
+    // 职业专属设置绘制到 ErosUI 的「基础设置」页，配置保存在 setting.json。
+
     internal static void DrawGeneralSettings()
     {
         ImGui.Spacing();
@@ -49,6 +50,7 @@ public sealed partial class ReaperRotation
             SaveOpenerConfig();
         }
 
+        ImGui.SameLine(0f, 24f);
         var rush = openerConfig.OpenerRush;
         if (ImGui.Checkbox("起手使用突进", ref rush))
         {
@@ -80,6 +82,10 @@ public sealed partial class ReaperRotation
             }
             ImGui.EndCombo();
         }
+
+        ImGui.Spacing();
+        ImGui.Separator();
+        ImGui.TextUnformatted("Hook 设置");
 
         var extraRange = openerConfig.ExtraRange;
         ImGui.SetNextItemWidth(360f);

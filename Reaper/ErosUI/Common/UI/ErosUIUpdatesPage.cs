@@ -10,6 +10,11 @@ internal static class ErosUIUpdatesPage
     private static readonly Notice[] Notices =
     [
         new(
+            "1.3.5", "2026-11-05", "使用时长与 Hook 设置优化",
+            "新增 ACR 总使用时长数码时钟，累计达到 24 小时后可获取凭证。\n\n" +
+            "优化 Reaper 设置排版：起手爆发药与突进并排显示，并增加 Hook 设置分节。",
+            "#UI #USAGE #RPR"),
+        new(
             "1.3.2", "2026-11-03", "更新载入动画",
             "按网页原版对齐载入动画的背景切换、圆环、横条和进度显示。\n\n" +
             "同步角色动画帧与播放节奏，并使用无损背景素材。",

@@ -1,10 +1,9 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Text.Json;
 using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Bindings.ImGui;
 using ECommons.DalamudServices;
+using LuliPR.Common;
 using ErosUI;
 using PromeRotation.Core;
 using PromeRotation.Data;
@@ -67,9 +66,14 @@ internal sealed class ReaperEventHandler : IRotationEventHandler, IDisposable
         return Environment.TickCount64 - timestamp <= milliseconds;
     }
 
-    public void OnUpdate() => ReaperHooks.Update();
+    public void OnUpdate()
+    {
+        UsageStatistics.Update();
+        ReaperHooks.Update();
+    }
     public void OnOutOfBattleUpdate()
     {
+        UsageStatistics.Update();
         InBattle = false;
         ReaperPositionDrawer.Clear();
         ReaperHooks.Update();
@@ -94,6 +98,7 @@ internal sealed class ReaperEventHandler : IRotationEventHandler, IDisposable
     }
     public void OnBattleUpdate()
     {
+        UsageStatistics.Update();
         InBattle = true;
         OpenerPositionalRuntime.Update();
         ReaperHooks.Update();

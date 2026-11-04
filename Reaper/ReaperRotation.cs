@@ -1,11 +1,10 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Text.Json;
 using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Bindings.ImGui;
 using ECommons.DalamudServices;
 using ErosUI;
+using LuliPR.Common;
 using PromeRotation.Core;
 using PromeRotation.Data;
 using PromeRotation.Extensions;
@@ -21,7 +20,7 @@ using PromeRotation.UI.HotKey;
 
 namespace Reaper.PR;
 
-[RotationMetadata(39u, "Luli Reaper PR", "Cino", "1.3.4", ContentScope = AcrContentScope.HighEnd)]
+[RotationMetadata(39u, "Luli Reaper PR", "Cino", "1.3.5", ContentScope = AcrContentScope.HighEnd)]
 public sealed partial class ReaperRotation : IRotation, IRotationLifecycle
 {
     public string AuthorName => "Cino";
@@ -39,7 +38,7 @@ public sealed partial class ReaperRotation : IRotation, IRotationLifecycle
         "提前1G团辅特化起手",
         FollowTimelineOpener
     };
-    private static OpenerConfig openerConfig = LoadOpenerConfig();
+    private static ReaperSettingsData openerConfig = LoadOpenerConfig();
     private static string selectedOpener = openerConfig.Selected ?? FollowTimelineOpener;
     internal static bool OpenerBurst => openerConfig.OpenerBurst;
     internal static bool OpenerRush => openerConfig.OpenerRush;
@@ -270,6 +269,7 @@ public sealed partial class ReaperRotation : IRotation, IRotationLifecycle
     public IRotationEventHandler GetEventHandler() => events;
     public void OnEnterAcr()
     {
+        UsageStatistics.Start("Reaper");
         events.Attach();
         ReaperHooks.Update();
         ErosUIFramework.Install();
@@ -277,63 +277,25 @@ public sealed partial class ReaperRotation : IRotation, IRotationLifecycle
 
     public void OnExitAcr()
     {
+        UsageStatistics.Stop("Reaper");
         events.Dispose();
         ReaperPositionDrawer.Clear();
         ErosUIFramework.Uninstall();
         ReaperHooks.Dispose();
     }
 
-    private sealed class OpenerConfig
+    private static ReaperSettingsData LoadOpenerConfig()
     {
-        public string? Selected { get; set; }
-        public bool OpenerBurst { get; set; }
-        public bool OpenerRush { get; set; }
-        public int PotionType { get; set; }
-        public bool HideQtPage { get; set; }
-        public bool HideHotkeyPage { get; set; }
-        public float ExtraRange { get; set; } = 3f;
-        public float MoveCasting { get; set; } = 0.4f;
-    }
-
-    private static string ConfigPath => Path.Combine(
-        Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-        "XIVLauncherCN", "pluginConfigs", "PromeRotation", "ACR", "Cino", "opener.json");
-
-    private static OpenerConfig LoadOpenerConfig()
-    {
-        try
-        {
-            if (File.Exists(ConfigPath))
-            {
-                var config = JsonSerializer.Deserialize<OpenerConfig>(File.ReadAllText(ConfigPath));
-                if (config?.Selected != null)
-                {
-                    var normalized = CanonicalOpenerName(config.Selected);
-                    if (Array.IndexOf(OpenerOptions, normalized) >= 0)
-                    {
-                        config.Selected = normalized;
-                        return config;
-                    }
-                }
-            }
-        }
-        catch
-        {
-            // A damaged optional settings file should not prevent the ACR from loading.
-        }
-        return new OpenerConfig { Selected = FollowTimelineOpener };
+        var config = AcrSettingsStore.Current.Reaper;
+        var normalized = CanonicalOpenerName(config.Selected);
+        config.Selected = Array.IndexOf(OpenerOptions, normalized) >= 0
+            ? normalized
+            : FollowTimelineOpener;
+        return config;
     }
 
     private static void SaveOpenerConfig()
     {
-        try
-        {
-            Directory.CreateDirectory(Path.GetDirectoryName(ConfigPath)!);
-            File.WriteAllText(ConfigPath, JsonSerializer.Serialize(openerConfig));
-        }
-        catch
-        {
-            // The in-memory selection remains active if the optional persistence file is unavailable.
-        }
+        AcrSettingsStore.Save();
     }
 }

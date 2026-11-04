@@ -22,6 +22,7 @@ using PromeRotation.Rotation;
 using PromeRotation.Updaters;
 using Ninja.PR.Timeline;
 using ECommons.DalamudServices;
+using LuliPR.Common;
 
 using Ninja.PR.Action;
 using Ninja.PR.Action.Gcd;
@@ -33,7 +34,7 @@ using Ninja.PR.UI;
 
 namespace Ninja.PR;
 
-[RotationMetadata(30u, "Luli Ninja PR", "Cino", "1.3.4", ContentScope = AcrContentScope.HighEnd)]
+[RotationMetadata(30u, "Luli Ninja PR", "Cino", "1.3.5", ContentScope = AcrContentScope.HighEnd)]
 public sealed class NinjaRotation : IRotation, IRotationLifecycle
 {
     private static readonly HashSet<string> DefaultHiddenQtKeys = new(StringComparer.Ordinal)
@@ -541,6 +542,7 @@ public sealed class NinjaRotation : IRotation, IRotationLifecycle
     public IRotationEventHandler GetEventHandler() => events;
     public void OnEnterAcr()
     {
+        UsageStatistics.Start("Ninja");
         NinjaWeavePolicy.Enter();
         events.Attach();
         NinjaActionInputGuard.Attach();
@@ -551,6 +553,7 @@ public sealed class NinjaRotation : IRotation, IRotationLifecycle
 
     public void OnExitAcr()
     {
+        UsageStatistics.Stop("Ninja");
         NinjaPositionDrawer.ResetLifecycle();
         NinjaWeavePolicy.Exit();
         NinjaHooks.Dispose();
@@ -811,6 +814,7 @@ internal sealed class NinjaEventHandler : IRotationEventHandler, IDisposable
 
     public void OnUpdate()
     {
+        UsageStatistics.Update();
         NinjaHooks.Update();
         NinjaPositionDrawer.Update();
         NinjaAttemptDebug.Update();
@@ -819,6 +823,7 @@ internal sealed class NinjaEventHandler : IRotationEventHandler, IDisposable
     }
     public void OnOutOfBattleUpdate()
     {
+        UsageStatistics.Update();
         NinjaHooks.Update();
         NinjaPositionDrawer.Update();
     }
@@ -838,6 +843,7 @@ internal sealed class NinjaEventHandler : IRotationEventHandler, IDisposable
     }
     public void OnBattleUpdate()
     {
+        UsageStatistics.Update();
         NinjaHooks.Update();
         NinjaAttemptDebug.Update();
         NinjaSequencePolicy.Update();
