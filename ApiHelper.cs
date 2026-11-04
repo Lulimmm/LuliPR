@@ -237,9 +237,10 @@ internal static class OpenerPositionalRuntime
             if (R.Ready(R.Gluttony) && R.Cd(R.Gluttony) <= .1f)
                 return;
 
-            firstPositionalAction = TargetHelper.GetTargetPositional() == Positional.Rear
+            var enhancedAction = TargetHelper.GetTargetPositional() == Positional.Rear
                 ? R.EnhancedGallows
                 : R.EnhancedGibbet;
+            firstPositionalAction = GetLevelAdjustedPositionalAction(enhancedAction);
             ActionQueueManager.Enqueue(new PAction(firstPositionalAction, ActionType.Gcd, ActionTargetType.Target)
             {
                 RequiresVerification = true
@@ -263,9 +264,10 @@ internal static class OpenerPositionalRuntime
             && now - firstPositionalQueuedAt < 1800)
             return;
 
-        var secondPositionalAction = R.Has(2589u)
+        var enhancedSecondAction = R.Has(2589u)
             ? R.EnhancedGallows
             : R.EnhancedGibbet;
+        var secondPositionalAction = GetLevelAdjustedPositionalAction(enhancedSecondAction);
         var actions = new List<PAction>
         {
             new(secondPositionalAction, ActionType.Gcd, ActionTargetType.Target)
@@ -276,5 +278,18 @@ internal static class OpenerPositionalRuntime
         actions.AddRange(tail);
         ActionQueueManager.Enqueue(actions);
         stage = Stage.Complete;
+    }
+
+    private static uint GetLevelAdjustedPositionalAction(uint actionId)
+    {
+        var player = Core.Me;
+        if (player == null || player.Level >= 96) return actionId;
+
+        return actionId switch
+        {
+            R.EnhancedGibbet => R.Gibbet,
+            R.EnhancedGallows => R.Gallows,
+            _ => actionId,
+        };
     }
 }
