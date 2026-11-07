@@ -8,7 +8,7 @@ namespace ErosUI;
 
 // 网站风格的像素小人控制器。尺寸、资源和交互对齐网站 desk-pet：
 // 左键点击切换运行/关闭，右键打开设置，中键锁定自动移动，左键拖动移动位置。
-public sealed partial class CombatControlWindow : Window
+public sealed partial class CombatControlWindow : Window, IDisposable
 {
     private enum PetVisualState
     {
@@ -76,10 +76,10 @@ public sealed partial class CombatControlWindow : Window
     private bool pendingPetClick;
     private double pendingPetClickAt;
     private bool suppressNextPetClickRelease;
-    // Keep names only, never texture-wrap instances. A wrap is owned by Dalamud
-    // and can be replaced/disposed between frames.
-    private string? lastReadyPetFrame;
-    private string? lastReadySealFrame;
+    private readonly PetFrameFallback petFallback = new();
+    private readonly PetFrameFallback sealFallback = new();
+    private Vector2? lastWindowPosition;
+    private Vector2 lastWindowSize = PetSize;
     private Vector2 petFlyFrom;
     private Vector2 petFlyTarget;
     private double petFlyEndsAt;
@@ -113,7 +113,7 @@ public sealed partial class CombatControlWindow : Window
         positionLocked = getPositionLocked?.Invoke() ?? false;
 
         Position = getSavedPosition?.Invoke() ?? DefaultPosition;
-        PositionCondition = ImGuiCond.FirstUseEver;
+        PositionCondition = ImGuiCond.Always;
         RespectCloseHotkey = false;
         AllowBackgroundBlur = false;
         IsOpen = true;
@@ -121,6 +121,7 @@ public sealed partial class CombatControlWindow : Window
 
     public override void PreDraw()
     {
+        PrepareWindowPosition();
         // 本窗口独立使用 SimplePalette 颜色，需自行同步色彩方案（设置窗口可能未打开）
         SimplePalette.ApplyScheme(ErosUICommonSettings.Instance.UIMode == SettingsUIMode.Day
             ? SimplePalette.UIColorScheme.Light
@@ -141,6 +142,14 @@ public sealed partial class CombatControlWindow : Window
     public override void Draw()
     {
         DrawPet();
+        lastWindowPosition = ImGui.GetWindowPos();
+        lastWindowSize = ImGui.GetWindowSize();
+    }
+
+    public void Dispose()
+    {
+        petFallback.Dispose();
+        sealFallback.Dispose();
     }
 
     public override void PostDraw()
@@ -155,7 +164,6 @@ public sealed partial class CombatControlWindow : Window
         UpdatePetState();
         var now = ImGui.GetTime();
         var doubleClickTime = Math.Max(0.30d, ImGui.GetIO().MouseDoubleClickTime);
-        var pos = ImGui.GetCursorScreenPos();
         var drawList = ImGui.GetWindowDrawList();
 
         ImGui.InvisibleButton("##cc_pet", PetSize);
@@ -273,36 +281,35 @@ public sealed partial class CombatControlWindow : Window
         }
         var acrOff = PromeSettings.Instance.EnableAcr == AcrState.Off;
         var frame = acrOff ? GetSealFrame(now) : GetPetFrame(now);
-        var drawFrame = frame;
+        var fallback = acrOff ? sealFallback : petFallback;
         var texture = ErosUILayer.GetResourceTextureWrap(frame);
-        if (!IsReadyTexture(texture))
+        var isCurrentFrame = IsReadyTexture(texture);
+        if (!isCurrentFrame)
         {
-            var fallbackFrame = acrOff ? lastReadySealFrame : lastReadyPetFrame;
-            if (fallbackFrame != null)
-            {
-                drawFrame = fallbackFrame;
-                texture = ErosUILayer.GetResourceTextureWrap(fallbackFrame);
-            }
+            if (texture != null) ErosUILayer.InvalidateResourceTexture(frame);
+            texture = fallback.Texture;
+            if (!IsReadyTexture(texture)) fallback.Dispose();
         }
 
         if (IsReadyTexture(texture))
         {
-            if (acrOff) lastReadySealFrame = drawFrame;
-            else lastReadyPetFrame = drawFrame;
-
             try
             {
                 // 网站通过 scaleX(-1) 翻转朝向；对 ImGui 纹理交换 U 坐标即可得到同样效果。
                 var uv0 = petFacingLeft ? new Vector2(1f, 0f) : Vector2.Zero;
                 var uv1 = petFacingLeft ? new Vector2(0f, 1f) : Vector2.One;
-                drawList.AddImage(texture!.Handle, pos, pos + PetSize, uv0, uv1,
+                // Dragging can move the window after the hit area was created.
+                // Use its current position so the image follows that move.
+                var imagePos = ImGui.GetWindowPos();
+                drawList.AddImage(texture!.Handle, imagePos, imagePos + PetSize, uv0, uv1,
                     SimplePalette.ToU32(new Vector4(1f, 1f, 1f, hovered ? 1f : 0.96f)));
+                if (isCurrentFrame)
+                    fallback.Remember(frame, texture);
             }
             catch (ObjectDisposedException)
             {
-                // Keep the frame name. The shared texture may be recreated on
-                // the next UI frame after a device/resource reset; clearing it
-                // here would turn a short reload into visible flicker.
+                fallback.Dispose();
+                ErosUILayer.InvalidateResourceTexture(frame);
             }
         }
 
@@ -311,6 +318,19 @@ public sealed partial class CombatControlWindow : Window
                 ? OffTooltips
                 : ActiveTooltips)[positionLocked ? 1 : 0]);
 
+    }
+
+    private void PrepareWindowPosition()
+    {
+        var viewport = ImGui.GetMainViewport();
+        // Do not overwrite the saved position while the game is minimized.
+        if (viewport.WorkSize.X <= 0f || viewport.WorkSize.Y <= 0f) return;
+        var current = lastWindowPosition ?? Position ?? DefaultPosition;
+        var clamped = ClampPosition(current, lastWindowSize, viewport.WorkPos, viewport.WorkSize);
+        // Apply the correction before Begin so its clipping rectangle matches
+        // the image even when the old window was entirely off screen.
+        Position = lastWindowPosition == null || current != clamped ? clamped : null;
+        if (current != clamped) persistPending = true;
     }
 
     private static void DrawPetTooltip(string text)
@@ -552,11 +572,18 @@ public sealed partial class CombatControlWindow : Window
         var size = ImGui.GetWindowSize();
         if (size.X <= 0f || size.Y <= 0f) size = PetSize;   // 首帧兜底尺寸
 
+        return ClampPosition(pos, size, vp.WorkPos, vp.WorkSize);
+    }
+
+    internal static Vector2 ClampPosition(Vector2 pos, Vector2 size, Vector2 workPos, Vector2 workSize)
+    {
+        if (!float.IsFinite(pos.X) || !float.IsFinite(pos.Y)) pos = DefaultPosition;
+
         var margin = 4f;
-        var minX = vp.WorkPos.X + margin;
-        var minY = vp.WorkPos.Y + margin;
-        var maxX = vp.WorkPos.X + vp.WorkSize.X - size.X - margin;
-        var maxY = vp.WorkPos.Y + vp.WorkSize.Y - size.Y - margin;
+        var minX = workPos.X + margin;
+        var minY = workPos.Y + margin;
+        var maxX = workPos.X + workSize.X - size.X - margin;
+        var maxY = workPos.Y + workSize.Y - size.Y - margin;
         if (maxX < minX) maxX = minX;
         if (maxY < minY) maxY = minY;
 

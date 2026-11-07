@@ -10,6 +10,11 @@ internal static class ErosUIUpdatesPage
     private static readonly Notice[] Notices =
     [
         new(
+            "1.3.6", "2026-11-07", "修复像素小人消失",
+            "修复像素小人纹理加载异常后持续空白的问题，增加加载重试与有效画面兜底。\n\n" +
+            "修复分辨率变化时窗口越界、宿主未就绪时窗口未注册的问题。",
+            "#UI #PET #FIX"),
+        new(
             "1.3.5", "2026-11-05", "使用时长与 Hook 设置优化",
             "新增 ACR 总使用时长数码时钟，累计达到 24 小时后可获取凭证。\n\n" +
             "优化 Reaper 设置排版：起手爆发药与突进并排显示，并增加 Hook 设置分节。",

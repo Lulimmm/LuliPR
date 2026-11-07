@@ -14,6 +14,7 @@ public static class ErosUIFramework
     private static ErosUISettingsWindow? settings;
     private static ErosUIQtPanelWindow? qtPanel;
     private static ErosUISplashWindow? splash;
+    private static bool installRetryPending;
 
     /// <summary>注入本职业的全部环境。在 Rotation 构造函数最前面调用。</summary>
     public static void Configure(
@@ -49,6 +50,8 @@ public static class ErosUIFramework
         if (ws == null)
         {
             Svc.Log.Info($"[{ErosUIJobEnv.作者}] 无法访问宿主 WindowSystem，UI 未注册");
+            installRetryPending = true;
+            Svc.PluginInterface.UiBuilder.Draw += RetryPendingInstall;
             return;
         }
 
@@ -81,16 +84,31 @@ public static class ErosUIFramework
         APIHelper.重建QT可见性();
     }
 
+    private static void RetryPendingInstall()
+    {
+        if (!installRetryPending || PromeRotation.Plugin.Instance?.WindowSystem == null) return;
+        // UiBuilder.Draw is the UI thread. Never register or remove windows
+        // from the combat update callbacks while WindowSystem is drawing.
+        // Install starts with Uninstall, which also removes this subscription.
+        Install();
+    }
+
     /// <summary>卸载全部窗口与热键面板，并把两份设置落盘。OnExitAcr 调用，与 Install 严格成对。</summary>
     public static void Uninstall()
     {
+        if (installRetryPending)
+        {
+            installRetryPending = false;
+            Svc.PluginInterface.UiBuilder.Draw -= RetryPendingInstall;
+        }
         ErosUIHotkeyUI.Uninstall();
         var ws = PromeRotation.Plugin.Instance?.WindowSystem;
-        if (ws == null) { control = null; settings = null; qtPanel = null; splash = null; SaveSettings(); return; }
+        if (ws == null) { control?.Dispose(); control = null; settings = null; qtPanel = null; splash = null; SaveSettings(); return; }
 
         if (control != null)
         {
             try { ws.RemoveWindow(control); } catch (ArgumentException) { }
+            control.Dispose();
             control = null;
         }
         if (settings != null)

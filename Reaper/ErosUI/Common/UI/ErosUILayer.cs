@@ -14,6 +14,12 @@ namespace ErosUI;
 internal static class ErosUILayer
 {
     private static readonly Dictionary<string, ISharedImmediateTexture> ResourceTextures = new(StringComparer.Ordinal);
+    private static readonly Dictionary<string, long> ResourceRetryAfter = new(StringComparer.Ordinal);
+    private static readonly Dictionary<string, long> ResourceUnavailableSince = new(StringComparer.Ordinal);
+    // Stop querying failed shared textures long enough for Dalamud's idle
+    // reference to expire, otherwise its faulted load task stays alive.
+    private const long ResourceRetryDelayMs = 5_000;
+    private const long ResourceLoadTimeoutMs = 15_000;
     private static readonly List<Meteor> Meteors = new();
     private static readonly Random MeteorRandom = new();
     private static double nextMeteorAt = -1d;
@@ -48,10 +54,17 @@ internal static class ErosUILayer
         var wrap = GetResourceTextureWrap("bg2.webp");
         if (wrap != null)
         {
-            var (uv0, uv1) = CoverUv(wrap, max - min);
-            drawList.AddImageRounded(wrap.Handle, min, max, uv0, uv1,
-                SimplePalette.ToU32(new Vector4(1f, 1f, 1f, Math.Clamp(imageAlpha, 0f, 1f))),
-                rounding, ImDrawFlags.RoundCornersAll);
+            try
+            {
+                var (uv0, uv1) = CoverUv(wrap, max - min);
+                drawList.AddImageRounded(wrap.Handle, min, max, uv0, uv1,
+                    SimplePalette.ToU32(new Vector4(1f, 1f, 1f, Math.Clamp(imageAlpha, 0f, 1f))),
+                    rounding, ImDrawFlags.RoundCornersAll);
+            }
+            catch (ObjectDisposedException)
+            {
+                InvalidateResourceTexture("bg2.webp");
+            }
         }
 
         drawList.AddRect(min + new Vector2(1f), max - new Vector2(1f),
@@ -208,20 +221,54 @@ internal static class ErosUILayer
     /// </summary>
     public static IDalamudTextureWrap? GetResourceTextureWrap(string name)
     {
+        if (ResourceRetryAfter.TryGetValue(name, out var retryAfter))
+        {
+            if (Environment.TickCount64 < retryAfter) return null;
+            ResourceRetryAfter.Remove(name);
+        }
         var texture = GetResourceTexture(name);
         if (texture == null) return null;
 
         try
         {
             Exception? error;
-            return texture.TryGetWrap(out var wrap, out error) && wrap != null ? wrap : null;
+            if (texture.TryGetWrap(out var wrap, out error) && wrap != null)
+            {
+                ResourceUnavailableSince.Remove(name);
+                return wrap;
+            }
+            if (error != null)
+            {
+                Svc.Log.Debug($"[ErosUI] texture load will retry ({name}): {error.Message}");
+                InvalidateResourceTexture(name);
+            }
+            else
+            {
+                // A cancelled/stalled load may report no exception. Allow
+                // normal asynchronous loading, but do not poll it forever.
+                var now = Environment.TickCount64;
+                if (!ResourceUnavailableSince.TryGetValue(name, out var since))
+                    ResourceUnavailableSince[name] = now;
+                else if (now - since >= ResourceLoadTimeoutMs)
+                    InvalidateResourceTexture(name);
+            }
+            return null;
         }
         catch
         {
             // Texture providers can be torn down during a device reset. The
-            // caller will retain its last successfully drawn frame and retry.
+            // caller can draw its owned fallback while the failed entry cools down.
+            InvalidateResourceTexture(name);
             return null;
         }
+    }
+
+    /// <summary>Forget one cached resource after a disposed graphics handle.</summary>
+    public static void InvalidateResourceTexture(string name)
+    {
+        ResourceTextures.Remove(name);
+        ResourceUnavailableSince.Remove(name);
+        ResourceRetryAfter[name] = Environment.TickCount64 + ResourceRetryDelayMs;
     }
 
     private static ISharedImmediateTexture? GetResourceTexture(string name)
@@ -238,6 +285,7 @@ internal static class ErosUILayer
         catch (Exception ex)
         {
             Svc.Log.Debug($"[ErosUI] embedded texture unavailable ({name}): {ex.Message}");
+            InvalidateResourceTexture(name);
             return null;
         }
     }
