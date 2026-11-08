@@ -43,6 +43,7 @@ public static class VisibleOrderHelper
     // 位置指数阻尼收敛：返回逼近 target 的下一帧位置，距离小于 0.1px 时直接吸附。
     public static Vector2 AnimatePosition(Vector2 current, Vector2 target, float deltaTime, float speed = DefaultAnimationSpeed)
     {
+        if (current == target) return target;
         var step = 1f - MathF.Exp(-MathF.Max(0.01f, speed) * Math.Clamp(deltaTime, 0f, 0.1f));
         var next = current + (target - current) * step;
         return Vector2.DistanceSquared(next, target) < 0.01f ? target : next;

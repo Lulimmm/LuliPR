@@ -23,6 +23,14 @@ internal static class ErosUIUsagePage
         { 1, 1, 1, 1, 1, 1, 1 },
         { 1, 1, 1, 1, 0, 1, 1 }
     };
+    private static readonly Vector2[] DigitSegmentOffsets =
+    [
+        new(2f, 0f), new(23f, 2f), new(23f, 32f),
+        new(2f, 53f), new(0f, 32f), new(0f, 2f), new(2f, 26.5f)
+    ];
+    private static readonly Vector2[] ClockRadials = BuildClockRadials();
+    private static long cachedDisplaySecond = long.MinValue;
+    private static string cachedDisplayText = "00:00:00";
 
     internal static void Draw()
     {
@@ -32,9 +40,15 @@ internal static class ErosUIUsagePage
 
     private static void DrawDigitalDisplay(double totalSeconds)
     {
-        var span = TimeSpan.FromSeconds(Math.Max(0, totalSeconds));
-        var hours = Math.Max(0, (long)span.TotalHours);
-        var text = $"{hours:00}:{span.Minutes:00}:{span.Seconds:00}";
+        var wholeSeconds = Math.Max(0L, (long)Math.Max(0d, totalSeconds));
+        if (wholeSeconds != cachedDisplaySecond)
+        {
+            var span = TimeSpan.FromSeconds(wholeSeconds);
+            var hours = Math.Max(0, (long)span.TotalHours);
+            cachedDisplayText = $"{hours:00}:{span.Minutes:00}:{span.Seconds:00}";
+            cachedDisplaySecond = wholeSeconds;
+        }
+        var text = cachedDisplayText;
 
         const float digitWidth = 30f;
         const float digitHeight = 58f;
@@ -92,8 +106,7 @@ internal static class ErosUIUsagePage
         var color = SimplePalette.ToU32(SimplePalette.WithAlpha(SimplePalette.PrimaryHover, 0.82f));
         for (var i = 0; i < 12; i++)
         {
-            var angle = -MathF.PI * 0.5f + i * MathF.PI / 6f;
-            var radial = new Vector2(MathF.Cos(angle), MathF.Sin(angle));
+            var radial = ClockRadials[i];
             var tangent = new Vector2(-radial.Y, radial.X);
             var inner = center + radial * (radius - 7f);
             var outer = center + radial * (radius + 7f);
@@ -113,26 +126,27 @@ internal static class ErosUIUsagePage
         const float inset = 2f;
         var horizontal = new Vector2(width - inset * 2f, thickness);
         var vertical = new Vector2(thickness, height * 0.5f - thickness * 1.5f);
-        var positions = new[]
-        {
-            new Vector2(inset, 0f),
-            new Vector2(width - thickness - inset, inset),
-            new Vector2(width - thickness - inset, height * 0.5f + thickness * 0.5f),
-            new Vector2(inset, height - thickness),
-            new Vector2(0f, height * 0.5f + thickness * 0.5f),
-            new Vector2(0f, inset),
-            new Vector2(inset, height * 0.5f - thickness * 0.5f)
-        };
+        var activeColor = SimplePalette.ToU32(SimplePalette.PrimaryHover);
+        var inactiveColor = SimplePalette.ToU32(new Vector4(0.25f, 0.18f, 0.35f, 0.45f));
 
         for (var i = 0; i < 7; i++)
         {
             var size = i is 0 or 3 or 6 ? horizontal : vertical;
-            var color = DigitSegments[digit, i] == 1
-                ? SimplePalette.PrimaryHover
-                : new Vector4(0.25f, 0.18f, 0.35f, 0.45f);
-            drawList.AddRectFilled(origin + positions[i], origin + positions[i] + size,
-                SimplePalette.ToU32(color), thickness * 0.5f);
+            var color = DigitSegments[digit, i] == 1 ? activeColor : inactiveColor;
+            drawList.AddRectFilled(origin + DigitSegmentOffsets[i], origin + DigitSegmentOffsets[i] + size,
+                color, thickness * 0.5f);
         }
+    }
+
+    private static Vector2[] BuildClockRadials()
+    {
+        var radials = new Vector2[12];
+        for (var i = 0; i < radials.Length; i++)
+        {
+            var angle = -MathF.PI * 0.5f + i * MathF.PI / 6f;
+            radials[i] = new Vector2(MathF.Cos(angle), MathF.Sin(angle));
+        }
+        return radials;
     }
 
     private static void DrawColon(ImDrawListPtr drawList, Vector2 center)

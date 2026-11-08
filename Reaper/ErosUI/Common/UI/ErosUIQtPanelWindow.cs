@@ -29,7 +29,7 @@ public sealed class ErosUIQtPanelWindow : Window
     // 格子视觉位置（按 QT id 索引, 窗口相对坐标, 拖动面板时按钮随窗刚性平移）：
     // 拖拽让位/松手回落时指数阻尼收敛到格位
     private static readonly Dictionary<string, Vector2> 动画格位 = new(StringComparer.Ordinal);
-    private static int[] 显示序暂存 = Array.Empty<int>();
+    private int[][] 显示序暂存 = Array.Empty<int[]>();
     private readonly HashSet<string> visibleQtKeys = new(StringComparer.Ordinal);
     private readonly List<string> visibleQtKeyOrder = new();
     private string[] cachedVisibleQtKeyOrder = Array.Empty<string>();
@@ -40,6 +40,13 @@ public sealed class ErosUIQtPanelWindow : Window
     private bool hasCachedWindowSize;
     private IReadOnlyList<QtDefinition> cachedDefinitions = Array.Empty<QtDefinition>();
     private List<分类分组> cachedGroups = new();
+    private LayoutKey? cachedLayout;
+    private int layoutColumns;
+    private Vector2 layoutSize;
+
+    private readonly record struct LayoutKey(IReadOnlyList<QtDefinition> Definitions,
+        int Columns, int ScalePercent, int Spacing, float TextHeight, Vector2 Padding,
+        ImFontPtr Font, float FontSize);
 
     // 一个分类分组：组标题 + 组内条目（defs 平铺索引，组内顺序 = 面板显示顺序）。
     // 布局字段（标题高/内容Y/行数）每帧由 布局分组 填充。
@@ -50,6 +57,8 @@ public sealed class ErosUIQtPanelWindow : Window
         public float 标题高;   // 组标题占用高度（含与首行格子的间距）；空标题 = 0
         public float 内容Y;    // 组网格相对窗口内容区原点的 Y 偏移
         public int 行数;       // 组网格行数（按面板列数换行）
+        public Vector2[] 格位 = Array.Empty<Vector2>();
+        public float 标题宽;
     }
 
     public ErosUIQtPanelWindow() : base($"{ErosUIJobEnv.作者}{ErosUIJobEnv.JobTag} QT面板",
@@ -83,6 +92,7 @@ public sealed class ErosUIQtPanelWindow : Window
 
     public override void Draw()
     {
+        using var measurement = ErosUIPerformance.Measure(ErosUIRenderSection.Qt);
         try
         {
             更新定义快照();
@@ -94,12 +104,13 @@ public sealed class ErosUIQtPanelWindow : Window
 
         var defs = cachedDefinitions;
         var groups = cachedGroups;
-        var cols = 布局分组(groups);
+        更新布局();
+        var cols = layoutColumns;
 
         // 每帧显式设置尺寸，让窗口精确贴合按钮网格。
         // 不要改回 AlwaysAutoResize：自适应尺寸会被窗口状态持久化干扰，
         // 导致窗口比内容宽出一截、左右多出透明边。
-        var windowSize = 计算窗口尺寸(groups, cols, defs.Count);
+        var windowSize = layoutSize;
         if (!hasCachedWindowSize || cachedWindowSize != windowSize)
         {
             ImGui.SetWindowSize(windowSize, ImGuiCond.Always);
@@ -141,15 +152,13 @@ public sealed class ErosUIQtPanelWindow : Window
         // 逐组绘制（组标题 + 网格）: 静止格子先画, 拖拽源最后画（跟随鼠标, 不被其它格子遮挡）;
         // 动画位置按窗口相对坐标存储, 绘制时加上窗口原点——拖动面板时按钮随窗刚性平移, 不产生追赶动画
         var winPos = ImGui.GetWindowPos();
-        var scratch = 显示序暂存;
         for (var gi = 0; gi < groups.Count; gi++)
         {
             var g = groups[gi];
             画分类标题(g, winPos);
             var n = g.条目.Count;
             var 显示序 = VisibleOrderHelper.BuildDisplayOrder(n,
-                gi == 源组 ? 源槽 : -1, gi == 源组 ? 拖拽目标 : -1, scratch);
-            scratch = 显示序;
+                gi == 源组 ? 源槽 : -1, gi == 源组 ? 拖拽目标 : -1, 显示序暂存[gi]);
             for (var slot = 0; slot < n; slot++)
             {
                 var displayIndex = 显示序[slot];
@@ -159,11 +168,9 @@ public sealed class ErosUIQtPanelWindow : Window
                 if (tileIndex < 0 || tileIndex >= defs.Count)
                     continue;
                 if (tileIndex == 拖拽源) continue;
-                画开关(defs[tileIndex], winPos + 取动画格位(defs[tileIndex].Id, 格位偏移(g, slot, cols)), locked, tileIndex);
+                画开关(defs[tileIndex], winPos + 取动画格位(defs[tileIndex].Id, 格位偏移(g, slot)), locked, tileIndex);
             }
         }
-        显示序暂存 = scratch;
-
         if (拖拽源 >= 0 && 拖拽源 < count)
         {
             var 源 = defs[拖拽源];
@@ -171,8 +178,6 @@ public sealed class ErosUIQtPanelWindow : Window
             动画格位[源.Id] = pos;   // 记录源格视觉位置（窗口相对）, 松手提交/取消后从该处平滑回落
             画开关(源, winPos + pos, locked, 拖拽源);
         }
-
-        清理动画格位(defs);
 
         if (拖拽源 >= 0)
         {
@@ -206,12 +211,10 @@ public sealed class ErosUIQtPanelWindow : Window
     private void 更新定义快照()
     {
         var settings = ErosUISettings.Instance;
-        visibleQtKeys.Clear();
         visibleQtKeyOrder.Clear();
         foreach (var key in PromeSettings.Instance.QuickToggles.Keys)
         {
             if (!settings.IsQtVisible(key)) continue;
-            visibleQtKeys.Add(key);
             visibleQtKeyOrder.Add(key);
         }
 
@@ -223,11 +226,18 @@ public sealed class ErosUIQtPanelWindow : Window
 
         // Resolve and copy once per registry/visibility/order change so a host
         // refresh cannot mutate the snapshot during the panel's draw pass.
+        visibleQtKeys.Clear();
+        for (var i = 0; i < visibleQtKeyOrder.Count; i++)
+            visibleQtKeys.Add(visibleQtKeyOrder[i]);
         var resolved = QtRegistry.ResolveVisible(
             visibleQtKeys,
             new HashSet<string>(StringComparer.Ordinal));
         cachedDefinitions = 按自定义顺序排序(resolved).ToList();
         cachedGroups = 构建分组(cachedDefinitions);
+        显示序暂存 = new int[cachedGroups.Count][];
+        for (var i = 0; i < cachedGroups.Count; i++)
+            显示序暂存[i] = new int[cachedGroups[i].条目.Count];
+        清理动画格位(cachedDefinitions);
         cachedVisibleQtKeyOrder = visibleQtKeyOrder.ToArray();
         cachedQtOrder = settings.QtOrder.ToArray();
         cachedJobTag = ErosUIJobEnv.JobTag;
@@ -271,34 +281,46 @@ public sealed class ErosUIQtPanelWindow : Window
         return groups;
     }
 
-    // 填充各组的布局字段并返回面板列数：列数 = min(每行设置, 最大组条目数)，全组共用同一列网格。
-    private static int 布局分组(List<分类分组> groups)
+    // Recompute geometry only when definitions, layout settings or font metrics
+    // change. Toggle state and hit testing remain live on every Draw.
+    private void 更新布局()
     {
+        var settings = ErosUISettings.Instance;
+        var key = new LayoutKey(cachedDefinitions, settings.QtPanelColumns,
+            settings.QtPanelScalePercent, settings.QtPanelSpacing, ImGui.GetTextLineHeight(),
+            ImGui.GetStyle().WindowPadding, ImGui.GetFont(), ImGui.GetFontSize());
+        if (cachedLayout is { } previous && previous == key) return;
+        var groups = cachedGroups;
         var max = 1;
         foreach (var g in groups) max = Math.Max(max, g.条目.Count);
-        var cols = Math.Min(每行, max);
+        var cols = Math.Min(Math.Clamp(key.Columns, 1, 6), max);
+        var spacing = Math.Clamp(key.Spacing, 0f, 20f);
+        var width = 112f * key.ScalePercent / 100f;
+        var height = 34f * key.ScalePercent / 100f;
 
-        var textH = ImGui.GetTextLineHeight();
         var y = 0f;
         foreach (var g in groups)
         {
-            g.标题高 = g.标题.Length == 0 ? 0f : textH + 间距;
+            g.标题高 = g.标题.Length == 0 ? 0f : key.TextHeight + spacing;
+            g.标题宽 = g.标题.Length == 0 ? 0f : ImGui.CalcTextSize(g.标题).X;
             g.内容Y = y + g.标题高;
             g.行数 = (g.条目.Count + cols - 1) / cols;
-            y = g.内容Y + g.行数 * 格高 + (g.行数 - 1) * 间距 + 间距;   // 末尾 间距 = 与下一组的组距
+            y = g.内容Y + g.行数 * height + (g.行数 - 1) * spacing + spacing;
+            if (g.格位.Length != g.条目.Count) g.格位 = new Vector2[g.条目.Count];
+            for (var slot = 0; slot < g.格位.Length; slot++)
+                g.格位[slot] = key.Padding + new Vector2((slot % cols) * (width + spacing),
+                    g.内容Y + (slot / cols) * (height + spacing));
         }
-        return cols;
-    }
-
-    // 窗口尺寸 = 分组网格 + 组标题 + 内边距，精确贴合、无多余边。
-    private static Vector2 计算窗口尺寸(List<分类分组> groups, int cols, int count)
-    {
-        if (count == 0) return new Vector2(260f, 110f);
-        var pad = ImGui.GetStyle().WindowPadding;
-        var last = groups[^1];
-        var contentH = last.内容Y + last.行数 * 格高 + (last.行数 - 1) * 间距;
-        return new Vector2(cols * 格宽 + (cols - 1) * 间距 + pad.X * 2f,
-                           contentH + pad.Y * 2f);
+        layoutColumns = cols;
+        layoutSize = new Vector2(260f, 110f);
+        if (cachedDefinitions.Count != 0)
+        {
+            var last = groups[^1];
+            var contentH = last.内容Y + last.行数 * height + (last.行数 - 1) * spacing;
+            layoutSize = new Vector2(cols * width + (cols - 1) * spacing + key.Padding.X * 2f,
+                contentH + key.Padding.Y * 2f);
+        }
+        cachedLayout = key;
     }
 
     // 查平铺索引所属分组与组内槽位；不在任何组（清单已变化）返回 (-1, -1)。
@@ -340,7 +362,7 @@ public sealed class ErosUIQtPanelWindow : Window
     // 拖拽中的目标格高亮描边（Accent 色, 格子矩形外扩 2px; 按源组网格坐标定位, 不依赖条目矩形）。
     private static void 画目标格高亮(分类分组 g, int slot, int cols)
     {
-        var min = ImGui.GetWindowPos() + 格位偏移(g, slot, cols);
+        var min = ImGui.GetWindowPos() + 格位偏移(g, slot);
         ImGui.GetWindowDrawList().AddRect(min - new Vector2(2f), min + new Vector2(格宽, 格高) + new Vector2(2f),
             SimplePalette.ToU32(SimplePalette.Accent), 10f, ImDrawFlags.RoundCornersAll, 2f);
     }
@@ -355,7 +377,7 @@ public sealed class ErosUIQtPanelWindow : Window
         drawList.AddText(origin, SimplePalette.ToU32(SimplePalette.TextSecondary), g.标题);
 
         var right = winPos.X + ImGui.GetWindowSize().X - pad.X;
-        var x1 = origin.X + ImGui.CalcTextSize(g.标题).X + 8f;
+        var x1 = origin.X + g.标题宽 + 8f;
         if (right - x1 > 12f)
         {
             var day = ErosUICommonSettings.Instance.UIMode == SettingsUIMode.Day;
@@ -367,10 +389,7 @@ public sealed class ErosUIQtPanelWindow : Window
     }
 
     // 组内槽位 slot 相对窗口原点的网格偏移（含窗口内边距与组标题/组距偏移，与 画目标格高亮/计算窗口尺寸 同一网格算法）。
-    private static Vector2 格位偏移(分类分组 g, int slot, int cols)
-        => ImGui.GetStyle().WindowPadding
-           + new Vector2((slot % cols) * (格宽 + 间距),
-                         g.内容Y + (slot / cols) * (格高 + 间距));
+    private static Vector2 格位偏移(分类分组 g, int slot) => g.格位[slot];
 
     // 格子视觉位置指数阻尼收敛到目标格位（窗口相对坐标）; 新出现的格子直接落位, 不做飞入动画。
     private static Vector2 取动画格位(string id, Vector2 目标)
@@ -381,6 +400,7 @@ public sealed class ErosUIQtPanelWindow : Window
             return 目标;
         }
 
+        if (当前 == 目标) return 目标;
         var next = VisibleOrderHelper.AnimatePosition(当前, 目标, ImGui.GetIO().DeltaTime);
         动画格位[id] = next;
         return next;
@@ -389,11 +409,13 @@ public sealed class ErosUIQtPanelWindow : Window
     // QT 清单变化后移除失效条目的动画位置记录。
     private static void 清理动画格位(IReadOnlyList<QtDefinition> defs)
     {
-        if (动画格位.Count <= defs.Count) return;
         var live = new HashSet<string>(StringComparer.Ordinal);
-        foreach (var def in defs) live.Add(def.Id);
-        foreach (var id in 动画格位.Keys.Where(id => !live.Contains(id)).ToArray())
-            动画格位.Remove(id);
+        for (var i = 0; i < defs.Count; i++) live.Add(defs[i].Id);
+        List<string>? stale = null;
+        foreach (var id in 动画格位.Keys)
+            if (!live.Contains(id)) (stale ??= new()).Add(id);
+        if (stale != null)
+            foreach (var id in stale) 动画格位.Remove(id);
     }
 
     // 单个开关按钮：绝对定位绘制（格位由让位动画给出）; 起拖判定挂在该格悬停上, 记录抓取偏移供源格跟随鼠标。

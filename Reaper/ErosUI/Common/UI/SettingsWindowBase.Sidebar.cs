@@ -23,8 +23,8 @@ public abstract partial class SettingsWindowBase
     }
 
     private readonly Dictionary<string, TabAnimState> tabAnims = new();
-    private HashSet<string>? prevTabLabels;
     private string[]? sidebarLabels;
+    private TabAnimState[] sidebarStates = Array.Empty<TabAnimState>();
 
     // 出现/收起动效时长（秒）
     private const float TabAnimDuration = 0.22f;
@@ -60,51 +60,15 @@ public abstract partial class SettingsWindowBase
 
             var now = ImGui.GetTime();
             var labels = AllTabs;
-            var labelsChanged = !ReferenceEquals(labels, sidebarLabels);
-
-            // 首帧全部直接落位，不做入场动画
-            if (prevTabLabels == null)
-            {
-                prevTabLabels = new HashSet<string>(labels);
-                sidebarLabels = labels;
-                labelsChanged = false;
-            }
-
-            // 出现走展开动效; 收起直接消失（不保留淡出项, 不推挤下方按钮）
-            for (var i = 0; i < labels.Length; i++)
-            {
-                var label = labels[i];
-                if (!tabAnims.TryGetValue(label, out var st))
-                    tabAnims[label] = st = new TabAnimState
-                    {
-                        T = prevTabLabels.Contains(label) ? 1f : 0f,
-                        起始T = prevTabLabels.Contains(label) ? 1f : 0f,
-                        起始时刻 = now,
-                    };
-                st.LastIndex = i;
-                推进TabAnim(st, 1f, now);
-            }
-            if (labelsChanged)
-            {
-                var liveLabels = new HashSet<string>(labels);
-                List<string>? dead = null;
-                foreach (var key in tabAnims.Keys)
-                {
-                    if (liveLabels.Contains(key)) continue;
-                    (dead ??= new List<string>()).Add(key);
-                }
-                if (dead != null)
-                    foreach (var key in dead) tabAnims.Remove(key);
-
-                prevTabLabels = liveLabels;
-                sidebarLabels = labels;
-            }
+            更新侧栏状态(labels, now);
 
             var drawn = 0;
             for (var i = 0; i < labels.Length; i++)
             {
                 var label = labels[i];
-                var t = tabAnims[label].T;
+                var state = sidebarStates[i];
+                推进TabAnim(state, 1f, now);
+                var t = state.T;
                 if (t <= 0f) continue;
 
                 if (drawn > 0)
@@ -156,5 +120,32 @@ public abstract partial class SettingsWindowBase
         // 右侧间距与左侧对齐：左 = WindowPadding.X(16)，右 = 按钮到内容区同样 16
         ImGui.SameLine(0f, 16f);
         DrawContentChild();
+    }
+
+    private void 更新侧栏状态(string[] labels, double now)
+    {
+        if (ReferenceEquals(labels, sidebarLabels)) return;
+        var firstFrame = sidebarLabels == null;
+        sidebarStates = new TabAnimState[labels.Length];
+        var liveLabels = new HashSet<string>(labels);
+        for (var i = 0; i < labels.Length; i++)
+        {
+            var label = labels[i];
+            if (!tabAnims.TryGetValue(label, out var state))
+                tabAnims[label] = state = new TabAnimState
+                {
+                    T = firstFrame ? 1f : 0f,
+                    起始T = firstFrame ? 1f : 0f,
+                    起始时刻 = now,
+                };
+            state.LastIndex = i;
+            sidebarStates[i] = state;
+        }
+        List<string>? dead = null;
+        foreach (var key in tabAnims.Keys)
+            if (!liveLabels.Contains(key)) (dead ??= new()).Add(key);
+        if (dead != null)
+            foreach (var key in dead) tabAnims.Remove(key);
+        sidebarLabels = labels;
     }
 }

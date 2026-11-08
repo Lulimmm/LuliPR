@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Numerics;
 using Dalamud.Bindings.ImGui;
-using Dalamud.Interface.Textures;
 using Dalamud.Interface.Textures.TextureWraps;
 using Dalamud.Interface.Windowing;
 using ECommons.DalamudServices;
@@ -32,7 +31,14 @@ public sealed class ErosUIHotkeyPanelWindow : Window
     private bool hasCachedOrder;
     private Vector2 cachedWindowSize;
     private bool hasCachedWindowSize;
-    private readonly Dictionary<(uint Icon, bool Hq), ISharedImmediateTexture> gameIconTextures = new();
+    private readonly HotkeyIconCache iconCache = new();
+    private readonly Dictionary<string, CooldownLabels> cooldownLabels = new(StringComparer.Ordinal);
+
+    private sealed class CooldownLabels
+    {
+        public HotkeyNumberLabel Seconds;
+        public HotkeyNumberLabel Charges;
+    }
 
     // 右键拖拽换位状态（面板级, 一次只拖一格; 左键点击执行热键与拖拽完全解耦）
     private int 拖拽源 = -1;
@@ -87,6 +93,7 @@ public sealed class ErosUIHotkeyPanelWindow : Window
 
     public override void Draw()
     {
+        using var measurement = ErosUIPerformance.Measure(ErosUIRenderSection.Hotkey);
         var pad = ImGui.GetStyle().WindowPadding;
         var cols = Math.Min(columns, entries.Count);
         var rows = (entries.Count + cols - 1) / cols;
@@ -138,8 +145,6 @@ public sealed class ErosUIHotkeyPanelWindow : Window
             DrawTile(drawList, ordered[拖拽源], winPos + rel, winPos + rel + new Vector2(tile), 拖拽源, floating: true);
         }
 
-        清理动画格位(ordered);
-
         if (拖拽源 >= 0)
         {
             if (ImGui.IsMouseReleased(ImGuiMouseButton.Right))
@@ -173,6 +178,7 @@ public sealed class ErosUIHotkeyPanelWindow : Window
         orderedEntries = 按自定义顺序排序(entries);
         cachedHotkeyOrder = order.ToArray();
         hasCachedOrder = true;
+        清理动画格位(orderedEntries);
         return orderedEntries;
     }
 
@@ -222,27 +228,7 @@ public sealed class ErosUIHotkeyPanelWindow : Window
 
         IDalamudTextureWrap? tex = null;
         if (gameIcon != 0)
-        {
-            try
-            {
-                var key = (gameIcon, gameIconHQ);
-                if (!gameIconTextures.TryGetValue(key, out var sharedTexture))
-                {
-                    sharedTexture = Svc.Texture.GetFromGameIcon(
-                        new GameIconLookup(gameIcon, itemHq: gameIconHQ));
-                    gameIconTextures.Add(key, sharedTexture);
-                }
-
-                tex = sharedTexture.GetWrapOrDefault(null);
-            }
-            catch (Exception ex)
-            {
-                // Some jobs expose an action/item ID whose game icon is not
-                // present in the current client build. Do not abort ImGui's
-                // whole window draw when that happens.
-                Svc.Log.Debug($"[{ErosUIJobEnv.作者}] missing hotkey icon {gameIcon}: {ex.Message}");
-            }
-        }
+            tex = iconCache.GetGameIcon(gameIcon, gameIconHQ);
 
         if (tex == null && hk.CustomIconPath != null)
         {
@@ -255,14 +241,23 @@ public sealed class ErosUIHotkeyPanelWindow : Window
 
         if (tex == null && dynamicActionId != 0)
         {
-            try { tex = dynamicActionId.GetActionIcon(); }
+            try { tex = iconCache.GetActionIcon(dynamicActionId); }
             catch
             {
             }
         }
         if (tex != null)
-            drawList.AddImageRounded(tex.Handle, min + Vector2.One, max - Vector2.One,
-                Vector2.Zero, Vector2.One, SimplePalette.ToU32(Vector4.One), MathF.Max(0f, 圆角 - 1f));
+        {
+            try
+            {
+                drawList.AddImageRounded(tex.Handle, min + Vector2.One, max - Vector2.One,
+                    Vector2.Zero, Vector2.One, SimplePalette.ToU32(Vector4.One), MathF.Max(0f, 圆角 - 1f));
+            }
+            catch (ObjectDisposedException)
+            {
+                iconCache.Invalidate(gameIcon, gameIconHQ, dynamicActionId);
+            }
+        }
 
         var hovered = false;
         if (!floating)
@@ -313,7 +308,7 @@ public sealed class ErosUIHotkeyPanelWindow : Window
         }
         else if (cooldownId != 0)
         {
-            DrawCooldown(drawList, cooldownId, cooldownIsItem, min, max);
+            DrawCooldown(drawList, cooldownId, cooldownIsItem, name, min, max);
         }
 
         // 描边：平时 BorderStrong（20%），悬停提亮到主文字色 40%
@@ -342,7 +337,7 @@ public sealed class ErosUIHotkeyPanelWindow : Window
     }
 
     // 冷却：顶部暗纱按剩余比例下压 + 居中秒数 + 多充能未满时右下角充能数。
-    private static void DrawCooldown(ImDrawListPtr drawList, uint actionId, bool isItem, Vector2 min, Vector2 max)
+    private void DrawCooldown(ImDrawListPtr drawList, uint actionId, bool isItem, string name, Vector2 min, Vector2 max)
     {
         var cd = isItem
             ? ActionHelper.GetItemCooldown(actionId)
@@ -357,6 +352,10 @@ public sealed class ErosUIHotkeyPanelWindow : Window
         var recast = isItem ? MathF.Max(cd, 1f) : ActionHelper.GetActionRecastTime(actionId);
         if (recast <= 0.001f) return;
         var progress = Math.Clamp(cd / recast, 0f, 1f);
+        if (!cooldownLabels.TryGetValue(name, out var labels))
+            cooldownLabels.Add(name, labels = new CooldownLabels());
+        var font = ImGui.GetFont();
+        var baseFontSize = ImGui.GetFontSize();
 
         var veilMax = new Vector2(max.X, min.Y + (max.Y - min.Y) * progress);
         drawList.AddRectFilled(min, veilMax,
@@ -364,24 +363,23 @@ public sealed class ErosUIHotkeyPanelWindow : Window
 
         if (cd > 0.05f)
         {
-            var text = ((int)MathF.Ceiling(cd)).ToString();
+            var (text, textSize) = labels.Seconds.Get((int)MathF.Ceiling(cd), font, baseFontSize);
             const float fontScale = 1.1f;
-            var fontSize = ImGui.GetFontSize() * fontScale;
-            var ts = ImGui.CalcTextSize(text) * fontScale;
+            var fontSize = baseFontSize * fontScale;
+            var ts = textSize * fontScale;
             var tp = (min + max) * 0.5f - ts * 0.5f;
-            drawList.AddText(ImGui.GetFont(), fontSize, tp + new Vector2(1f, 1f), 4278190080u, text);
-            drawList.AddText(ImGui.GetFont(), fontSize, tp, 4294967295u, text);
+            drawList.AddText(font, fontSize, tp + new Vector2(1f, 1f), 4278190080u, text);
+            drawList.AddText(font, fontSize, tp, 4294967295u, text);
         }
 
         if (maxCharges > 1)
         {
             var n = Math.Clamp((int)MathF.Floor(charges + 0.001f), 0, maxCharges);
-            var nText = n.ToString();
-            var ts = ImGui.CalcTextSize(nText);
+            var (nText, ts) = labels.Charges.Get(n, font, baseFontSize);
             var tp = max - ts - new Vector2(5f, 3f);
             drawList.AddRectFilled(tp - new Vector2(4f, 1f), max - new Vector2(1f),
                 SimplePalette.ToU32(new Vector4(0.1f, 0.1f, 0.1f, 0.85f)), 5f);
-            drawList.AddText(ImGui.GetFont(), ImGui.GetFontSize(), tp,
+            drawList.AddText(font, baseFontSize, tp,
                 SimplePalette.ToU32(SimplePalette.TextPrimary), nText);
         }
     }
@@ -438,19 +436,23 @@ public sealed class ErosUIHotkeyPanelWindow : Window
             return 目标;
         }
 
+        if (当前 == 目标) return 目标;
         var next = VisibleOrderHelper.AnimatePosition(当前, 目标, ImGui.GetIO().DeltaTime);
         动画格位[name] = next;
         return next;
     }
 
-    // 热键清单变化后移除失效条目的动画位置记录。
-    private void 清理动画格位(IReadOnlyList<(string Name, IHotkey Hotkey, uint GameIcon, bool GameIconHQ, Func<uint>? DynamicIconActionId, Func<(uint Icon, bool Hq)>? DynamicGameIcon)> entries)
+    // 热键清单变化时清理一次失效动画位置；不在每个绘制帧创建集合。
+    private void 清理动画格位(IReadOnlyList<(string Name, IHotkey Hotkey, uint GameIcon, bool GameIconHQ, Func<uint>? DynamicIconActionId, Func<(uint Icon, bool Hq)>? DynamicGameIcon)> liveEntries)
     {
-        if (动画格位.Count <= entries.Count) return;
+        if (动画格位.Count <= liveEntries.Count) return;
         var live = new HashSet<string>(StringComparer.Ordinal);
-        foreach (var entry in entries) live.Add(entry.Name);
-        foreach (var name in 动画格位.Keys.Where(name => !live.Contains(name)).ToArray())
-            动画格位.Remove(name);
+        for (var i = 0; i < liveEntries.Count; i++) live.Add(liveEntries[i].Name);
+        List<string>? stale = null;
+        foreach (var name in 动画格位.Keys)
+            if (!live.Contains(name)) (stale ??= new()).Add(name);
+        if (stale != null)
+            foreach (var name in stale) 动画格位.Remove(name);
     }
 
     // ============================================================

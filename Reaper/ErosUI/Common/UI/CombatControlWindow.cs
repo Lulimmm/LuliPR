@@ -141,6 +141,7 @@ public sealed partial class CombatControlWindow : Window, IDisposable
 
     public override void Draw()
     {
+        using var measurement = ErosUIPerformance.Measure(ErosUIRenderSection.PixelPet);
         DrawPet();
         lastWindowPosition = ImGui.GetWindowPos();
         lastWindowSize = ImGui.GetWindowSize();

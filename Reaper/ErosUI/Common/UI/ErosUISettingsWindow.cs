@@ -21,11 +21,21 @@ public sealed class ErosUISettingsWindow : SettingsWindowBase
     private static readonly string[] tabs = ["基础设置", "Hotkey", "QT面板", "更新通告", "使用时长"];
 
     private static readonly string[] tabsWithDebug = [..tabs, "Debug"];
+    private static readonly string[] tabsWithPerformance = [..tabs, ErosUIPerformancePage.TabLabel];
+    private static readonly string[] tabsWithDebugAndPerformance = [..tabsWithDebug, ErosUIPerformancePage.TabLabel];
 
-    protected override string[] Tabs => ErosUIJobEnv.DrawDebugSettings == null ? tabs : tabsWithDebug;
+    protected override string[] Tabs => ErosUIJobEnv.DrawDebugSettings == null
+        ? ErosUIPerformance.CanView ? tabsWithPerformance : tabs
+        : ErosUIPerformance.CanView ? tabsWithDebugAndPerformance : tabsWithDebug;
 
     protected override void DrawTabContent(int tabIndex)
     {
+        var currentTabs = Tabs;
+        if (tabIndex >= 0 && tabIndex < currentTabs.Length && currentTabs[tabIndex] == ErosUIPerformancePage.TabLabel)
+        {
+            ErosUIPerformancePage.Draw();
+            return;
+        }
         switch (tabIndex)
         {
             case 0: ErosUISettingsUI.DrawGeneral(); break;

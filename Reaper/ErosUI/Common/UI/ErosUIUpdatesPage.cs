@@ -10,6 +10,12 @@ internal static class ErosUIUpdatesPage
     private static readonly Notice[] Notices =
     [
         new(
+            "1.3.7", "2026-11-09", "面板显隐记忆与 UI 性能优化",
+            "QT 与 Hotkey 面板按职业记住显隐状态，重新上线、加载 ACR 或重建面板时自动恢复。\n\n" +
+            "新增指定账号可见的 UI 性能分析页，支持手动采样 CPU 耗时、托管分配和峰值。\n\n" +
+            "优化 QT、Hotkey、侧栏和时长页面的绘制缓存，减少每帧内存分配和重复计算。",
+            "#UI #QT #HOTKEY #PERF"),
+        new(
             "1.3.6", "2026-11-07", "修复像素小人消失",
             "修复像素小人纹理加载异常后持续空白的问题，增加加载重试与有效画面兜底。\n\n" +
             "修复分辨率变化时窗口越界、宿主未就绪时窗口未注册的问题。",
@@ -37,6 +43,10 @@ internal static class ErosUIUpdatesPage
             "Reaper：修复 newQT 与 QT Trigger 只显示 JSON 文本、无法显示专用编辑控件的问题。",
             "#NIN #RPR #QT #TRIGGER"),
     ];
+    private static readonly CardLayout[] Layouts = new CardLayout[Notices.Length];
+
+    private readonly record struct CardLayout(bool Ready, ImFontPtr Font, float FontSize,
+        float WrapWidth, float HeaderHeight, float DateHeight, float Height);
 
     internal static void Draw()
     {
@@ -65,14 +75,10 @@ internal static class ErosUIUpdatesPage
         const float padding = 16f;
         var headerHeight = ImGui.GetFrameHeight() + 8f;
         var wrapWidth = MathF.Max(1f, width - padding * 2f);
-        var titleHeight = ImGui.CalcTextSize(notice.Title, false, wrapWidth).Y;
-        var bodyHeight = ImGui.CalcTextSize(notice.Body, false, wrapWidth).Y;
-        var tagHeight = notice.TagText.Length == 0 ? 0f : ImGui.CalcTextSize(notice.TagText, false, wrapWidth).Y + 12f;
-        var dateHeight = notice.Date.Length == 0 ? 0f : ImGui.GetTextLineHeightWithSpacing();
         var collapsed = Collapsed.Contains(index);
         var height = collapsed
             ? headerHeight
-            : MathF.Max(210f, headerHeight + padding * 2f + titleHeight + bodyHeight + tagHeight + dateHeight + 16f);
+            : GetCardHeight(notice, index, wrapWidth, headerHeight);
 
         var pos = ImGui.GetCursorScreenPos();
         var max = pos + new Vector2(width, height);
@@ -126,8 +132,27 @@ internal static class ErosUIUpdatesPage
         ImGui.EndGroup();
     }
 
+    private static float GetCardHeight(Notice notice, int index, float wrapWidth, float headerHeight)
+    {
+        var font = ImGui.GetFont();
+        var fontSize = ImGui.GetFontSize();
+        var dateHeight = notice.Date.Length == 0 ? 0f : ImGui.GetTextLineHeightWithSpacing();
+        var previous = Layouts[index];
+        if (previous.Ready && previous.Font.Equals(font) && previous.FontSize == fontSize
+            && previous.WrapWidth == wrapWidth && previous.HeaderHeight == headerHeight
+            && previous.DateHeight == dateHeight)
+            return previous.Height;
+
+        var titleHeight = ImGui.CalcTextSize(notice.Title, false, wrapWidth).Y;
+        var bodyHeight = ImGui.CalcTextSize(notice.Body, false, wrapWidth).Y;
+        var tagHeight = notice.TagText.Length == 0 ? 0f : ImGui.CalcTextSize(notice.TagText, false, wrapWidth).Y + 12f;
+        var height = MathF.Max(210f, headerHeight + 32f + titleHeight + bodyHeight + tagHeight + dateHeight + 16f);
+        Layouts[index] = new CardLayout(true, font, fontSize, wrapWidth, headerHeight, dateHeight, height);
+        return height;
+    }
+
     private sealed record Notice(string Version, string Date, string Title, string Body, string TagText)
     {
-        public string Caption => "UPDATE " + Version;
+        public string Caption { get; } = "UPDATE " + Version;
     }
 }

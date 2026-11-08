@@ -113,6 +113,7 @@ public abstract partial class SettingsWindowBase : Window
 
     public override void Draw()
     {
+        using var measurement = ErosUIPerformance.Measure(ErosUIRenderSection.Settings);
         try
         {
             DrawWindowDragHandle();

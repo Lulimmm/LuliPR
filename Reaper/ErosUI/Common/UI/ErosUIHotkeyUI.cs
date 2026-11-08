@@ -24,6 +24,7 @@ internal static class ErosUIHotkeyUI
             s.HotkeyColumns,
             45f * s.HotkeyScalePercent / 100f,
             s.HotkeySpacing);
+        window.IsOpen = s.HotkeyPanelVisible;
         try { PromeRotation.Plugin.Instance?.WindowSystem.AddWindow(window); }
         catch { /* 宿主未就绪 */ }
     }
@@ -79,8 +80,8 @@ internal static class ErosUIHotkeyUI
         window = null;
     }
 
-    /// <summary>热键面板当前是否可见，未构建时为 false。</summary>
-    internal static bool PanelVisible => window?.IsOpen ?? false;
+    /// <summary>热键面板的显隐状态；未构建时返回保存的偏好。</summary>
+    internal static bool PanelVisible => window?.IsOpen ?? ErosUISettings.Instance.HotkeyPanelVisible;
 
     /// <summary>显示/隐藏热键面板。只切换显隐，不重建窗口。</summary>
     internal static void SetPanelVisible(bool visible)

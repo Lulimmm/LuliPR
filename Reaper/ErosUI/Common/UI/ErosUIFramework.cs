@@ -75,7 +75,7 @@ public static class ErosUIFramework
         ws.AddWindow(settings);
         qtPanel = new ErosUIQtPanelWindow();
         ws.AddWindow(qtPanel);
-        qtPanel.IsOpen = true;   // 默认打开
+        qtPanel.IsOpen = uiSettings.QtPanelVisible;
         splash = new ErosUISplashWindow();
         ws.AddWindow(splash);
 
@@ -96,6 +96,7 @@ public static class ErosUIFramework
     /// <summary>卸载全部窗口与热键面板，并把两份设置落盘。OnExitAcr 调用，与 Install 严格成对。</summary>
     public static void Uninstall()
     {
+        ErosUIPerformance.Stop();
         if (installRetryPending)
         {
             installRetryPending = false;
@@ -148,18 +149,14 @@ public static class ErosUIFramework
     /// <summary>切换 QT 悬浮面板的显示/隐藏。</summary>
     public static void ToggleQtPanel()
     {
-        if (qtPanel == null) return;
-        qtPanel.IsOpen = !qtPanel.IsOpen;
+        SetQtPanelVisible(!QtPanelVisible);
     }
 
-    /// <summary>QT 悬浮面板当前是否可见。</summary>
-    public static bool QtPanelVisible => qtPanel?.IsOpen ?? false;
+    /// <summary>QT 悬浮面板的显隐状态；未构建时返回保存的偏好。</summary>
+    public static bool QtPanelVisible => qtPanel?.IsOpen ?? ErosUISettings.Instance.QtPanelVisible;
 
-    /// <summary>显示/隐藏 QT 悬浮面板。只切换显隐，不重建窗口。</summary>
-    public static void SetQtPanelVisible(bool visible)
-    {
-        if (qtPanel != null) qtPanel.IsOpen = visible;
-    }
+    /// <summary>显示/隐藏 QT 悬浮面板并保存偏好，不重建窗口。</summary>
+    public static void SetQtPanelVisible(bool visible) => SetPanelVisibility(qtVisible: visible);
 
     /// <summary>热键悬浮面板当前是否可见。</summary>
     public static bool HotkeyPanelVisible => ErosUIHotkeyUI.PanelVisible;
@@ -170,21 +167,40 @@ public static class ErosUIFramework
     /// <summary>List the current job's registered hotkeys, including hidden entries.</summary>
     public static string[] GetHotkeyNames() => ErosUIHotkeyUI.GetHotkeyNames();
 
-    /// <summary>显示/隐藏热键悬浮面板。只切换显隐，不重建窗口。</summary>
-    public static void SetHotkeyPanelVisible(bool visible) => ErosUIHotkeyUI.SetPanelVisible(visible);
+    /// <summary>显示/隐藏热键悬浮面板并保存偏好，不重建窗口。</summary>
+    public static void SetHotkeyPanelVisible(bool visible) => SetPanelVisibility(hotkeyVisible: visible);
 
     /// <summary>同步切换 QT 与 Hotkey 悬浮面板的显隐状态。</summary>
     public static void ToggleAuxiliaryPanels()
     {
-        SetQtPanelVisible(!QtPanelVisible);
-        SetHotkeyPanelVisible(!HotkeyPanelVisible);
+        SetPanelVisibility(!QtPanelVisible, !HotkeyPanelVisible);
     }
 
-    /// <summary>Close both auxiliary panels when the pixel pet is double-clicked.</summary>
+    /// <summary>关闭两个辅助面板并保存偏好。</summary>
     public static void CloseAuxiliaryPanels()
     {
-        SetQtPanelVisible(false);
-        SetHotkeyPanelVisible(false);
+        SetPanelVisibility(false, false);
+    }
+
+    private static void SetPanelVisibility(bool? qtVisible = null, bool? hotkeyVisible = null)
+    {
+        var uiSettings = ErosUISettings.Instance;
+        var changed = false;
+        if (qtVisible is { } qt)
+        {
+            if (qtPanel != null) qtPanel.IsOpen = qt;
+            changed |= uiSettings.QtPanelVisible != qt;
+            uiSettings.QtPanelVisible = qt;
+        }
+        if (hotkeyVisible is { } hotkey)
+        {
+            ErosUIHotkeyUI.SetPanelVisible(hotkey);
+            changed |= uiSettings.HotkeyPanelVisible != hotkey;
+            uiSettings.HotkeyPanelVisible = hotkey;
+        }
+        // A double click changes both panels with one write. Window teardown
+        // and rebuild never change the saved preference.
+        if (changed) uiSettings.Save();
     }
 
     /// <summary>打开设置窗口。</summary>

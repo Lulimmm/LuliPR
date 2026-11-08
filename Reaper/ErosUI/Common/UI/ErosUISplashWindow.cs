@@ -71,6 +71,7 @@ internal sealed class ErosUISplashWindow : Window
 
     public override void Draw()
     {
+        using var measurement = ErosUIPerformance.Measure(ErosUIRenderSection.Splash);
         if (startedAt < 0d)
         {
             var now = ImGui.GetTime();
