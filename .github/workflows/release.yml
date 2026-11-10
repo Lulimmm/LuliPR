@@ -85,8 +85,6 @@ jobs:
           $output = "$env:APPDATA\XIVLauncherCN\pluginConfigs\PromeRotation\ACR\Cino"
           Copy-Item "$output\LuliReaperPR.dll" $package -Force
           Copy-Item "$output\LuliReaperPR.deps.json" $package -Force
-          if (-not (Test-Path "$output\Timelines")) { throw "Bundled timeline files were not copied to the build output" }
-          Copy-Item "$output\Timelines" $package -Recurse -Force
           ./tools/verify-timelines.ps1 -PackageDirectory $package
           Compress-Archive -Path $package -DestinationPath "$dist\latest.zip" -Force
           $sha = (Get-FileHash -Algorithm SHA256 "$dist\latest.zip").Hash.ToLowerInvariant()

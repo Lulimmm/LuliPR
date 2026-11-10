@@ -13,7 +13,7 @@ using ECommons.DalamudServices;
 
 namespace LuliPR.Common;
 
-/// <summary>Installs packaged PTLs and synchronizes their versions with the author's GitHub repository.</summary>
+/// <summary>Synchronizes GitHub PTLs directly into PromeRotation's PureTimelines directory.</summary>
 internal static class BundledTimelineSync
 {
     private const string GitHubTimelineBaseUrl = "https://raw.githubusercontent.com/Lulimmm/LuliPR/main/Timeline/NewTimeline/";
@@ -22,7 +22,14 @@ internal static class BundledTimelineSync
     private static readonly object Sync = new();
     private static readonly Dictionary<string, string> TimelineStatus = new(StringComparer.OrdinalIgnoreCase);
     private static readonly Dictionary<string, string> CloudVersions = new(StringComparer.OrdinalIgnoreCase);
-    private static TimelineDefinition[]? definitions;
+    // Only identities are compiled into the ACR. Timeline contents always come from GitHub.
+    private static readonly TimelineDefinition[] Definitions =
+    [
+        new("伊甸近战减伤-02566ee3.json", "02566ee3-2ba5-49cb-8d05-6853db3a6937", "伊甸近战减伤"),
+        new("伊甸镰刀-614f92f2.json", "614f92f2-8e9b-4a66-94f8-9f7bdf8111ca", "伊甸镰刀"),
+        new("妖星镰刀.json", "396a5f80-f1c4-4e75-90ad-7d60e611bf3a", "妖星镰刀"),
+        new("绝欧镰刀.json", "2011beac-efee-44a1-8243-eae2f08ed351", "绝欧镰刀")
+    ];
     private static TimelineRow[] rows = [];
     private static int syncStarted;
     private static int remoteCheckStarted;
@@ -40,36 +47,13 @@ internal static class BundledTimelineSync
 
         try
         {
-            var sourceDirectory = GetPackageTimelineDirectory();
-            if (!Directory.Exists(sourceDirectory)) return;
-
-            var directory = GetTargetDirectory();
-            Directory.CreateDirectory(directory);
-            var settings = AcrSettingsStore.Current;
-            var stateChanged = false;
-
-            lock (Sync)
-            {
-                foreach (var sourcePath in Directory.EnumerateFiles(sourceDirectory, "*.json")
-                             .OrderBy(path => path, StringComparer.OrdinalIgnoreCase))
-                {
-                    try
-                    {
-                        stateChanged |= SyncTimeline(sourcePath, directory, settings.BundledTimelines);
-                    }
-                    catch (Exception ex)
-                    {
-                        Svc.Log.Error(ex, $"Luli ACR: bundled timeline sync failed for {Path.GetFileName(sourcePath)}");
-                    }
-                }
-            }
-
-            if (stateChanged) AcrSettingsStore.Save();
+            Directory.CreateDirectory(GetTargetDirectory());
+            CleanupLegacyPackage();
             RefreshRows();
         }
         catch (Exception ex)
         {
-            Svc.Log.Error(ex, "Luli ACR: failed to synchronize bundled timelines");
+            Svc.Log.Error(ex, "Luli ACR: failed to initialize cloud timeline synchronization");
         }
     }
 
@@ -168,8 +152,8 @@ internal static class BundledTimelineSync
             catch (Exception ex)
             {
                 Svc.Log.Error(ex, "MewUI: cloud timeline check failed");
-                foreach (var item in GetDefinitions().Where(item => timelineGuid == null || item.Metadata.TimelineGuid == timelineGuid))
-                    SetTimelineStatus(item.Metadata.TimelineGuid, "检查失败：" + ex.Message, null);
+                foreach (var item in GetDefinitions().Where(item => timelineGuid == null || item.TimelineGuid == timelineGuid))
+                    SetTimelineStatus(item.TimelineGuid, "检查失败：" + ex.Message, null);
             }
             finally
             {
@@ -189,21 +173,34 @@ internal static class BundledTimelineSync
 
     internal static void RequestRestore(string timelineGuid)
     {
-        QueueFileOperation(timelineGuid, () => RestoreTimeline(timelineGuid));
+        QueueFileOperation(timelineGuid, cancellation => RestoreTimelineAsync(timelineGuid, cancellation));
     }
 
     private static void QueueFileOperation(string guid, System.Action operation)
+        => QueueFileOperation(guid, _ => { operation(); return Task.CompletedTask; });
+
+    private static void QueueFileOperation(string guid, Func<CancellationToken, Task> operation)
     {
+        var cancellation = lifetime?.Token ?? CancellationToken.None;
         _ = Task.Run(async () =>
         {
-            await Operations.WaitAsync().ConfigureAwait(false);
-            try { operation(); }
+            var acquired = false;
+            try
+            {
+                await Operations.WaitAsync(cancellation).ConfigureAwait(false);
+                acquired = true;
+                await operation(cancellation).ConfigureAwait(false);
+            }
+            catch (OperationCanceledException)
+            {
+                SetTimelineStatus(guid, "操作已取消，可重新检查或恢复", null);
+            }
             catch (Exception ex)
             {
                 Svc.Log.Error(ex, "MewUI: timeline operation failed");
                 SetTimelineStatus(guid, "操作失败：" + ex.Message, null);
             }
-            finally { Operations.Release(); }
+            finally { if (acquired) Operations.Release(); }
         });
     }
 
@@ -213,14 +210,14 @@ internal static class BundledTimelineSync
         var catalog = GetDefinitions();
         var selected = string.IsNullOrWhiteSpace(timelineGuid)
             ? catalog
-            : catalog.Where(item => string.Equals(item.Metadata.TimelineGuid, timelineGuid, StringComparison.OrdinalIgnoreCase)).ToArray();
+            : catalog.Where(item => string.Equals(item.TimelineGuid, timelineGuid, StringComparison.OrdinalIgnoreCase)).ToArray();
         if (selected.Length == 0) return;
 
         lock (Sync)
         {
             TimelineStatus["*"] = "正在检查 GitHub 时间轴版本";
             foreach (var item in selected)
-                TimelineStatus[item.Metadata.TimelineGuid] = "正在检查云端版本";
+                TimelineStatus[item.TimelineGuid] = "正在检查云端版本";
             RefreshRowsLocked();
         }
 
@@ -230,7 +227,7 @@ internal static class BundledTimelineSync
             cancellation.ThrowIfCancellationRequested();
             if (check.Bytes == null)
             {
-                SetTimelineStatus(check.Definition.Metadata.TimelineGuid, "云端检查失败：" + check.Error, null);
+                SetTimelineStatus(check.Definition.TimelineGuid, "云端检查失败：" + check.Error, null);
                 continue;
             }
 
@@ -240,8 +237,8 @@ internal static class BundledTimelineSync
             }
             catch (Exception ex)
             {
-                Svc.Log.Error(ex, $"MewUI: cloud timeline update failed for {check.Definition.Metadata.Name}");
-                SetTimelineStatus(check.Definition.Metadata.TimelineGuid, "更新失败：" + ex.Message, check.Metadata.Version);
+                Svc.Log.Error(ex, $"MewUI: cloud timeline update failed for {check.Definition.Name}");
+                SetTimelineStatus(check.Definition.TimelineGuid, "更新失败：" + ex.Message, check.Metadata.Version);
             }
         }
 
@@ -282,13 +279,14 @@ internal static class BundledTimelineSync
     private static TimelineMetadata ReadCloudMetadata(TimelineDefinition definition, byte[] bytes)
     {
         if (!TryReadMetadata(bytes, out var metadata)
-            || !string.Equals(metadata.TimelineGuid, definition.Metadata.TimelineGuid, StringComparison.OrdinalIgnoreCase)
+            || !string.Equals(metadata.TimelineGuid, definition.TimelineGuid, StringComparison.OrdinalIgnoreCase)
             || !string.Equals(metadata.Format, "PTL", StringComparison.OrdinalIgnoreCase))
-            throw new InvalidDataException("云端时间轴 GUID 或格式与内置时间轴不匹配");
+            throw new InvalidDataException("云端时间轴 GUID 或格式与登记的时间轴不匹配");
         return metadata;
     }
 
-    private static void ApplyCloudTimeline(TimelineDefinition definition, byte[] bytes, TimelineMetadata cloudMetadata)
+    private static void ApplyCloudTimeline(TimelineDefinition definition, byte[] bytes, TimelineMetadata cloudMetadata,
+        bool restoring = false)
     {
         var targetDirectory = GetTargetDirectory();
         Directory.CreateDirectory(targetDirectory);
@@ -300,7 +298,7 @@ internal static class BundledTimelineSync
         {
             var states = AcrSettingsStore.Current.BundledTimelines;
             states.TryGetValue(cloudMetadata.TimelineGuid, out var state);
-            if (state?.Disabled == true)
+            if (state?.Disabled == true && !restoring)
             {
                 CloudVersions[cloudMetadata.TimelineGuid] = cloudMetadata.Version;
                 TimelineStatus[cloudMetadata.TimelineGuid] = "已删除；云端版本 " + cloudMetadata.Version;
@@ -311,11 +309,12 @@ internal static class BundledTimelineSync
             var installed = ReadInstalledTimelines(targetDirectory)
                 .Where(file => string.Equals(file.TimelineGuid, cloudMetadata.TimelineGuid, StringComparison.OrdinalIgnoreCase))
                 .ToArray();
-            var local = state != null
+            var local = !restoring && state != null
                 ? installed.FirstOrDefault(file => string.Equals(file.FileName, state.FileName, StringComparison.OrdinalIgnoreCase)
                     && string.Equals(file.TimelineGuid, cloudMetadata.TimelineGuid, StringComparison.OrdinalIgnoreCase))
                 : null;
-            local ??= installed.FirstOrDefault();
+            // Restoring must not adopt or overwrite another copy with the same GUID.
+            if (!restoring) local ??= installed.FirstOrDefault();
 
             CloudVersions[cloudMetadata.TimelineGuid] = cloudMetadata.Version;
             if (local != null && string.Equals(local.Version, cloudMetadata.Version, StringComparison.Ordinal))
@@ -337,7 +336,11 @@ internal static class BundledTimelineSync
             }
             else
             {
-                var targetName = local?.FileName ?? CreateUniqueFileName(targetDirectory, cloudMetadata);
+                var preferredName = restoring && state != null && IsSafeFileName(state.FileName)
+                    ? state.FileName : definition.FileName;
+                var targetName = local?.FileName
+                    ?? (IsSafeFileName(preferredName) && !File.Exists(Path.Combine(targetDirectory, preferredName))
+                        ? preferredName : CreateUniqueFileName(targetDirectory, cloudMetadata));
                 var targetPath = Path.Combine(targetDirectory, targetName);
                 var expectedHash = local?.Sha256;
                 WriteAtomically(targetPath, bytes, expectedHash);
@@ -366,7 +369,7 @@ internal static class BundledTimelineSync
         lock (Sync)
         {
             var definition = GetDefinitions().FirstOrDefault(item =>
-                string.Equals(item.Metadata.TimelineGuid, timelineGuid, StringComparison.OrdinalIgnoreCase));
+                string.Equals(item.TimelineGuid, timelineGuid, StringComparison.OrdinalIgnoreCase));
             if (definition == null) return;
 
             var targetDirectory = GetTargetDirectory();
@@ -394,53 +397,36 @@ internal static class BundledTimelineSync
                 Disabled = true
             };
             TimelineStatus[timelineGuid] = "已从本地删除";
-            TimelineStatus["*"] = "已删除 " + definition.Metadata.Name;
+            TimelineStatus["*"] = "已删除 " + definition.Name;
             RefreshRowsLocked();
         }
 
         AcrSettingsStore.Save();
     }
 
-    private static void RestoreTimeline(string timelineGuid)
+    private static async Task RestoreTimelineAsync(string timelineGuid, CancellationToken cancellation)
     {
         var definition = GetDefinitions().FirstOrDefault(item =>
-            string.Equals(item.Metadata.TimelineGuid, timelineGuid, StringComparison.OrdinalIgnoreCase));
+            string.Equals(item.TimelineGuid, timelineGuid, StringComparison.OrdinalIgnoreCase));
         if (definition == null) return;
 
         lock (Sync)
         {
-            var states = AcrSettingsStore.Current.BundledTimelines;
-            states.TryGetValue(timelineGuid, out var oldState);
-            var targetDirectory = GetTargetDirectory();
-            Directory.CreateDirectory(targetDirectory);
-            var files = ReadInstalledTimelines(targetDirectory)
-                .Where(file => string.Equals(file.TimelineGuid, timelineGuid, StringComparison.OrdinalIgnoreCase))
-                .ToArray();
-            var exact = files.FirstOrDefault(file => string.Equals(file.Sha256, definition.Sha256, StringComparison.Ordinal));
-            var restored = exact;
-            if (restored == null)
-            {
-                var name = oldState != null && IsSafeFileName(oldState.FileName)
-                    && !File.Exists(Path.Combine(targetDirectory, oldState.FileName))
-                    ? oldState.FileName
-                    : CreateUniqueFileName(targetDirectory, definition.Metadata);
-                var path = Path.Combine(targetDirectory, name);
-                WriteAtomically(path, definition.Bytes, expectedCurrentHash: null);
-                restored = new InstalledTimeline(name, timelineGuid, definition.Metadata.Version, definition.Sha256);
-            }
-
-            states[timelineGuid] = new BundledTimelineSyncState
-            {
-                FileName = restored.FileName,
-                Sha256 = restored.Sha256
-            };
-            TimelineStatus[timelineGuid] = "已恢复内置时间轴，正在检查云端";
-            TimelineStatus["*"] = "正在恢复 " + definition.Metadata.Name;
+            if (!AcrSettingsStore.Current.BundledTimelines.TryGetValue(timelineGuid, out var state)
+                || !state.Disabled) return;
+            TimelineStatus[timelineGuid] = "正在从 GitHub 恢复时间轴";
             RefreshRowsLocked();
         }
 
-        AcrSettingsStore.Save();
-        RequestCloudCheck(timelineGuid);
+        var check = await FetchCloudAsync(definition, cancellation).ConfigureAwait(false);
+        cancellation.ThrowIfCancellationRequested();
+        if (check.Bytes == null)
+        {
+            SetTimelineStatus(timelineGuid, "恢复失败：" + check.Error, null);
+            return;
+        }
+        // Keep Disabled until the validated cloud file has been written successfully.
+        ApplyCloudTimeline(definition, check.Bytes, check.Metadata, restoring: true);
     }
 
     private static void SetTimelineStatus(string guid, string message, string? cloudVersion)
@@ -465,7 +451,7 @@ internal static class BundledTimelineSync
         var installed = Directory.Exists(targetDirectory) ? ReadInstalledTimelines(targetDirectory) : [];
         rows = catalog.Select(definition =>
         {
-            var guid = definition.Metadata.TimelineGuid;
+            var guid = definition.TimelineGuid;
             var state = AcrSettingsStore.Current.BundledTimelines.TryGetValue(guid, out var found) ? found : null;
             var local = state != null && !string.IsNullOrWhiteSpace(state.FileName)
                 ? installed.FirstOrDefault(file => string.Equals(file.FileName, state.FileName, StringComparison.OrdinalIgnoreCase)
@@ -474,7 +460,7 @@ internal static class BundledTimelineSync
             local ??= installed.FirstOrDefault(file => string.Equals(file.TimelineGuid, guid, StringComparison.OrdinalIgnoreCase));
             var hasStatus = TimelineStatus.TryGetValue(guid, out var status);
             var isWorking = status != null && status.StartsWith("正在", StringComparison.Ordinal);
-            return new TimelineRow(guid, definition.Metadata.Name,
+            return new TimelineRow(guid, definition.Name,
                 state?.Disabled == true ? "已删除" : local?.Version ?? "未安装",
                 CloudVersions.TryGetValue(guid, out var cloudVersion) ? cloudVersion : "未检查",
                 hasStatus ? status! : "等待检查",
@@ -482,38 +468,35 @@ internal static class BundledTimelineSync
         }).ToArray();
     }
 
-    private static TimelineDefinition[] GetDefinitions()
-    {
-        lock (Sync)
-        {
-            if (definitions != null) return definitions;
-            var directory = GetPackageTimelineDirectory();
-            if (!Directory.Exists(directory)) return definitions = [];
+    private static TimelineDefinition[] GetDefinitions() => Definitions;
 
-            var loaded = new List<TimelineDefinition>();
-            foreach (var path in Directory.EnumerateFiles(directory, "*.json")
-                         .OrderBy(item => item, StringComparer.OrdinalIgnoreCase))
+    private static void CleanupLegacyPackage()
+    {
+        // Migration only: retire copies shipped by older ACR packages. Never use this as a source.
+        var directory = Path.Combine(Path.GetDirectoryName(GetTargetDirectory())!, "ACR", "Cino", "Timelines");
+        if (!Directory.Exists(directory)) return;
+        foreach (var definition in GetDefinitions())
+        {
+            var path = Path.Combine(directory, definition.FileName);
+            try
             {
-                var bytes = File.ReadAllBytes(path);
-                if (!TryReadMetadata(bytes, out var metadata) || !string.Equals(metadata.Format, "PTL", StringComparison.OrdinalIgnoreCase))
-                    continue;
-                loaded.Add(new TimelineDefinition(Path.GetFileName(path), path, metadata, bytes,
-                    Convert.ToHexStringLower(SHA256.HashData(bytes))));
+                if (File.Exists(path) && TryReadMetadata(File.ReadAllBytes(path), out var metadata)
+                    && string.Equals(metadata.TimelineGuid, definition.TimelineGuid, StringComparison.OrdinalIgnoreCase))
+                    File.Delete(path);
             }
-            return definitions = loaded.ToArray();
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+            {
+                Svc.Log.Warning($"MewUI: could not remove legacy timeline copy {definition.FileName}: {ex.Message}");
+            }
         }
-    }
-
-    private static string GetPackageTimelineDirectory()
-    {
-        var assemblyPath = typeof(BundledTimelineSync).Assembly.Location;
-        if (!string.IsNullOrWhiteSpace(assemblyPath))
+        try
         {
-            var besideAssembly = Path.Combine(Path.GetDirectoryName(assemblyPath)!, "Timelines");
-            if (Directory.Exists(besideAssembly)) return besideAssembly;
+            if (!Directory.EnumerateFileSystemEntries(directory).Any()) Directory.Delete(directory);
         }
-        // PromeRotation loads ACRs using LoadFromStream, which leaves Assembly.Location empty.
-        return Path.Combine(Path.GetDirectoryName(GetTargetDirectory())!, "ACR", "Cino", "Timelines");
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+        {
+            Svc.Log.Warning($"MewUI: could not remove empty legacy timeline directory: {ex.Message}");
+        }
     }
 
     private static string GetTargetDirectory()
@@ -578,70 +561,8 @@ internal static class BundledTimelineSync
     internal readonly record struct TimelineRow(string Guid, string Name, string LocalVersion,
         string CloudVersion, string Status, bool IsDeleted, bool IsWorking);
 
-    private sealed record TimelineDefinition(string FileName, string SourcePath, TimelineMetadata Metadata,
-        byte[] Bytes, string Sha256);
+    private sealed record TimelineDefinition(string FileName, string TimelineGuid, string Name);
     private sealed record CloudCheck(TimelineDefinition Definition, byte[]? Bytes, TimelineMetadata Metadata, string Error);
-
-    private static bool SyncTimeline(string sourcePath, string targetDirectory,
-        System.Collections.Concurrent.ConcurrentDictionary<string, BundledTimelineSyncState> syncStates)
-    {
-        var bytes = File.ReadAllBytes(sourcePath);
-        if (!TryReadMetadata(bytes, out var metadata))
-            throw new InvalidDataException("Timeline metadata is invalid.");
-
-        if (syncStates.TryGetValue(metadata.TimelineGuid, out var disabledState)
-            && disabledState?.Disabled == true)
-            return false;
-
-        var hash = Convert.ToHexStringLower(SHA256.HashData(bytes));
-        var files = ReadInstalledTimelines(targetDirectory);
-        var matches = files.Where(file => string.Equals(file.TimelineGuid, metadata.TimelineGuid, StringComparison.OrdinalIgnoreCase))
-            .ToArray();
-        var exact = matches.FirstOrDefault(file => string.Equals(file.Sha256, hash, StringComparison.Ordinal));
-
-        if (exact != null)
-        {
-            CleanupCompletedArtifacts(Path.Combine(targetDirectory, exact.FileName), metadata.TimelineGuid);
-            var stateChanged = !syncStates.TryGetValue(metadata.TimelineGuid, out var currentState)
-                || currentState == null
-                || !string.Equals(currentState.FileName, exact.FileName, StringComparison.OrdinalIgnoreCase)
-                || !string.Equals(currentState.Sha256, hash, StringComparison.Ordinal);
-            syncStates[metadata.TimelineGuid] = new BundledTimelineSyncState { FileName = exact.FileName, Sha256 = hash };
-            Svc.Log.Information($"Luli ACR: bundled timeline is current: {metadata.Name}");
-            return stateChanged;
-        }
-
-        if (syncStates.TryGetValue(metadata.TimelineGuid, out var previous)
-            && previous != null
-            && IsSafeFileName(previous.FileName)
-            && !string.IsNullOrWhiteSpace(previous.Sha256)
-            && matches.FirstOrDefault(file =>
-                string.Equals(file.FileName, previous.FileName, StringComparison.OrdinalIgnoreCase)) is { } managed
-            && string.Equals(previous.Sha256, managed.Sha256, StringComparison.Ordinal))
-        {
-            if (CompareVersions(managed.Version, metadata.Version) >= 0)
-                return false;
-
-            var managedPath = Path.Combine(targetDirectory, previous.FileName);
-            WriteAtomically(managedPath, bytes, previous.Sha256);
-            CleanupCompletedArtifacts(managedPath, metadata.TimelineGuid);
-            syncStates[metadata.TimelineGuid] = new BundledTimelineSyncState { FileName = previous.FileName, Sha256 = hash };
-            Svc.Log.Information($"Luli ACR: updated bundled timeline: {metadata.Name}");
-            return true;
-        }
-
-        if (matches.Length > 0)
-        {
-            Svc.Log.Warning($"Luli ACR: preserved a locally modified or unmanaged timeline: {metadata.Name}");
-            return false;
-        }
-
-        var installedFileName = CreateUniqueFileName(targetDirectory, metadata);
-        WriteAtomically(Path.Combine(targetDirectory, installedFileName), bytes, expectedCurrentHash: null);
-        syncStates[metadata.TimelineGuid] = new BundledTimelineSyncState { FileName = installedFileName, Sha256 = hash };
-        Svc.Log.Information($"Luli ACR: installed bundled timeline: {metadata.Name}");
-        return true;
-    }
 
     private static InstalledTimeline[] ReadInstalledTimelines(string directory)
     {
@@ -720,13 +641,6 @@ internal static class BundledTimelineSync
             && string.Equals(Path.GetFileName(fileName), fileName, StringComparison.Ordinal)
             && fileName.EndsWith(".json", StringComparison.OrdinalIgnoreCase);
 
-    private static int CompareVersions(string left, string right)
-    {
-        if (Version.TryParse(left, out var leftVersion) && Version.TryParse(right, out var rightVersion))
-            return leftVersion.CompareTo(rightVersion);
-        return string.Compare(left, right, StringComparison.OrdinalIgnoreCase);
-    }
-
     private static void WriteAtomically(string path, byte[] bytes, string? expectedCurrentHash)
     {
         var temporaryPath = path + ".luli-tmp-" + Guid.NewGuid().ToString("N");
@@ -741,7 +655,7 @@ internal static class BundledTimelineSync
                      || !string.Equals(Convert.ToHexStringLower(SHA256.HashData(File.ReadAllBytes(path))),
                          expectedCurrentHash, StringComparison.Ordinal))
             {
-                throw new IOException("Timeline changed while its bundled update was being applied.");
+                throw new IOException("Timeline changed while its cloud update was being applied.");
             }
             File.Move(temporaryPath, path, overwrite: expectedCurrentHash != null);
         }

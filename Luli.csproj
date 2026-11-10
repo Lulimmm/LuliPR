@@ -28,7 +28,6 @@
       <!-- The project contains only PR ACR sources. Keep the template's
            convention of compiling the source tree once. -->
       <Compile Include="**\*.cs" Exclude="bin\**\*;obj\**\*;**\bin\**\*;**\obj\**\*" />
-      <None Update="Timeline\NewTimeline\*.json" Link="Timelines\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
       <EmbeddedResource Include="Reaper\MewUI\Resources\bg2.webp">
         <LogicalName>MewUI.Resources.bg2.webp</LogicalName>
       </EmbeddedResource>

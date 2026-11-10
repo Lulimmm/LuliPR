@@ -8,6 +8,9 @@ $files = @(Get-ChildItem -LiteralPath $sourceDirectory -File -Filter '*.json')
 if ($files.Count -eq 0) { throw "No PTL files found in $sourceDirectory" }
 
 $guids = [Collections.Generic.HashSet[string]]::new([StringComparer]::OrdinalIgnoreCase)
+$catalog = Get-Content -LiteralPath (Join-Path $PSScriptRoot '..\Common\BundledTimelineSync.cs') -Encoding UTF8 -Raw
+$catalogEntries = @([regex]::Matches($catalog, 'new\("(?<file>[^"]+\.json)",\s*"(?<guid>[0-9a-fA-F-]{36})",\s*"(?<name>[^"]+)"\)'))
+if ($catalogEntries.Count -ne $files.Count) { throw 'Cloud catalog and source timeline counts differ' }
 $metadata = foreach ($file in $files) {
     $document = Get-Content -LiteralPath $file.FullName -Encoding UTF8 -Raw | ConvertFrom-Json
     $guid = [guid]::Empty
@@ -20,6 +23,11 @@ $metadata = foreach ($file in $files) {
     }
     if (-not $guids.Add($guid.ToString('D'))) {
         throw "Duplicate TimelineGuid in $($file.Name)"
+    }
+    $registered = @($catalogEntries | Where-Object { $_.Groups['file'].Value -ceq $file.Name })
+    if ($registered.Count -ne 1 -or $registered[0].Groups['guid'].Value -ine $guid.ToString('D') -or
+        $registered[0].Groups['name'].Value -cne $document.Meta.Name) {
+        throw "Timeline identity does not match the cloud catalog: $($file.Name)"
     }
     if ($document.Meta.Format -ne 'PTL' -or [string]::IsNullOrWhiteSpace($document.Meta.Name)) {
         throw "Invalid PTL metadata in $($file.Name)"
@@ -43,14 +51,8 @@ if (-not [string]::IsNullOrWhiteSpace($PackageDirectory)) {
             throw "Missing package file: $name"
         }
     }
-    foreach ($timeline in $metadata) {
-        $installed = Join-Path (Join-Path $package 'Timelines') $timeline.File
-        if (-not (Test-Path -LiteralPath $installed -PathType Leaf)) {
-            throw "Missing packaged timeline: $($timeline.File)"
-        }
-        if ((Get-FileHash -LiteralPath $installed -Algorithm SHA256).Hash -ne $timeline.Sha256) {
-            throw "Packaged timeline differs from source: $($timeline.File)"
-        }
+    if (Test-Path -LiteralPath (Join-Path $package 'Timelines')) {
+        throw 'Timeline contents must not be generated or shipped beside the ACR DLL'
     }
     Write-Output "Package verified: $package"
 }

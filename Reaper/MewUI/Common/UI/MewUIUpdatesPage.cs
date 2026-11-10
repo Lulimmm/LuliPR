@@ -10,8 +10,9 @@ internal static class MewUIUpdatesPage
     private static readonly Notice[] Notices =
     [
         new(
-            "1.4.0", "2026-11-11", "自动清理时间轴更新文件",
-            "时间轴更新不再保留备份文件；更新完成或确认最新后，自动清理对应时间轴的旧更新备份和失效临时文件。",
+            "1.4.0", "2026-11-11", "时间轴直接云端更新",
+            "直接比较 GitHub 与 PureTimelines 中的时间轴版本并更新，DLL 目录不再附带时间轴副本。\n\n" +
+            "删除后可从云端恢复；自动清理旧版随包目录、更新备份和失效临时文件。",
             "#TIMELINE #CLEANUP"),
         new(
             "1.3.10", "2026-11-11", "修复时间轴版本检查误报",
