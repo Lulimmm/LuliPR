@@ -10,6 +10,10 @@ internal static class ErosUIUpdatesPage
     private static readonly Notice[] Notices =
     [
         new(
+            "1.3.8", "2026-11-10", "修复快速拖动像素小人时被裁切",
+            "调整像素小人贴图的绘制裁剪区域，使其跟随窗口当前位置，修复快速拖动时角色部分显示或消失的问题。",
+            "#UI #PET"),
+        new(
             "1.3.7", "2026-11-09", "面板显隐记忆与 UI 性能优化",
             "QT 与 Hotkey 面板按职业记住显隐状态，重新上线、加载 ACR 或重建面板时自动恢复。\n\n" +
             "新增指定账号可见的 UI 性能分析页，支持手动采样 CPU 耗时、托管分配和峰值。\n\n" +

@@ -302,10 +302,20 @@ public sealed partial class CombatControlWindow : Window, IDisposable
                 // Dragging can move the window after the hit area was created.
                 // Use its current position so the image follows that move.
                 var imagePos = ImGui.GetWindowPos();
-                drawList.AddImage(texture!.Handle, imagePos, imagePos + PetSize, uv0, uv1,
-                    SimplePalette.ToU32(new Vector4(1f, 1f, 1f, hovered ? 1f : 0.96f)));
-                if (isCurrentFrame)
-                    fallback.Remember(frame, texture);
+                // SetWindowPos does not update the draw list clip rect created at Begin.
+                // Replace it for this image so fast drags cannot clip against the old window position.
+                drawList.PushClipRect(imagePos, imagePos + PetSize, false);
+                try
+                {
+                    drawList.AddImage(texture!.Handle, imagePos, imagePos + PetSize, uv0, uv1,
+                        SimplePalette.ToU32(new Vector4(1f, 1f, 1f, hovered ? 1f : 0.96f)));
+                    if (isCurrentFrame)
+                        fallback.Remember(frame, texture);
+                }
+                finally
+                {
+                    drawList.PopClipRect();
+                }
             }
             catch (ObjectDisposedException)
             {
