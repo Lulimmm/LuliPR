@@ -10,6 +10,10 @@ internal static class MewUIUpdatesPage
     private static readonly Notice[] Notices =
     [
         new(
+            "1.3.10", "2026-11-11", "修复时间轴版本检查误报",
+            "时间轴内容比较忽略 UTF BOM 和换行格式差异，避免 Windows 发布包与 GitHub 原始文件仅因编码格式不同而误报为本地修改。",
+            "#TIMELINE #FIX"),
+        new(
             "1.3.9", "2026-11-11", "时间轴云端同步与 MewUI",
             "内置伊甸近战减伤、伊甸镰刀、妖星镰刀和绝欧镰刀，时间轴初始版本统一为 1.0.1。\n\n" +
             "登录后首次启用 ACR 时检查 GitHub 时间轴版本，版本不一致时自动更新；覆盖本地修改前保留备份。\n\n" +

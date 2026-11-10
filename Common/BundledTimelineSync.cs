@@ -320,12 +320,14 @@ internal static class BundledTimelineSync
             CloudVersions[cloudMetadata.TimelineGuid] = cloudMetadata.Version;
             if (local != null && string.Equals(local.Version, cloudMetadata.Version, StringComparison.Ordinal))
             {
-                if (string.Equals(local!.Sha256, cloudHash, StringComparison.Ordinal))
+                if (string.Equals(local!.Sha256, cloudHash, StringComparison.Ordinal)
+                    || SameTimelineText(File.ReadAllBytes(Path.Combine(targetDirectory, local.FileName)), bytes))
                 {
                     states[cloudMetadata.TimelineGuid] = new BundledTimelineSyncState
                     {
                         FileName = local.FileName,
-                        Sha256 = cloudHash
+                        // Preserve the on-disk byte hash for later local-edit detection.
+                        Sha256 = local.Sha256
                     };
                     updated = true;
                     result = "已是最新版本 " + cloudMetadata.Version;
@@ -530,6 +532,17 @@ internal static class BundledTimelineSync
         var backupPath = path + ".backup-" + DateTime.UtcNow.ToString("yyyyMMddHHmmssfff")
             + "-" + Guid.NewGuid().ToString("N")[..8] + ".bak";
         File.Copy(path, backupPath, overwrite: false);
+    }
+
+    private static bool SameTimelineText(byte[] left, byte[] right)
+    {
+        static string Normalize(byte[] bytes)
+        {
+            using var reader = new StreamReader(new MemoryStream(bytes), Encoding.UTF8,
+                detectEncodingFromByteOrderMarks: true);
+            return reader.ReadToEnd().Replace("\r\n", "\n").Replace('\r', '\n');
+        }
+        return string.Equals(Normalize(left), Normalize(right), StringComparison.Ordinal);
     }
 
     private static async Task<byte[]> ReadBoundedAsync(HttpContent content, CancellationToken cancellation)
