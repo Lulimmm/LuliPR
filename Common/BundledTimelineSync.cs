@@ -340,16 +340,6 @@ internal static class BundledTimelineSync
                 var targetName = local?.FileName ?? CreateUniqueFileName(targetDirectory, cloudMetadata);
                 var targetPath = Path.Combine(targetDirectory, targetName);
                 var expectedHash = local?.Sha256;
-                if (local != null)
-                {
-                    var isManaged = state != null
-                        && !state.Disabled
-                        && string.Equals(state.FileName, local.FileName, StringComparison.OrdinalIgnoreCase)
-                        && string.Equals(state.Sha256, local.Sha256, StringComparison.Ordinal);
-                    if (!isManaged && !string.Equals(local.Sha256, definition.Sha256, StringComparison.Ordinal))
-                        BackupLocalTimeline(targetPath);
-                }
-
                 WriteAtomically(targetPath, bytes, expectedHash);
                 states[cloudMetadata.TimelineGuid] = new BundledTimelineSyncState
                 {
@@ -360,6 +350,9 @@ internal static class BundledTimelineSync
                 result = "已更新到云端版本 " + cloudMetadata.Version;
             }
 
+            if (updated)
+                CleanupCompletedArtifacts(Path.Combine(targetDirectory, states[cloudMetadata.TimelineGuid].FileName),
+                    cloudMetadata.TimelineGuid);
             TimelineStatus[cloudMetadata.TimelineGuid] = result;
             TimelineStatus["*"] = result;
             RefreshRowsLocked();
@@ -526,12 +519,33 @@ internal static class BundledTimelineSync
     private static string GetTargetDirectory()
         => targetDirectory ??= Path.Combine(Svc.PluginInterface.ConfigDirectory.FullName, "PureTimelines");
 
-    private static void BackupLocalTimeline(string path)
+    private static void CleanupCompletedArtifacts(string timelinePath, string timelineGuid)
     {
-        if (!File.Exists(path)) return;
-        var backupPath = path + ".backup-" + DateTime.UtcNow.ToString("yyyyMMddHHmmssfff")
-            + "-" + Guid.NewGuid().ToString("N")[..8] + ".bak";
-        File.Copy(path, backupPath, overwrite: false);
+        var directory = Path.GetDirectoryName(timelinePath)!;
+        var fileName = Path.GetFileName(timelinePath);
+        var backupPrefix = fileName + ".backup-";
+        var temporaryPrefix = fileName + ".luli-tmp-";
+        foreach (var path in Directory.EnumerateFiles(directory))
+        {
+            var name = Path.GetFileName(path);
+            try
+            {
+                // Only retire updater-created backups belonging to this exact installed PTL.
+                if (name.StartsWith(backupPrefix, StringComparison.OrdinalIgnoreCase)
+                    && name.EndsWith(".bak", StringComparison.OrdinalIgnoreCase)
+                    && TryReadMetadata(File.ReadAllBytes(path), out var backup)
+                    && string.Equals(backup.TimelineGuid, timelineGuid, StringComparison.OrdinalIgnoreCase))
+                    File.Delete(path);
+                else if (name.StartsWith(temporaryPrefix, StringComparison.OrdinalIgnoreCase)
+                         && Guid.TryParseExact(name[temporaryPrefix.Length..], "N", out _)
+                         && DateTime.UtcNow - File.GetLastWriteTimeUtc(path) > TimeSpan.FromMinutes(10))
+                    File.Delete(path);
+            }
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+            {
+                Svc.Log.Warning($"MewUI: could not remove completed timeline update file {name}: {ex.Message}");
+            }
+        }
     }
 
     private static bool SameTimelineText(byte[] left, byte[] right)
@@ -587,6 +601,7 @@ internal static class BundledTimelineSync
 
         if (exact != null)
         {
+            CleanupCompletedArtifacts(Path.Combine(targetDirectory, exact.FileName), metadata.TimelineGuid);
             var stateChanged = !syncStates.TryGetValue(metadata.TimelineGuid, out var currentState)
                 || currentState == null
                 || !string.Equals(currentState.FileName, exact.FileName, StringComparison.OrdinalIgnoreCase)
@@ -609,6 +624,7 @@ internal static class BundledTimelineSync
 
             var managedPath = Path.Combine(targetDirectory, previous.FileName);
             WriteAtomically(managedPath, bytes, previous.Sha256);
+            CleanupCompletedArtifacts(managedPath, metadata.TimelineGuid);
             syncStates[metadata.TimelineGuid] = new BundledTimelineSyncState { FileName = previous.FileName, Sha256 = hash };
             Svc.Log.Information($"Luli ACR: updated bundled timeline: {metadata.Name}");
             return true;
