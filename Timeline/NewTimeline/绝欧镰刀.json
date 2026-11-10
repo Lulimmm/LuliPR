@@ -1,0 +1,5490 @@
+{"Variables":[],
+  "Version": "1.0.1",
+  "Meta": {"AcrAuthor":"Cino","CustomOpener":null,"Format":"PTL","TimelineGuid":"2011beac-efee-44a1-8243-eae2f08ed351","Category":"normal","Roles":["D1","D2"],
+    "Name": "\u7EDD\u6B27\u9570\u5200",
+    "TerritoryId": 1122,
+    "JobId": 39,
+    "Author": "Cino",
+    "CreatedAt": "2026-04-18T21:42:42.4451756+08:00",
+    "Opener": "\u5207\u52722G\u56E2\u8F85\u8D77\u624B",
+    "Remark": "\u9C7F\u9C7C\u673A\u5236\u539F\u56E0\u6CA1\u7F16\u5199\u63D2\u79E7\u8F74\uFF0C\u627E\u673A\u4F1A\u63D2\u4E00\u4E0B\u79E7\n\u65E0\u505C\u624B\uFF0C\u8111\u6D4B\u8F74\u6709\u95EE\u9898\u8BF7\u53CD\u9988"
+  },
+  "Anchors": [
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "460d4a1e-4d28-49db-a70f-965869844fcd",
+      "Name": "\u5F00\u59CB",
+      "Time": 0,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "InCombat",
+        "Params": {},
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "dfaeb28d-c3f6-4fb0-b26a-bf8daee618d9",
+      "Name": "\u5FAA\u73AF\u7A0B\u5E8F \u8BFB\u6761",
+      "Time": 11,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "CastStart",
+        "Params": {
+          "ActionId": "31491"
+        },
+        "WindowBefore": 20,
+        "WindowAfter": 20
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "76f95891-37eb-4376-94c2-4ebce18ad795",
+      "Name": "\u5FAA\u73AF\u7A0B\u5E8F \u5224\u5B9A",
+      "Time": 15,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "31491"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "f7925128-4220-447d-a7c5-9b17909e7e46",
+      "Name": "\u51B2\u51FB\u6CE2 \u8BFB\u6761",
+      "Time": 21,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "CastStart",
+        "Params": {
+          "ActionId": "31495"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "8014e318-4082-4f2b-8c9b-563cc08a005d",
+      "Name": "\u6E05\u9664\u8BB0\u5FC6\u6C61\u67D3S 1 \u5224\u5B9A",
+      "Time": 29.1,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "31492"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "ec8859d1-21c0-4dff-ac65-1a052f7a43c8",
+      "Name": "\u6E05\u9664\u8BB0\u5FC6\u6C61\u67D3S 2 \u5224\u5B9A",
+      "Time": 38.1,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "31492"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "04ca5e8c-0c85-478b-9479-b21eda565525",
+      "Name": "\u6E05\u9664\u8BB0\u5FC6\u6C61\u67D3S 3 \u5224\u5B9A",
+      "Time": 47.1,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "31492"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "50c012bd-5754-4cbe-8c64-629baed1ca4b",
+      "Name": "\u6E05\u9664\u8BB0\u5FC6\u6C61\u67D3S 4 \u5224\u5B9A",
+      "Time": 56.1,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "31492"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "c14ee76d-973e-48bf-b191-b74ee70c95ae",
+      "Name": "\u5168\u80FD\u4E4B\u4E3B \u8BFB\u6761",
+      "Time": 64.2,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "CastStart",
+        "Params": {
+          "ActionId": "31499"
+        },
+        "WindowBefore": 20,
+        "WindowAfter": 20
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "fc94aead-02e3-47e3-990b-e298e6532ae2",
+      "Name": "\u5168\u80FD\u4E4B\u4E3B \u5224\u5B9A",
+      "Time": 69.2,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "31499"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "1a437e45-d688-4fb2-9721-9530cd5d3521",
+      "Name": "\u706B\u708E\u653E\u5C04 \u5224\u5B9A",
+      "Time": 75.3,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "31501"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "d675eda8-cc95-4bb8-9f62-78f074a532f1",
+      "Name": "\u5927\u529F\u7387\u6CE2\u52A8\u70AEP 1 \u5224\u5B9A",
+      "Time": 81.3,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "31503"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "8651d293-23c8-44b3-970e-a5486c35818e",
+      "Name": "\u5927\u529F\u7387\u6CE2\u52A8\u70AEP 2 \u5224\u5B9A",
+      "Time": 87.3,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "31503"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "f72cdb4e-4eec-4981-bb46-fca5a989b5f0",
+      "Name": "\u5927\u529F\u7387\u6CE2\u52A8\u70AEP 3 \u5224\u5B9A",
+      "Time": 93.3,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "31503"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "5da21ec2-05ef-4746-9e5e-45cbb0454c05",
+      "Name": "\u5927\u529F\u7387\u6CE2\u52A8\u70AEP 4 \u5224\u5B9A",
+      "Time": 99.3,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "31503"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "c09e9856-6b21-4087-83ad-0c52664d900d",
+      "Name": "\u6269\u6563\u6CE2\u52A8\u70AEP\u6B7B\u5211 \u5224\u5B9A",
+      "Time": 108,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "31504"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "6bac9b9b-d7e3-447d-a3d9-7e45973f4e95",
+      "Name": "\u6CE2\u52A8\u70AEP 1 \u5224\u5B9A",
+      "Time": 108.001,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": null
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "0a2a35c3-b6fc-43ce-b257-28d3de9475ca",
+      "Name": "\u6CE2\u52A8\u70AEP 2 \u5224\u5B9A",
+      "Time": 116.8,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": null
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "37807d13-34dd-44c9-9cb6-53e23fd080d1",
+      "Name": "\u539F\u5B50\u5C04\u7EBF \u8BFB\u6761",
+      "Time": 122.7,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "CastStart",
+        "Params": {
+          "ActionId": "31480"
+        },
+        "WindowBefore": 20,
+        "WindowAfter": 20
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "9136df73-b31e-4c62-b1c8-dbd8b0365dc7",
+      "Name": "\u539F\u5B50\u5C04\u7EBF\u72C2\u66B4 \u5224\u5B9A",
+      "Time": 127.7,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "31480"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "949146e1-5d5e-4a03-a0f2-96483bf0dd12",
+      "Name": "---P2\u5929\u6C14\u8F6C\u573A---",
+      "Time": 200,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "Weather",
+        "Params": {
+          "WeatherId": "78"
+        },
+        "WindowBefore": 200,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "62a0d702-be65-40df-9cdf-5842d9a4f11e",
+      "Name": "--\u53EF\u9009\u4E2D--",
+      "Time": 201.8,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": null
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "09b7ca77-edea-418e-b4ff-126f8631ffd0",
+      "Name": "\u9632\u5FA1\u7A0B\u5E8F \u8BFB\u6761",
+      "Time": 203.4,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "CastStart",
+        "Params": {
+          "ActionId": "31552"
+        },
+        "WindowBefore": 210,
+        "WindowAfter": 5
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "0b943c2e-ea15-4434-97ae-efc1d19596d1",
+      "Name": "\u9632\u5FA1\u7A0B\u5E8F \u5224\u5B9A",
+      "Time": 206.4,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "31552"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "3ef8a6d2-ccfc-4b7e-a516-292aa1c318b3",
+      "Name": "\u592A\u9633\u5C04\u7EBF \u5224\u5B9A",
+      "Time": 214.5,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "32362"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "fbc1b941-f450-4332-bd76-c88032adb41e",
+      "Name": "\u534F\u4F5C\u7A0B\u5E8FPT \u5224\u5B9A",
+      "Time": 230.9,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "31550"
+        },
+        "WindowBefore": 20,
+        "WindowAfter": 20
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "e61bc34f-395f-4d83-8ac2-b7f9c211c116",
+      "Name": "--\u4E0D\u53EF\u9009\u4E2D--",
+      "Time": 233.9,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": null
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "88713bf9-a73a-437a-83f5-da7dc5606cf2",
+      "Name": "--\u540C\u6B65-- \u5224\u5B9A",
+      "Time": 240.5,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "31515"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "c8fe48e8-40dd-44a9-abb7-4215e6e5ec0c",
+      "Name": "\u5251\u8FDE\u51FBB/\u6B27\u7C73\u8304\u51B0\u5C01/\u5251\u51FB/\u76FE\u8FDE\u51FBG \u5224\u5B9A",
+      "Time": 241.3,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "31530|31533|31525|31526"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "0477eef5-25e9-41cf-a953-a20e481a51ce",
+      "Name": "\u5206\u6563/\u573A\u4E2D\u5149\u5B66\u5C04\u7EBFF \u5224\u5B9A",
+      "Time": 248,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "31521"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "3310a283-4f29-40ac-85a0-951cecbdec62",
+      "Name": "--\u540C\u6B65-- \u5224\u5B9A",
+      "Time": 250.8,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "31519"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "77b895e4-5e4d-4735-8d17-5dc8b49cb195",
+      "Name": "\u80FD\u91CF\u653E\u51FA \u51FB\u9000 \u5224\u5B9A",
+      "Time": 254.9,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "31534"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "8d1aa0ca-3633-4d10-95be-3adaab150a8b",
+      "Name": "\u5206\u644A \u5224\u5B9A",
+      "Time": 259.101,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "31526"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "4c5a8440-9c38-435e-9e6d-06c01da58fd2",
+      "Name": "--\u53EF\u9009\u4E2D--",
+      "Time": 262.1,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": null
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "a7027a70-38ef-4a46-b0ae-c9c71547af19",
+      "Name": "\u5408\u6210\u76FE \u5224\u5B9A",
+      "Time": 272.2,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "32369"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "95844601-4d01-4fa2-8c63-3955e9f898b4",
+      "Name": "\u534F\u4F5C\u7A0B\u5E8FLB \u5224\u5B9A",
+      "Time": 282.4,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "31544"
+        },
+        "WindowBefore": 20,
+        "WindowAfter": 20
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "4829521e-1118-4f2f-abcb-bf3ba0ec4cad",
+      "Name": "--\u5973\u4EBA\u65E0\u654C-- \u5224\u5B9A",
+      "Time": 285.5,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "31554"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "8526ec0b-3946-4bed-a875-19b8c78f83e1",
+      "Name": "\u6B27\u7C73\u8304\u6B66\u88C5\u620D\u536B \u5224\u5B9A",
+      "Time": 287.4,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "31556"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "c87b27bc-ed5c-4f58-b806-cc1eef4ff0d3",
+      "Name": "\u5408\u6210\u76FE \u5224\u5B9A",
+      "Time": 288.6,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "32369"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "707126e9-925a-496b-a519-34eea069e835",
+      "Name": "\u5200\u5149\u5251\u821E \u6B7B\u5211 \u5224\u5B9A",
+      "Time": 295.7,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "31539"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "7cac97e5-c6b2-4965-adc6-99cb70f29779",
+      "Name": "\u76FE\u8FDE\u51FBS \u5224\u5B9A",
+      "Time": 306.7,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "31527"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "256a91a8-738e-40ea-84dd-d666c436628e",
+      "Name": "\u6B27\u7C73\u8304\u9668\u77F3\u6D41\u661F \u5224\u5B9A",
+      "Time": 309.7,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "31537"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "4374b54a-fd0d-43e6-afcc-136dcb780264",
+      "Name": "\u5B87\u5B99\u8BB0\u5FC6 \u5224\u5B9A",
+      "Time": 318.8,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "31522"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "2200f086-8bb6-48c0-ae84-e179ea5f4339",
+      "Name": "\u6FC0\u5149\u9AA4\u96E8 Enrage \u5224\u5B9A",
+      "Time": 347.4,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "31557"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "d56d9142-d1df-4c48-8d95-bc3d3257cf29",
+      "Name": "--P2.5\u540C\u6B65-- \u5224\u5B9A",
+      "Time": 400,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "31507"
+        },
+        "WindowBefore": 400,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "d470fa3b-2fc0-4c78-9872-e6bf7f7f3e2f",
+      "Name": "--P2.5\u540C\u6B65Buff\u51FA\u73B0-- \u5224\u5B9A",
+      "Time": 409.3,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "31562"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "993db739-d901-4fc4-87b0-ceeba242961f",
+      "Name": "--P2.5\u540C\u6B65-- \u5224\u5B9A",
+      "Time": 412.3,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "31563"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "3067914b-e0bc-4dd3-8ec8-ad1fb8137eda",
+      "Name": "\u901F\u5C04\u5F0F\u6CE2\u52A8\u70AE 1 \u5224\u5B9A",
+      "Time": 414.3,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "31567"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "c3fbc49f-9724-48a4-8c8c-501f4e950d04",
+      "Name": "\u901F\u5C04\u5F0F\u6CE2\u52A8\u70AE 2 \u5224\u5B9A",
+      "Time": 416.4,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "31568"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "36098672-601e-4c0b-ad92-2ce863e29835",
+      "Name": "\u901F\u5C04\u5F0F\u6CE2\u52A8\u70AE 3 \u5224\u5B9A",
+      "Time": 418.4,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "31569"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "c3d213db-2398-42e6-9ca0-755647265c02",
+      "Name": "\u901F\u5C04\u5F0F\u6CE2\u52A8\u70AE 4 \u5224\u5B9A",
+      "Time": 420.4,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "31570"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "0e9fdcd6-0e9c-417d-997b-ed5c6711f12d",
+      "Name": "\u901F\u5C04\u5F0F\u6CE2\u52A8\u70AE 1 \u5224\u5B9A",
+      "Time": 422.4,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "31567"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "3057b810-f67d-40d0-a993-e8b6a0165177",
+      "Name": "\u901F\u5C04\u5F0F\u6CE2\u52A8\u70AE 2 \u5224\u5B9A",
+      "Time": 424.5,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "31568"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "dadc63eb-4664-4137-9b4e-9203c90004c5",
+      "Name": "\u5DE8\u80FD\u7206\u6563 \u5224\u5B9A",
+      "Time": 426.4,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "31566"
+        },
+        "WindowBefore": 1,
+        "WindowAfter": 1
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "2dfbb562-6b20-4804-b977-8ccf21048c67",
+      "Name": "\u901F\u5C04\u5F0F\u6CE2\u52A8\u70AE 3 \u5224\u5B9A",
+      "Time": 426.6,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "31569"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "bba17363-5318-45c9-a269-90e8b3c255cd",
+      "Name": "\u5206\u644A\u5206\u6563Buff \u5224\u5B9A",
+      "Time": 428.4,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "31571"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "3b05d418-dc54-4622-85ee-b91192c4e83b",
+      "Name": "\u901F\u5C04\u5F0F\u6CE2\u52A8\u70AE 4 \u5224\u5B9A",
+      "Time": 428.7,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "31570"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "b87f3a48-a3cd-4194-98e3-70086ab77129",
+      "Name": "\u5DE8\u80FD\u7206\u6563 \u5224\u5B9A",
+      "Time": 428.9,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": null
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "dc92d6de-635b-40a8-9924-8118dd803c13",
+      "Name": "--\u53EF\u9009\u4E2D--",
+      "Time": 432.3,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": null
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "2f081a5f-a9fb-4569-b39e-5043d0760c11",
+      "Name": "\u4F60\u597D\uFF0C\u4E16\u754C \u8BFB\u6761",
+      "Time": 436.3,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "CastStart",
+        "Params": {
+          "ActionId": "31573"
+        },
+        "WindowBefore": 40,
+        "WindowAfter": 40
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "a03fda6f-06b6-4e41-a02f-27d29f485f08",
+      "Name": "\u4F60\u597D\uFF0C\u4E16\u754C \u5224\u5B9A",
+      "Time": 441.3,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "31573"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "b95457a0-ca82-4af2-9f87-9f1a04ea1640",
+      "Name": "\u6F5C\u5728\u9519\u8BEF 1 \u8BFB\u6761",
+      "Time": 455.4,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "CastStart",
+        "Params": {
+          "ActionId": "31599"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "31583879-de0e-4a74-b788-276ea093388d",
+      "Name": "\u6F5C\u5728\u9519\u8BEF 1 \u5224\u5B9A",
+      "Time": 464.4,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "31599"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "3beeead0-36ea-4bf0-9184-2d4cdcab457b",
+      "Name": "\u6F5C\u5728\u9519\u8BEF 2 \u8BFB\u6761",
+      "Time": 476.4,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "CastStart",
+        "Params": {
+          "ActionId": "31599"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "c0630f4f-b073-43b2-8fb8-368b4f2c00e4",
+      "Name": "\u6F5C\u5728\u9519\u8BEF 2 \u5224\u5B9A",
+      "Time": 485.4,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "31599"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "d243cff3-0cc4-43d5-8063-e8ffeac96433",
+      "Name": "\u6F5C\u5728\u9519\u8BEF 3 \u8BFB\u6761",
+      "Time": 497.5,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "CastStart",
+        "Params": {
+          "ActionId": "31599"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "9640a309-6750-4aa8-917c-b89fe8b2a1e5",
+      "Name": "\u6F5C\u5728\u9519\u8BEF 3 \u5224\u5B9A",
+      "Time": 506.5,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "31599"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "eb8dd00a-4ed0-43cd-9d67-a0b7a27b63b8",
+      "Name": "\u6F5C\u5728\u9519\u8BEF 4 \u8BFB\u6761",
+      "Time": 518.8,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "CastStart",
+        "Params": {
+          "ActionId": "31599"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "425dc95c-0767-405d-99f8-c42956630860",
+      "Name": "\u6F5C\u5728\u9519\u8BEF 4 \u5224\u5B9A",
+      "Time": 527.8,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "31599"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "73ba1ec5-3ea4-42da-8cab-493b3524ed44",
+      "Name": "\u4E25\u91CD\u9519\u8BEF \u8BFB\u6761",
+      "Time": 542.1,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "CastStart",
+        "Params": {
+          "ActionId": "31588"
+        },
+        "WindowBefore": 30,
+        "WindowAfter": 30
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "94af60c2-10cd-4e40-a4ce-fe0179da5a27",
+      "Name": "\u4E25\u91CD\u9519\u8BEF \u5224\u5B9A",
+      "Time": 550.1,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "31588"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "62299549-b710-4313-855e-cd0a25065d4e",
+      "Name": "--\u540C\u6B65-- \u5224\u5B9A",
+      "Time": 560.2,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "31558"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "626cbafd-6bf9-48bd-82c2-20a0b81a044e",
+      "Name": "\u63A2\u6D4B\u5F0F\u6CE2\u52A8\u70AE \u5224\u5B9A",
+      "Time": 571.4,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "31595|31596"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "451fd94b-2b0d-4450-a64c-3ea6269f5f31",
+      "Name": "\u79BB\u5B50\u6D41\u51FA \u8BFB\u6761",
+      "Time": 577.4,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "CastStart",
+        "Params": {
+          "ActionId": "31560"
+        },
+        "WindowBefore": 50,
+        "WindowAfter": 50
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "97f7f98d-cafc-4d3f-be02-7426ec4d9632",
+      "Name": "\u79BB\u5B50\u6D41\u51FA \u72C2\u66B4 \u5224\u5B9A",
+      "Time": 587.4,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "31560"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "573af17c-6a7b-4d35-942e-1385b7e7058f",
+      "Name": "\u79BB\u5B50\u6D41\u51FA \u666E\u901A\u51FB\u6740 \u5224\u5B9A",
+      "Time": 600,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "31559"
+        },
+        "WindowBefore": 600,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "f92fcc9e-3c98-42ac-9e27-3eef6ef38782",
+      "Name": "--\u4E0D\u53EF\u9009\u4E2D--",
+      "Time": 600.001,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": null
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "1f75e23e-6cd7-43a3-b159-c34b0eaf7182",
+      "Name": "--P4\u540C\u6B65-- \u5224\u5B9A",
+      "Time": 607.1,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "31610"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "73b120ee-2f7d-4863-81c1-0cb6cd012e8d",
+      "Name": "--\u53EF\u9009\u4E2D--",
+      "Time": 607.10095,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": null
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "550babed-d1b4-4f12-958a-48f4f34c6690",
+      "Name": "--\u540C\u6B65-- \u5224\u5B9A",
+      "Time": 615.2,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "31558"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "eeeee117-7b33-4b7a-b2e5-dfd37a0ca24d",
+      "Name": "\u6CE2\u52A8\u70AE 1 \u5224\u5B9A",
+      "Time": 621.4,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "31617"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "611015f7-d371-41bf-b917-a83a15f09a68",
+      "Name": "\u6CE2\u52A8\u70AE 1\u539F\u5730 \u5224\u5B9A",
+      "Time": 626.7,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "32534"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "819cf955-c4ce-4633-8ccb-663e06ea6dd8",
+      "Name": "\u6CE2\u52A8\u70AE 1\u5206\u644A \u5224\u5B9A",
+      "Time": 627,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "31615"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "d90534b7-f77d-4476-8691-f2b0f6c15e49",
+      "Name": "--\u540C\u6B65-- \u5224\u5B9A",
+      "Time": 629.1,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "22393"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "14c8663f-5129-4a18-8858-267dc615e634",
+      "Name": "\u6CE2\u52A8\u70AE 2 \u5224\u5B9A",
+      "Time": 631.501,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": null
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "0c899b13-dd2f-4d88-900a-0fe38f89f606",
+      "Name": "\u6CE2\u52A8\u70AE 2\u539F\u5730 \u5224\u5B9A",
+      "Time": 636.6,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "31618"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "ee183657-72b5-48ed-a8e5-04c5961bbfb9",
+      "Name": "\u6CE2\u52A8\u70AE 2\u5206\u644A \u5224\u5B9A",
+      "Time": 636.8,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "31615"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "e552a326-c540-45e8-be3d-31b53592ac46",
+      "Name": "--\u540C\u6B65-- \u5224\u5B9A",
+      "Time": 639,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "22393"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "8e1edf35-b384-427d-9d86-7860079af351",
+      "Name": "\u6CE2\u52A8\u70AE 3 \u5224\u5B9A",
+      "Time": 641.6,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "31619"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "fe3da009-14ca-4cf9-978c-bfef4c5153eb",
+      "Name": "\u6CE2\u52A8\u70AE 3\u539F\u5730 \u5224\u5B9A",
+      "Time": 646.7,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "31620"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "6432c19c-66d6-4167-b8b1-4fc702a4babc",
+      "Name": "\u6CE2\u52A8\u70AE 3\u5206\u644A \u5224\u5B9A",
+      "Time": 646.9,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "31615"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "d7e40f0d-415a-4ee2-9feb-940122ca8914",
+      "Name": "\u901F\u5C04\u5F0F\u6CE2\u52A8\u70AE 2 \u5224\u5B9A",
+      "Time": 648.6,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "31568"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "cf494881-711b-438d-9660-c2f8000c5f38",
+      "Name": "\u84DD\u5C4F\u72C2\u66B4 \u5224\u5B9A",
+      "Time": 661.6,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "31611"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "93fb1e39-31f2-43d0-aac4-925d97ceca87",
+      "Name": "--\u4E0D\u53EF\u9009\u4E2D--",
+      "Time": 661.60095,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": null
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "9191cf99-0111-44a9-a9fc-41fb443e589a",
+      "Name": "--P5\u540C\u6B65-- \u5224\u5B9A",
+      "Time": 700,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "31612"
+        },
+        "WindowBefore": 700,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "67e520eb-0149-4371-bc81-a1132eea497e",
+      "Name": "--\u53EF\u9009\u4E2D--",
+      "Time": 715.6,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": null
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "b45ccd13-32d3-41ff-8ffe-2cf9af0b3fb9",
+      "Name": "\u592A\u9633\u5C04\u7EBF 1 \u5224\u5B9A",
+      "Time": 723.6,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "33196"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "87a8ccff-e4d3-436b-aeda-e2714ca96045",
+      "Name": "\u592A\u9633\u5C04\u7EBF 2 \u5224\u5B9A",
+      "Time": 726.8,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "31489"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "ad3bc87d-e1f6-4c69-9b21-3604302d76cb",
+      "Name": "--sync-- \u5224\u5B9A",
+      "Time": 733.9,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "31554"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "2d6bfe30-b474-4eb2-bf9e-7a39c2c9369a",
+      "Name": "\u4EE3\u7801\uFF1A\uFF0A\u80FD\uFF0A\uFF08\u5FB7\u5C14\u5854\uFF09 \u5224\u5B9A",
+      "Time": 740,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "31624"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "030152ed-22e1-4fa6-9f60-bfd7ca7e6640",
+      "Name": "--\u4E0D\u53EF\u9009\u4E2D--",
+      "Time": 743,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": null
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "c3096563-2d0a-4d1a-9790-9856093af496",
+      "Name": "\u751F\u6210\u5916\u8BBE \u5224\u5B9A",
+      "Time": 750.2,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "31628"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "1de58118-09d2-436f-b085-9b79167b3b98",
+      "Name": "\u624B\u81C2\u5F52\u6863 \u5224\u5B9A",
+      "Time": 753.2,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "32630"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "81255e00-1184-49d9-a40f-699c0dd1b804",
+      "Name": "\u8865\u4E01 \u5224\u5B9A",
+      "Time": 761.2,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "31587"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "29634b02-1153-40fc-a233-be029a42856d",
+      "Name": "\u5149\u5B66\u5C04\u7EBFF \u5224\u5B9A",
+      "Time": 763.2,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "31521"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "cf9c7d10-1e07-4a32-a3f2-b2990ca95155",
+      "Name": "\u8865\u4E01 \u5224\u5B9A",
+      "Time": 764.9,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": null
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "febb4df2-535d-4608-b829-11f25398b8ee",
+      "Name": "\u7206\u70B8 \u5224\u5B9A",
+      "Time": 766.4,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "31482"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "7ac2fe57-e667-4ccf-ba30-ad374e1fb83a",
+      "Name": "\u76FE\u8FDE\u51FBS \u5224\u5B9A",
+      "Time": 768.5,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "31527"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "cf008fd3-19f2-40a4-ada9-3715c0ee0d25",
+      "Name": "\u8D85\u80FD\u8109\u51B2 \u5224\u5B9A",
+      "Time": 771.1,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "31600"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "cfeb9d2a-7046-4125-9959-6ae2b026a456",
+      "Name": "\u63A2\u6D4B\u5F0F\u6CE2\u52A8\u70AE \u5224\u5B9A",
+      "Time": 773.60095,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "31597"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "cc82b6de-5412-4a1a-ae06-e086dc9b9648",
+      "Name": "\u80FD\u91CF\u6295\u5C04 \u5224\u5B9A",
+      "Time": 774,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "31529"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "0c1bf398-2255-43ea-9137-ee33f99d0327",
+      "Name": "\u56DE\u65CB\u5F0F\u6CE2\u52A8\u70AE \u5224\u5B9A",
+      "Time": 786.4,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "31636|31637"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "64b5bbb7-1065-404d-80f3-73f0531b0724",
+      "Name": "\u4F60\u597D\uFF0C\u8FDC\u5904\u4E16\u754C 1 \u5224\u5B9A",
+      "Time": 787,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "33040"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "b08a3365-213c-46c2-862e-6b3bdb0b797a",
+      "Name": "\u4F60\u597D\uFF0C\u8FDC\u5904\u4E16\u754C 2 \u5224\u5B9A",
+      "Time": 788,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": null
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "d4a69175-5d52-4250-97a7-3e675fe84afa",
+      "Name": "\u4F60\u597D\uFF0C\u8FDC\u5904\u4E16\u754C 3 \u5224\u5B9A",
+      "Time": 789,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": null
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "8a20d3ff-e39c-492c-b188-a82d6858ec43",
+      "Name": "--\u53EF\u9009\u4E2D--",
+      "Time": 791.1,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": null
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "44dd29b8-b556-49ff-ad21-6178bbaabf74",
+      "Name": "\u592A\u9633\u5C04\u7EBF 1 \u5224\u5B9A",
+      "Time": 805.2,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "33196"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "c26b306a-2558-4d9a-b9e6-fb17b5142d81",
+      "Name": "\u592A\u9633\u5C04\u7EBF 2 \u5224\u5B9A",
+      "Time": 808.5,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "31489"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "12f666f4-ffe8-4891-a20e-f57cec21189f",
+      "Name": "--\u540C\u6B65-- \u5224\u5B9A",
+      "Time": 815.6,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "31554"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "a2d26d33-e167-4245-a09e-799808a084e0",
+      "Name": "\u4EE3\u7801\uFF1A\uFF0A\u80FD\uFF0A\uFF08\u897F\u683C\u739B\uFF09 \u5224\u5B9A",
+      "Time": 821.7,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "32788"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "dea04ec6-7b47-4f64-83c3-25c062bbb8ae",
+      "Name": "--\u4E0D\u53EF\u9009\u4E2D--",
+      "Time": 824.7,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": null
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "85b5a02f-90d5-41b4-9caa-f14b9fdd7b78",
+      "Name": "\u53D8\u5F62F \u5224\u5B9A",
+      "Time": 839,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "32559"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "c10c73fe-c9e7-4ba7-ada0-d05f1dd01986",
+      "Name": "--\u540C\u6B65-- \u5224\u5B9A",
+      "Time": 840,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "31508"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "4dc66b35-bc43-4425-b59b-1a287f136e99",
+      "Name": "\u5FAA\u73AF\u7A0B\u5E8F \u5224\u5B9A",
+      "Time": 840.4,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "31640"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "380465e5-3ce1-4a86-8353-b5f12dc86658",
+      "Name": "--\u540C\u6B65-- \u5224\u5B9A",
+      "Time": 841.1,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "31510"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "5d1337e1-6b1b-4a30-831a-9f12ae9315dc",
+      "Name": "\u8D85\u80FD\u8109\u51B2 \u5224\u5B9A",
+      "Time": 843.8,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "31602"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "430f9075-cf69-44ea-989f-187bc5fbb159",
+      "Name": "\u6CE2\u52A8\u70AE \u5224\u5B9A",
+      "Time": 844,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "31603"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "74e21c05-ca8d-4094-9754-3baeb39b5e93",
+      "Name": "--\u540C\u6B65-- \u5224\u5B9A",
+      "Time": 845.1,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "32560"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "f1ac61f8-f489-4d2a-a656-4853ff7710fc",
+      "Name": "--\u540C\u6B65-- \u5224\u5B9A",
+      "Time": 848.7,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "31509"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "28a702b0-0bef-4f34-bcb3-7f00e224c511",
+      "Name": "--\u540C\u6B65-- \u5224\u5B9A",
+      "Time": 849.3,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "31520"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "0934b830-1a12-4897-80d7-887a92773d30",
+      "Name": "--\u540C\u6B65-- \u5224\u5B9A",
+      "Time": 851.3,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "31555"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "6a8edd72-a9ec-4bd7-ae09-d8e92985e939",
+      "Name": "\u80FD\u91CF\u653E\u51FA \u5224\u5B9A",
+      "Time": 852.4,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "31534"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "6740fc6e-1ab7-46c5-a4ee-d1cc91804b2a",
+      "Name": "\u6E05\u9664\u8BB0\u5FC6\u6C61\u67D3S x5 / \u6E05\u9664\u8BB0\u5FC6\u6C61\u67D3S x6 \u5224\u5B9A",
+      "Time": 856.4,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "31492|31493"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "456306c8-916e-44b4-90f9-99a92eebe390",
+      "Name": "\u80CC\u73AF\u6FC0\u5149 x14 \u5224\u5B9A",
+      "Time": 870.6,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "31631"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "525220d0-d46f-4b47-ab11-bc30a047ffdf",
+      "Name": "\u5251\u8FDE\u51FBB/\u6B27\u7C73\u8304\u51B0\u5C01 \u5224\u5B9A",
+      "Time": 873.7,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "31530|31533"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "33c06bd6-05ca-4e7e-b2f8-9559d69a249b",
+      "Name": "\u4F60\u597D\uFF0C\u8FDC\u5904\u4E16\u754C 1 \u5224\u5B9A",
+      "Time": 880.60095,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "33040"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "41726cc6-8f0f-4690-bd9d-035086106b1c",
+      "Name": "\u4F60\u597D\uFF0C\u8FDC\u5904\u4E16\u754C 2 \u5224\u5B9A",
+      "Time": 881.60095,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": null
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "ee600c53-ae30-480a-be47-f74dd0986b84",
+      "Name": "\u4F60\u597D\uFF0C\u8FDC\u5904\u4E16\u754C 3 \u5224\u5B9A",
+      "Time": 882.60095,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": null
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "1717b14f-d60b-4057-98ad-6390232402f7",
+      "Name": "--\u53EF\u9009\u4E2D--",
+      "Time": 885.3,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": null
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "1a24ba12-bb2c-4c86-97b9-db112b7c8f01",
+      "Name": "--\u540C\u6B65-- \u5224\u5B9A",
+      "Time": 887.3,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "31746"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "1132c161-146f-4597-8765-d9a8dd1b7a33",
+      "Name": "\u592A\u9633\u5C04\u7EBF 1 \u5224\u5B9A",
+      "Time": 894.3,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "33197"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "3e5fbfc6-8738-48ae-93ff-2f75dac2d92f",
+      "Name": "\u592A\u9633\u5C04\u7EBF 2 \u5224\u5B9A",
+      "Time": 897.4,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "31490"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "70f6f3b4-e657-4172-b32e-52bc0a39e686",
+      "Name": "--\u540C\u6B65-- \u5224\u5B9A",
+      "Time": 904.6,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "31555"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "140fdd87-5f01-43c7-9b18-52ee6f999e87",
+      "Name": "\u4EE3\u7801\uFF1A\uFF0A\u80FD\uFF0A\uFF08\u6B27\u7C73\u8304\uFF09 \u5224\u5B9A",
+      "Time": 910.7,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "32789"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "89903957-f3fb-4165-abb2-947da2ff281f",
+      "Name": "\u6269\u6563\u6CE2\u52A8\u70AE \u5224\u5B9A",
+      "Time": 927.8,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "31643|31644"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "d361da15-c858-4f0d-bb0b-e5d0b8b65aab",
+      "Name": "\u6269\u6563\u6CE2\u52A8\u70AE \u5224\u5B9A",
+      "Time": 931.9,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "31608|31607"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "3e4486de-606f-41e1-bc74-289443a39e3d",
+      "Name": "--\u4E0D\u53EF\u9009\u4E2D--",
+      "Time": 935.6,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": null
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "2c25e4e0-5c1e-4470-bfef-16b1536d1f4a",
+      "Name": "\u4F60\u597D\uFF0C\u8FDC\u5904\u4E16\u754C 1 \u5224\u5B9A",
+      "Time": 945.4,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "33040"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "5d603a0e-0495-4fb9-bf08-3cde00695835",
+      "Name": "\u63A2\u6D4B\u5F0F\u6CE2\u52A8\u70AE \u5224\u5B9A",
+      "Time": 945.8,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "31597"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "a1c29b00-d698-4b8a-9626-4d4f8211cb10",
+      "Name": "\u4F60\u597D\uFF0C\u8FDC\u5904\u4E16\u754C 2 \u5224\u5B9A",
+      "Time": 946.4,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "33041"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "5dc9a170-dbcc-41e9-90d9-a19cba425d72",
+      "Name": "\u4F60\u597D\uFF0C\u8FDC\u5904\u4E16\u754C 3 \u5224\u5B9A",
+      "Time": 947.4,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": null
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "7fff0fc0-bfab-4f21-a578-67c6e86fe2db",
+      "Name": "\u51B2\u51FB\u6CE2 x2 \u5224\u5B9A",
+      "Time": 961.6,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "32373"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "b3552ffe-bebd-4dc6-b5af-5ba43bee4565",
+      "Name": "\u4F60\u597D\uFF0C\u8FDC\u5904\u4E16\u754C 1 \u5224\u5B9A",
+      "Time": 963.4,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "33040"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "7a96d944-e7b8-43cd-bb92-328086daface",
+      "Name": "\u4F60\u597D\uFF0C\u8FDC\u5904\u4E16\u754C 2 \u5224\u5B9A",
+      "Time": 964.4,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": null
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "ebaea348-8505-4188-a12c-854caebd5e11",
+      "Name": "\u4F60\u597D\uFF0C\u8FDC\u5904\u4E16\u754C 3 \u5224\u5B9A",
+      "Time": 965.4,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": null
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "c40ce366-84ce-4e7c-92e0-4bbaafa32c6c",
+      "Name": "--\u53EF\u9009\u4E2D--",
+      "Time": 967.7,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": null
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "5b11771f-699a-4aa5-be3c-a258e1fe788a",
+      "Name": "\u592A\u9633\u5C04\u7EBF 1 \u5224\u5B9A",
+      "Time": 976.8,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "33197"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "5ad7c9d1-793e-4c08-b67e-2b1e6aad6e58",
+      "Name": "\u592A\u9633\u5C04\u7EBF 2 \u5224\u5B9A",
+      "Time": 979.9,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "31490"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "b2251e87-3017-4946-96b9-556b0058d910",
+      "Name": "--\u540C\u6B65-- \u5224\u5B9A",
+      "Time": 988.2,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "31555"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "9190d4c1-9bd4-49a8-a447-457ab96f00d1",
+      "Name": "\u76F2\u4FE1 \u5224\u5B9A",
+      "Time": 998.5,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "31623"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "9cbd3528-5a4f-41c4-ba2a-06870d9526a2",
+      "Name": "\u76F2\u4FE1 Enrage \u5224\u5B9A",
+      "Time": 999.7,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "32627"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "d54601d8-ab01-459f-bfeb-7db35bdcbaa1",
+      "Name": "--\u540C\u6B65-- \u5224\u5B9A",
+      "Time": 1100,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "32626"
+        },
+        "WindowBefore": 1100,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "4f597dd7-a18a-45ed-9cf5-bb00451ccc6f",
+      "Name": "--\u53EF\u9009\u4E2D--",
+      "Time": 1154.7,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": null
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "3f82e99a-6975-4346-bc94-15b1c4a32b58",
+      "Name": "\u5B87\u5B99\u8BB0\u5FC6 \u5224\u5B9A",
+      "Time": 1167.8,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "31649"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "ac98437c-6f92-4dcc-aa1b-9389751d4818",
+      "Name": "--\u540C\u6B65-- \u5224\u5B9A",
+      "Time": 1171.9,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "31747"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "cdc99c25-2c99-4ed7-b9b7-39c276abc336",
+      "Name": "\u95EA\u5149\u98CE 1 \u5224\u5B9A",
+      "Time": 1172.8,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "32223"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "ca6ab1f4-03fc-4524-b3a9-c488719d0e21",
+      "Name": "--\u540C\u6B65-- \u5224\u5B9A",
+      "Time": 1175.1,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": null
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "d963ea70-0283-41fb-831e-114bea9a47da",
+      "Name": "\u95EA\u5149\u98CE 2 \u5224\u5B9A",
+      "Time": 1176,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": null
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "82a8e517-f54d-490c-907c-818f33f90c11",
+      "Name": "\u5B87\u5B99\u5929\u7BAD \u5224\u5B9A",
+      "Time": 1182.2,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "31650"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "69b82dc1-2216-4944-bed1-354b92f715a4",
+      "Name": "\u5B87\u5B99\u9F99\u708E 1 \u5224\u5B9A",
+      "Time": 1199.3,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "31656"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "05b1d8b4-03ed-46a3-add3-9efb734ed2c3",
+      "Name": "--\u540C\u6B65-- \u5224\u5B9A",
+      "Time": 1206.1,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "31747"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "2a148fbd-e55e-4ad9-8d92-f19c712f7cec",
+      "Name": "\u95EA\u5149\u98CE 1 \u5224\u5B9A",
+      "Time": 1207,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "32223"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "b0210f7c-8dc1-4896-9104-735d93f15446",
+      "Name": "--\u540C\u6B65-- \u5224\u5B9A",
+      "Time": 1209.3,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": null
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "36b1c6ee-c2da-4fa0-85fa-c03f6c4d55a4",
+      "Name": "\u95EA\u5149\u98CE 2 \u5224\u5B9A",
+      "Time": 1210.2,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": null
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "8171dc41-7a94-4ac3-a858-00bfad2a0e28",
+      "Name": "\u6CE2\u52A8\u70AE\uFF1A\u9650\u5236\u89E3\u9664 \u5224\u5B9A",
+      "Time": 1215.4,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "31660"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "4ca9d599-8b09-4eb4-a211-02a21612228b",
+      "Name": "\u6CE2\u52A8\u70AE \u5730\u9762\u9EC4\u5708 1 \u5224\u5B9A",
+      "Time": 1223.4,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": null
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "a8853f82-5829-4c09-85be-3267193e75d1",
+      "Name": "\u6CE2\u52A8\u70AE \u5730\u9762\u9EC4\u5708 2 \u5224\u5B9A",
+      "Time": 1225.2,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": null
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "50250c9e-b1d8-4619-9409-1b742b90b015",
+      "Name": "\u6CE2\u52A8\u70AE \u5730\u9762\u9EC4\u5708 3 \u5224\u5B9A",
+      "Time": 1227.1,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": null
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "10f5b60f-053d-410e-b5ac-0aed2752bdbb",
+      "Name": "\u6CE2\u52A8\u70AE \u5730\u9762\u9EC4\u5708 4 \u5224\u5B9A",
+      "Time": 1229,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": null
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "f31d1870-5ff9-4512-8d83-6e05f42e6d28",
+      "Name": "\u6CE2\u52A8\u70AE \u5730\u9762\u9EC4\u5708 5 \u5224\u5B9A",
+      "Time": 1230.9,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": null
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "3030e015-72d2-4f60-a046-9b4f71df661f",
+      "Name": "\u6CE2\u52A8\u70AE \u5730\u9762\u9EC4\u5708 6 \u5224\u5B9A",
+      "Time": 1232.9,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": null
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "0bf81fa2-5801-4912-a019-fac659df179b",
+      "Name": "\u6CE2\u52A8\u70AE 1 \u5224\u5B9A",
+      "Time": 1236,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "31659"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "05cc5b48-5bb8-4767-9ca2-f161264a03dd",
+      "Name": "\u6CE2\u52A8\u70AE 2 \u5224\u5B9A",
+      "Time": 1238,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": null
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "147992d0-132f-44ce-bf1f-d20dc86022a9",
+      "Name": "--\u540C\u6B65-- \u5224\u5B9A",
+      "Time": 1243.9,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "31657"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "b1f07e32-259b-47e5-8652-fdf20f5fc36f",
+      "Name": "\u6CE2\u52A8\u70AE 1 \u6321\u67AA\u5206\u644A \u5224\u5B9A",
+      "Time": 1244.3,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "31658"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "0af929a9-adbc-42b7-bc27-748c11fc3974",
+      "Name": "--\u540C\u6B65-- \u5224\u5B9A",
+      "Time": 1248.4,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "31747"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "4e7c2d66-036e-4394-ac89-fc379587433f",
+      "Name": "\u95EA\u5149\u98CE 1 \u5224\u5B9A",
+      "Time": 1249.3,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "32223"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "ca424fe5-bdc4-4fa2-af6b-ee2165aba0e1",
+      "Name": "--\u540C\u6B65-- \u5224\u5B9A",
+      "Time": 1251.6,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": null
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "e96978f0-ca39-4aa5-a8be-0fadfa00c89b",
+      "Name": "\u95EA\u5149\u98CE 2 \u5224\u5B9A",
+      "Time": 1252.5,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": null
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "82b3a61d-7235-44a4-aa0b-0467d84188d8",
+      "Name": "\u5B87\u5B99\u5929\u7BAD \u5224\u5B9A",
+      "Time": 1258.7,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "31650"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "99fc06a4-04f7-4d6e-adc2-62afe1dbb2ba",
+      "Name": "\u6CE2\u52A8\u70AE 1 \u5224\u5B9A",
+      "Time": 1269.9,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "31659"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "6ced224c-52d9-4d1a-8f5b-a90457bd81be",
+      "Name": "\u6CE2\u52A8\u70AE 2 \u5224\u5B9A",
+      "Time": 1271.9,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": null
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "9f17a62b-a993-4dd8-a373-998bb262f176",
+      "Name": "--\u540C\u6B65-- \u5224\u5B9A",
+      "Time": 1277.8,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "31657"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "e06ccf14-e8aa-4d90-879a-e43133e5f4d4",
+      "Name": "\u6CE2\u52A8\u70AE 2 \u6321\u67AA\u5206\u644A \u5224\u5B9A",
+      "Time": 1278.2,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "31658"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "97f85ca4-2ab9-41d9-952d-f3bf3921c80c",
+      "Name": "--\u540C\u6B65-- \u5224\u5B9A",
+      "Time": 1282.3,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "31747"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "80e597d3-7093-4aaf-aba1-4c726ece547b",
+      "Name": "\u95EA\u5149\u98CE 1 \u5224\u5B9A",
+      "Time": 1283.2,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "32223"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "7353c66b-8d5b-4239-8ab6-b0460ab4f0b5",
+      "Name": "--\u540C\u6B65-- \u5224\u5B9A",
+      "Time": 1285.5,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": null
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "1040d264-981d-4d7d-9f83-c61eb92efdc8",
+      "Name": "\u95EA\u5149\u98CE 2 \u5224\u5B9A",
+      "Time": 1286.4,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": null
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "ce72df29-6e5b-4867-8dd0-01fbead92523",
+      "Name": "\u6CE2\u52A8\u70AE\uFF1A\u9650\u5236\u89E3\u9664 \u5224\u5B9A",
+      "Time": 1291.7,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "31660"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "1e9e6978-226b-469e-878d-23cc5ad2e403",
+      "Name": "\u6CE2\u52A8\u70AE \u5730\u9762\u9EC4\u5708 1 \u5224\u5B9A",
+      "Time": 1299.7,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": null
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "5a26850d-987c-46d4-9fd6-4235b589d0aa",
+      "Name": "\u6CE2\u52A8\u70AE \u5730\u9762\u9EC4\u5708 2 \u5224\u5B9A",
+      "Time": 1301.5,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": null
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "30f92d9d-7f00-4142-937d-2dde6bc0c443",
+      "Name": "\u6CE2\u52A8\u70AE \u5730\u9762\u9EC4\u5708 3 \u5224\u5B9A",
+      "Time": 1303.4,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": null
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "04f7812b-ab28-4032-9f41-e7861aaa4039",
+      "Name": "\u6CE2\u52A8\u70AE \u5730\u9762\u9EC4\u5708 4 \u5224\u5B9A",
+      "Time": 1305.3,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": null
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "f4232346-5264-47fa-a1aa-ad59ca2eccb8",
+      "Name": "\u6CE2\u52A8\u70AE \u5730\u9762\u9EC4\u5708 5 \u5224\u5B9A",
+      "Time": 1307.2,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": null
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "501e0eeb-0598-49de-b296-4d06567541cc",
+      "Name": "\u6CE2\u52A8\u70AE \u5730\u9762\u9EC4\u5708 6 \u5224\u5B9A",
+      "Time": 1309.2,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": null
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "5cd4b8fd-3aff-436e-a6c2-526bbfa401a6",
+      "Name": "\u5B87\u5B99\u9F99\u708E 2 \u5224\u5B9A",
+      "Time": 1312.401,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "31655"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "7b0a2da8-3a0c-41a1-b39e-353c98741733",
+      "Name": "--\u540C\u6B65-- \u5224\u5B9A",
+      "Time": 1319.2,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "31747"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "e72e3462-a6b9-43cc-a7c3-43c0cdd96d7a",
+      "Name": "\u95EA\u5149\u98CE 1 \u5224\u5B9A",
+      "Time": 1320.1,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "32223"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "2e5b6888-87b3-4adb-91db-da1619a29da2",
+      "Name": "--\u540C\u6B65-- \u5224\u5B9A",
+      "Time": 1322.4,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": null
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "65ecce27-06fe-4a0a-82f7-e5652ee3ffe7",
+      "Name": "\u95EA\u5149\u98CE 2 \u5224\u5B9A",
+      "Time": 1323.2,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": null
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "fd0197fc-1943-4783-8030-a44ae738fb3d",
+      "Name": "\u5B87\u5B99\u6D41\u661F \u5224\u5B9A",
+      "Time": 1331.6,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "31664"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "86b01c36-53cc-4ada-b4d7-479bbfd652b7",
+      "Name": "\u5B87\u5B99\u6D41\u661F \u4E2D\u95F4\u9EC4\u5708 \u5224\u5B9A",
+      "Time": 1335.6,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "31666"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "94b485f5-ca98-4c49-9116-52a2f40d7f44",
+      "Name": "\u5B87\u5B99\u6D41\u661F 1 \u5206\u6563 x4 \u5224\u5B9A",
+      "Time": 1336.7,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "32699"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "e0dd4c04-0f85-4a01-9f25-2454bfb43e8b",
+      "Name": "\u5B87\u5B99\u6D41\u661F 2 \u5206\u6563 x4 \u5224\u5B9A",
+      "Time": 1337.7,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": null
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "f9bdcbaf-ea0d-4e5c-9026-a5469f891173",
+      "Name": "--\u540C\u6B65--",
+      "Time": 1339.3,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": null
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "b2dd8633-1d0e-4f0d-9ae2-d608caa095bc",
+      "Name": "\u5B87\u5B99\u6D41\u661F 1 x4 \u5224\u5B9A",
+      "Time": 1342.7,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "32699"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "a0f581b3-6cc5-4739-88d5-86d372a29174",
+      "Name": "\u5B87\u5B99\u6D41\u661F 2 x4 \u5224\u5B9A",
+      "Time": 1343.7,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": null
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "ac79ccb5-8ded-41de-abda-a2589a1abd73",
+      "Name": "\u5B87\u5B99\u6D41\u661F \u5206\u644A\u6838\u7206 \u5224\u5B9A",
+      "Time": 1354.7,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "31667"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "25b78e1f-bd3e-4644-b31a-f0f5adf80b29",
+      "Name": "\u5B87\u5B99\u6D41\u661F \u5224\u5B9A",
+      "Time": 1355.7,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "31665"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "d64606c1-6089-4a83-bd55-db810810dd6d",
+      "Name": "\u5B87\u5B99\u6D41\u661F Enrage \u5224\u5B9A",
+      "Time": 1357,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "31669"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "41dad205-5cc0-497e-a38c-da9979ca3c64",
+      "Name": "\u9B54\u65701 \u8BFB\u6761",
+      "Time": 1361.7,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "CastStart",
+        "Params": {
+          "ActionId": "31670"
+        },
+        "WindowBefore": 5,
+        "WindowAfter": 5
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "adc5e3f3-7a00-4ae0-b335-c4ed9720745a",
+      "Name": "\u9B54\u6570 \u5224\u5B9A",
+      "Time": 1366.7,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "31670"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "dc9d0e15-7fab-45a5-ae17-3f2dce7c483a",
+      "Name": "\u9B54\u65702 \u8BFB\u6761",
+      "Time": 1377.8,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "CastStart",
+        "Params": {
+          "ActionId": "31670"
+        },
+        "WindowBefore": 5,
+        "WindowAfter": 5
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "85a8873c-94d9-4ae8-8887-ce906d4eb6e9",
+      "Name": "\u9B54\u6570 \u5224\u5B9A",
+      "Time": 1382.8,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "31670"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "400e8a1e-fa60-4153-a928-65164c225c4a",
+      "Name": "\u4EE3\u7801\uFF1A\uFF0A\u80FD\uFF0A Enrage \u8BFB\u6761",
+      "Time": 1391.9,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "CastStart",
+        "Params": {
+          "ActionId": "31648"
+        },
+        "WindowBefore": 50,
+        "WindowAfter": 50
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "deea0119-6eec-48a4-a269-247e4aa8ce25",
+      "Name": "\u4EE3\u7801\uFF1A\uFF0A\u80FD\uFF0A Enrage \u5224\u5B9A",
+      "Time": 1421.9,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "Enabled": true,
+      "Sync": {"MatchTime":null,"JumpTargetTime":null,"IsForceJump":false,
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "31648"
+        },
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },
+    {"IsCommentAnchor":false,"IsTechnicalAnchor":false,"Remark":null,
+      "Guid": "fa2ce300-5470-41a7-926a-71dda7c12ba8",
+      "Name": "Run: ****mi* Enrage \u5224\u5B9A",
+      "Time": 1422,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": true,
+      "Enabled": true,
+      "Sync": null
+    }
+  ],
+  "Entries": [{
+      "Guid": "827e2469-d166-4f1a-abdf-44a3561827fc",
+      "Name": "\u884C\u4E3A\u7EC4 1",
+      "StartAnchorGuid": "0a2a35c3-b6fc-43ce-b257-28d3de9475ca",
+      "Offset": 0,
+      "Enabled": true,
+      "Remark": null,
+      "EntryGroup": {
+        "Id": 1,
+        "Name": "\u884C\u4E3A\u7EC4",
+        "Type": "serial",
+        "Enabled": true,
+        "Remark": null,
+        "DelayMs": null,
+        "Mode": null,
+        "UseAndLogic": null,
+        "Condition": null,
+        "Conditions": null,
+        "Action": null,
+        "Actions": null,
+        "Children": [{
+            "Id": 2,
+            "Name": "\u68C0\u6D4B\u5927\u87D1\u8782\u8840\u91CF\u5C0F\u4E8E5",
+            "Type": "condition",
+            "Enabled": true,
+            "Remark": null,
+            "DelayMs": null,
+            "Mode": "wait",
+            "UseAndLogic": null,
+            "Condition": null,
+            "Conditions": [
+              {
+                "Type": "luli_general_target_condition",
+                "ActionId": null,
+                "Immediate": true,
+                "Target": null,
+                "BuffId": null,
+                "Mode": null,
+                "Regex": null,
+                "Value": null,
+                "Negate": false,
+                "Params": {
+                  "target": "1",
+                  "enabled": "True",
+                  "changeSelectorMode": "False",
+                  "selectorMode": "0",
+                  "needTargetable": "False",
+                  "secondary": "0",
+                  "filters": "[{\u0022Filter\u0022:1,\u0022Remark\u0022:\u0022\u0022,\u0022StrParam1\u0022:\u0022\u0022,\u0022UintParam1\u0022:15708,\u0022FloatParam1\u0022:0,\u0022LeftTime\u0022:0,\u0022CompareType\u0022:5,\u0022BuffCompareType\u0022:3,\u0022Nearest\u0022:false},{\u0022Filter\u0022:3,\u0022Remark\u0022:\u0022\u0022,\u0022StrParam1\u0022:\u0022\u0022,\u0022UintParam1\u0022:0,\u0022FloatParam1\u0022:5,\u0022LeftTime\u0022:0,\u0022CompareType\u0022:5,\u0022BuffCompareType\u0022:3,\u0022Nearest\u0022:false}]"
+                }
+              }
+            ],
+            "Action": null,
+            "Actions": null,
+            "Children": null
+          },{
+            "Id": 3,
+            "Name": "\u5F3A\u5236\u9644\u4F53",
+            "Type": "action",
+            "Enabled": true,
+            "Remark": null,
+            "DelayMs": null,
+            "Mode": null,
+            "UseAndLogic": null,
+            "Condition": null,
+            "Conditions": null,
+            "Action": null,
+            "Actions": [
+              {
+                "Type": "ForceUseSkill",
+                "Qt": null,
+                "Enabled": false,
+                "Message": null,
+                "ActionId": 24394,
+                "SkillType": "OffGcd",
+                "Target": "Self",
+                "HighPriority": false,
+                "TargetMode": null,
+                "Mode": null
+              }
+            ],
+            "Children": null
+          },{
+            "Id": 4,
+            "Name": "\u9644\u4F53\u5C42\u6570\u5C0F\u4E8E2",
+            "Type": "condition",
+            "Enabled": true,
+            "Remark": null,
+            "DelayMs": null,
+            "Mode": "wait",
+            "UseAndLogic": null,
+            "Condition": null,
+            "Conditions": [
+              {
+                "Type": "luli_reaper_trigger_lemure_shroud",
+                "ActionId": null,
+                "Immediate": true,
+                "Target": null,
+                "BuffId": null,
+                "Mode": null,
+                "Regex": null,
+                "Value": null,
+                "Negate": false,
+                "Params": {
+                  "threshold": "2"
+                }
+              }
+            ],
+            "Action": null,
+            "Actions": null,
+            "Children": null
+          },{
+            "Id": 5,
+            "Name": "\u5173\u95ED\u56E2\u5951",
+            "Type": "action",
+            "Enabled": true,
+            "Remark": null,
+            "DelayMs": null,
+            "Mode": null,
+            "UseAndLogic": null,
+            "Condition": null,
+            "Conditions": null,
+            "Action": null,
+            "Actions": [
+              {
+                "Type": "luli_reaper_trigger_qt2",
+                "Qt": null,
+                "Enabled": true,
+                "Message": null,
+                "ActionId": null,
+                "SkillType": null,
+                "Target": null,
+                "HighPriority": false,
+                "TargetMode": null,
+                "Mode": null,
+                "Params": {
+                  "qtValues": "{\u0022\\u56E2\\u5951\u0022:false}"
+                }
+              }
+            ],
+            "Children": null
+          }]
+      }
+    },{
+      "Guid": "a969258d-2636-4326-9a48-c6f09b7ca8dd",
+      "Name": "\u91CD\u7F6Eqt",
+      "StartAnchorGuid": "460d4a1e-4d28-49db-a70f-965869844fcd",
+      "Offset": 0,
+      "Enabled": true,
+      "Remark": null,
+      "EntryGroup": {
+        "Id": 1,
+        "Name": "\u884C\u4E3A\u7EC4",
+        "Type": "serial",
+        "Enabled": true,
+        "Remark": null,
+        "DelayMs": null,
+        "Mode": null,
+        "UseAndLogic": null,
+        "Condition": null,
+        "Conditions": null,
+        "Action": null,
+        "Actions": null,
+        "Children": [{
+            "Id": 2,
+            "Name": "\u65B0\u884C\u4E3A\u8282\u70B9",
+            "Type": "action",
+            "Enabled": true,
+            "Remark": null,
+            "DelayMs": null,
+            "Mode": null,
+            "UseAndLogic": null,
+            "Condition": null,
+            "Conditions": null,
+            "Action": null,
+            "Actions": [
+              {
+                "Type": "luli_reaper_trigger_qt2",
+                "Qt": null,
+                "Enabled": true,
+                "Message": null,
+                "ActionId": null,
+                "SkillType": null,
+                "Target": null,
+                "HighPriority": false,
+                "TargetMode": null,
+                "Mode": null,
+                "Params": {
+                  "qtValues": "{\u0022\\u57FA\\u7840\\u8FDE\u0022:true,\u0022\\u7075\\u9B42\\u5207\\u5272\u0022:true,\u0022\\u6B7B\\u4EA1\\u4E4B\\u5F71\u0022:true,\u0022\\u6536\\u83B7\\u6708\u0022:false,\u0022\\u52FE\\u5203\u0022:false,\u0022\\u5927\\u4E30\\u6536\u0022:true,\u0022\\u9644\\u4F53\u0022:true,\u0022\\u5355\\u9644\\u4F53\u0022:false,\u0022\\u53CC\\u9644\\u4F53\u0022:true,\u0022\\u4E09\\u9644\\u4F53\u0022:false,\u0022\\u66B4\\u98DF\u0022:true,\u0022\\u9690\\u533F\\u6325\\u5272\u0022:true,\u0022\\u503E\\u6CC4\\u9690\\u533F\\u6325\\u5272\u0022:false,\u0022\\u81EA\\u52A8\\u771F\\u5317\u0022:true,\u0022\\u795E\\u79D8\\u73AF\u0022:true,\u0022\\u7206\\u53D1\\u836F\u0022:true,\u0022\\u957F\\u81C2\\u733F\u0022:true,\u0022\\u56E2\\u5951\u0022:true,\u0022\\u53EA\\u6253\\u5927\\u4E30\\u6536\\u9644\\u4F53\u0022:false}"
+                }
+              }
+            ],
+            "Children": null
+          }]
+      }
+    },{
+      "Guid": "3618dfe9-0a92-4077-b019-4ac1f7e774e2",
+      "Name": "\u884C\u4E3A\u7EC4 3",
+      "StartAnchorGuid": "37807d13-34dd-44c9-9cb6-53e23fd080d1",
+      "Offset": 0,
+      "Enabled": true,
+      "Remark": null,
+      "EntryGroup": {
+        "Id": 1,
+        "Name": "\u884C\u4E3A\u7EC4",
+        "Type": "serial",
+        "Enabled": true,
+        "Remark": null,
+        "DelayMs": null,
+        "Mode": null,
+        "UseAndLogic": null,
+        "Condition": null,
+        "Conditions": null,
+        "Action": null,
+        "Actions": null,
+        "Children": [
+          {
+            "Id": 2,
+            "Name": "\u65B0\u884C\u4E3A\u8282\u70B9",
+            "Type": "action",
+            "Enabled": true,
+            "Remark": null,
+            "DelayMs": null,
+            "Mode": null,
+            "UseAndLogic": null,
+            "Condition": null,
+            "Conditions": null,
+            "Action": null,
+            "Actions": [
+              {
+                "Type": "luli_reaper_trigger_qt2",
+                "Qt": null,
+                "Enabled": true,
+                "Message": null,
+                "ActionId": null,
+                "SkillType": null,
+                "Target": null,
+                "HighPriority": false,
+                "TargetMode": null,
+                "Mode": null,
+                "Params": {
+                  "qtValues": "{\u0022\\u6B7B\\u4EA1\\u4E4B\\u5F71\u0022:false,\u0022\\u9690\\u533F\\u6325\\u5272\u0022:false}"
+                }
+              }
+            ],
+            "Children": null
+          }
+        ]
+      }
+    },{
+      "Guid": "5bf2d71b-d598-439b-b2b9-d2a2331114a0",
+      "Name": "\u884C\u4E3A\u7EC4 4",
+      "StartAnchorGuid": "62a0d702-be65-40df-9cdf-5842d9a4f11e",
+      "Offset": 0,
+      "Enabled": true,
+      "Remark": null,
+      "EntryGroup": {
+        "Id": 1,
+        "Name": "\u884C\u4E3A\u7EC4",
+        "Type": "serial",
+        "Enabled": true,
+        "Remark": null,
+        "DelayMs": null,
+        "Mode": null,
+        "UseAndLogic": null,
+        "Condition": null,
+        "Conditions": null,
+        "Action": null,
+        "Actions": null,
+        "Children": [{
+            "Id": 2,
+            "Name": "\u5F3A\u5236\u56E2\u5951\u53CC\u76EE\u6807",
+            "Type": "action",
+            "Enabled": true,
+            "Remark": null,
+            "DelayMs": null,
+            "Mode": null,
+            "UseAndLogic": null,
+            "Condition": null,
+            "Conditions": null,
+            "Action": null,
+            "Actions": [
+              {
+                "Type": "ForceUseSkill",
+                "Qt": null,
+                "Enabled": false,
+                "Message": null,
+                "ActionId": 24398,
+                "SkillType": "Gcd",
+                "Target": "Target",
+                "HighPriority": false,
+                "TargetMode": null,
+                "TargetDataId": 15713,
+                "Mode": null
+              }
+            ],
+            "Children": null
+          },{
+            "Id": 3,
+            "Name": "\u68C0\u6D4B\u56E2\u5951\u547D\u4E2D",
+            "Type": "condition",
+            "Enabled": true,
+            "Remark": null,
+            "DelayMs": null,
+            "Mode": "wait",
+            "UseAndLogic": null,
+            "Condition": null,
+            "Conditions": [
+              {
+                "Type": "ActionEffect",
+                "ActionId": null,
+                "Immediate": false,
+                "Target": null,
+                "BuffId": null,
+                "Mode": null,
+                "Regex": "24398",
+                "Value": null,
+                "Negate": false,
+                "Params": {
+                  "sourceMode": "Any",
+                  "targetMode": "Any"
+                }
+              }
+            ],
+            "Action": null,
+            "Actions": null,
+            "Children": null
+          },{
+            "Id": 4,
+            "Name": "\u5F3A\u5236\u6536\u83B7\u6708\u53CC\u76EE\u6807",
+            "Type": "action",
+            "Enabled": true,
+            "Remark": null,
+            "DelayMs": null,
+            "Mode": null,
+            "UseAndLogic": null,
+            "Condition": null,
+            "Conditions": null,
+            "Action": null,
+            "Actions": [
+              {
+                "Type": "ForceUseSkill",
+                "Qt": null,
+                "Enabled": false,
+                "Message": null,
+                "ActionId": 24388,
+                "SkillType": "Gcd",
+                "Target": "Target",
+                "HighPriority": false,
+                "TargetMode": null,
+                "TargetDataId": 15731,
+                "Mode": null
+              },
+              {
+                "Type": "luli_reaper_trigger_qt2",
+                "Qt": null,
+                "Enabled": true,
+                "Message": null,
+                "ActionId": null,
+                "SkillType": null,
+                "Target": null,
+                "HighPriority": false,
+                "TargetMode": null,
+                "Mode": null,
+                "Params": {
+                  "qtValues": "{\u0022\\u56E2\\u5951\u0022:true}"
+                }
+              }
+            ],
+            "Children": null
+          }]
+      }
+    },{
+      "Guid": "a60a981f-6507-4571-bca2-26a34036dfb7",
+      "Name": "\u7B49\u5F85\u795E\u79D8\u73AF\u8F6C\u597D\u7ACB\u523B\u795E\u79D8\u73AF",
+      "StartAnchorGuid": "37807d13-34dd-44c9-9cb6-53e23fd080d1",
+      "Offset": 0.5,
+      "Enabled": true,
+      "Remark": null,
+      "EntryGroup": {
+        "Id": 1,
+        "Name": "\u884C\u4E3A\u7EC4",
+        "Type": "serial",
+        "Enabled": true,
+        "Remark": null,
+        "DelayMs": null,
+        "Mode": null,
+        "UseAndLogic": null,
+        "Condition": null,
+        "Conditions": null,
+        "Action": null,
+        "Actions": null,
+        "Children": [
+          {
+            "Id": 2,
+            "Name": "\u795E\u79D8\u73AFcd\u003C0",
+            "Type": "condition",
+            "Enabled": true,
+            "Remark": null,
+            "DelayMs": null,
+            "Mode": "wait",
+            "UseAndLogic": null,
+            "Condition": null,
+            "Conditions": [
+              {
+                "Type": "SkillCooldown",
+                "ActionId": 24405,
+                "Immediate": false,
+                "Target": null,
+                "BuffId": null,
+                "Mode": "\u003C=",
+                "Regex": null,
+                "Value": 0,
+                "Negate": false
+              }
+            ],
+            "Action": null,
+            "Actions": null,
+            "Children": null
+          },
+          {
+            "Id": 3,
+            "Name": "\u5F3A\u5236\u795E\u79D8\u73AF",
+            "Type": "action",
+            "Enabled": true,
+            "Remark": null,
+            "DelayMs": null,
+            "Mode": null,
+            "UseAndLogic": null,
+            "Condition": null,
+            "Conditions": null,
+            "Action": null,
+            "Actions": [
+              {
+                "Type": "ForceUseSkill",
+                "Qt": null,
+                "Enabled": false,
+                "Message": null,
+                "ActionId": 24405,
+                "SkillType": "OffGcd",
+                "Target": "Self",
+                "HighPriority": false,
+                "TargetMode": null,
+                "Mode": null
+              }
+            ],
+            "Children": null
+          }
+        ]
+      }
+    },{
+      "Guid": "d0accf3c-777d-494c-bcd0-2b4658f09160",
+      "Name": "\u8FDB\u5165p2\u4FEE\u6539qt",
+      "StartAnchorGuid": "949146e1-5d5e-4a03-a0f2-96483bf0dd12",
+      "Offset": 0,
+      "Enabled": true,
+      "Remark": null,
+      "EntryGroup": {
+        "Id": 1,
+        "Name": "\u884C\u4E3A\u7EC4",
+        "Type": "serial",
+        "Enabled": true,
+        "Remark": null,
+        "DelayMs": null,
+        "Mode": null,
+        "UseAndLogic": null,
+        "Condition": null,
+        "Conditions": null,
+        "Action": null,
+        "Actions": null,
+        "Children": [{
+            "Id": 2,
+            "Name": "\u65B0\u884C\u4E3A\u8282\u70B9",
+            "Type": "action",
+            "Enabled": true,
+            "Remark": null,
+            "DelayMs": null,
+            "Mode": null,
+            "UseAndLogic": null,
+            "Condition": null,
+            "Conditions": null,
+            "Action": null,
+            "Actions": [
+              {
+                "Type": "luli_reaper_trigger_qt2",
+                "Qt": null,
+                "Enabled": true,
+                "Message": null,
+                "ActionId": null,
+                "SkillType": null,
+                "Target": null,
+                "HighPriority": false,
+                "TargetMode": null,
+                "Mode": null,
+                "Params": {
+                  "qtValues": "{\u0022\\u6B7B\\u4EA1\\u4E4B\\u5F71\u0022:true,\u0022\\u7206\\u53D1\\u836F\u0022:false,\u0022\\u9690\\u533F\\u6325\\u5272\u0022:true}"
+                }
+              }
+            ],
+            "Children": null
+          }]
+      }
+    },{
+      "Guid": "ed804fd6-5179-4ec7-9916-143df1139a11",
+      "Name": "\u884C\u4E3A\u7EC4 7",
+      "StartAnchorGuid": "fbc1b941-f450-4332-bd76-c88032adb41e",
+      "Offset": 0,
+      "Enabled": true,
+      "Remark": null,
+      "EntryGroup": {
+        "Id": 1,
+        "Name": "\u884C\u4E3A\u7EC4",
+        "Type": "serial",
+        "Enabled": true,
+        "Remark": null,
+        "DelayMs": null,
+        "Mode": null,
+        "UseAndLogic": null,
+        "Condition": null,
+        "Conditions": null,
+        "Action": null,
+        "Actions": null,
+        "Children": [
+          {
+            "Id": 2,
+            "Name": "\u65B0\u884C\u4E3A\u8282\u70B9",
+            "Type": "action",
+            "Enabled": true,
+            "Remark": null,
+            "DelayMs": null,
+            "Mode": null,
+            "UseAndLogic": null,
+            "Condition": null,
+            "Conditions": null,
+            "Action": null,
+            "Actions": [
+              {
+                "Type": "luli_reaper_trigger_qt2",
+                "Qt": null,
+                "Enabled": true,
+                "Message": null,
+                "ActionId": null,
+                "SkillType": null,
+                "Target": null,
+                "HighPriority": false,
+                "TargetMode": null,
+                "Mode": null,
+                "Params": {
+                  "qtValues": "{\u0022\\u9690\\u533F\\u6325\\u5272\u0022:false,\u0022\\u6B7B\\u4EA1\\u4E4B\\u5F71\u0022:false}"
+                }
+              }
+            ],
+            "Children": null
+          }
+        ]
+      }
+    },{
+      "Guid": "8c1ed249-155f-4ed8-8a24-c92369ef524c",
+      "Name": "\u884C\u4E3A\u7EC4 8",
+      "StartAnchorGuid": "3ef8a6d2-ccfc-4b7e-a516-292aa1c318b3",
+      "Offset": 12,
+      "Enabled": true,
+      "Remark": null,
+      "EntryGroup": {
+        "Id": 1,
+        "Name": "\u884C\u4E3A\u7EC4",
+        "Type": "serial",
+        "Enabled": true,
+        "Remark": null,
+        "DelayMs": null,
+        "Mode": null,
+        "UseAndLogic": null,
+        "Condition": null,
+        "Conditions": null,
+        "Action": null,
+        "Actions": null,
+        "Children": [
+          {
+            "Id": 2,
+            "Name": "\u65B0\u884C\u4E3A\u8282\u70B9",
+            "Type": "action",
+            "Enabled": true,
+            "Remark": null,
+            "DelayMs": null,
+            "Mode": null,
+            "UseAndLogic": null,
+            "Condition": null,
+            "Conditions": null,
+            "Action": null,
+            "Actions": [
+              {
+                "Type": "luli_reaper_trigger_qt2",
+                "Qt": null,
+                "Enabled": true,
+                "Message": null,
+                "ActionId": null,
+                "SkillType": null,
+                "Target": null,
+                "HighPriority": false,
+                "TargetMode": null,
+                "Mode": null,
+                "Params": {
+                  "qtValues": "{\u0022\\u9644\\u4F53\u0022:false}"
+                }
+              }
+            ],
+            "Children": null
+          }
+        ]
+      }
+    },{
+      "Guid": "b5023c24-e3c6-43de-be46-8b2062491fa5",
+      "Name": "\u884C\u4E3A\u7EC4 9",
+      "StartAnchorGuid": "e61bc34f-395f-4d83-8ac2-b7f9c211c116",
+      "Offset": 1,
+      "Enabled": true,
+      "Remark": null,
+      "EntryGroup": {
+        "Id": 1,
+        "Name": "\u884C\u4E3A\u7EC4",
+        "Type": "serial",
+        "Enabled": true,
+        "Remark": null,
+        "DelayMs": null,
+        "Mode": null,
+        "UseAndLogic": null,
+        "Condition": null,
+        "Conditions": null,
+        "Action": null,
+        "Actions": null,
+        "Children": [{
+            "Id": 2,
+            "Name": "\u65B0\u884C\u4E3A\u8282\u70B9",
+            "Type": "action",
+            "Enabled": true,
+            "Remark": null,
+            "DelayMs": null,
+            "Mode": null,
+            "UseAndLogic": null,
+            "Condition": null,
+            "Conditions": null,
+            "Action": null,
+            "Actions": [
+              {
+                "Type": "luli_reaper_trigger_qt2",
+                "Qt": null,
+                "Enabled": true,
+                "Message": null,
+                "ActionId": null,
+                "SkillType": null,
+                "Target": null,
+                "HighPriority": false,
+                "TargetMode": null,
+                "Mode": null,
+                "Params": {
+                  "qtValues": "{\u0022\\u6B7B\\u4EA1\\u4E4B\\u5F71\u0022:true,\u0022\\u9690\\u533F\\u6325\\u5272\u0022:true}"
+                }
+              }
+            ],
+            "Children": null
+          }]
+      }
+    },{
+      "Guid": "49c28286-b0e1-432e-97d4-0cf5d9556c7f",
+      "Name": "\u884C\u4E3A\u7EC4 10",
+      "StartAnchorGuid": "a7027a70-38ef-4a46-b0ae-c9c71547af19",
+      "Offset": 4,
+      "Enabled": true,
+      "Remark": null,
+      "EntryGroup": {
+        "Id": 1,
+        "Name": "\u884C\u4E3A\u7EC4",
+        "Type": "serial",
+        "Enabled": true,
+        "Remark": null,
+        "DelayMs": null,
+        "Mode": null,
+        "UseAndLogic": null,
+        "Condition": null,
+        "Conditions": null,
+        "Action": null,
+        "Actions": null,
+        "Children": [{
+            "Id": 2,
+            "Name": "\u65B0\u6761\u4EF6\u8282\u70B9",
+            "Type": "condition",
+            "Enabled": true,
+            "Remark": null,
+            "DelayMs": null,
+            "Mode": "wait",
+            "UseAndLogic": null,
+            "Condition": null,
+            "Conditions": [
+              {
+                "Type": "luli_reaper_shroud_gauge",
+                "ActionId": null,
+                "Immediate": true,
+                "Target": null,
+                "BuffId": null,
+                "Mode": null,
+                "Regex": null,
+                "Value": null,
+                "Negate": false,
+                "Params": {
+                  "operator": "3",
+                  "value": "50",
+                  "useRange": "False",
+                  "minValue": "0",
+                  "maxValue": "0"
+                }
+              }
+            ],
+            "Action": null,
+            "Actions": null,
+            "Children": null
+          },{
+            "Id": 3,
+            "Name": "\u65B0\u884C\u4E3A\u8282\u70B9",
+            "Type": "action",
+            "Enabled": true,
+            "Remark": null,
+            "DelayMs": null,
+            "Mode": null,
+            "UseAndLogic": null,
+            "Condition": null,
+            "Conditions": null,
+            "Action": null,
+            "Actions": [
+              {
+                "Type": "ForceUseSkill",
+                "Qt": null,
+                "Enabled": false,
+                "Message": null,
+                "ActionId": 24394,
+                "SkillType": "OffGcd",
+                "Target": "Self",
+                "HighPriority": false,
+                "TargetMode": null,
+                "Mode": null
+              }
+            ],
+            "Children": null
+          },{
+            "Id": 4,
+            "Name": "\u65B0\u6761\u4EF6\u8282\u70B9",
+            "Type": "condition",
+            "Enabled": true,
+            "Remark": null,
+            "DelayMs": null,
+            "Mode": "wait",
+            "UseAndLogic": null,
+            "Condition": null,
+            "Conditions": [
+              {
+                "Type": "ActionEffect",
+                "ActionId": null,
+                "Immediate": false,
+                "Target": null,
+                "BuffId": null,
+                "Mode": null,
+                "Regex": "24398",
+                "Value": null,
+                "Negate": false,
+                "Params": {
+                  "sourceMode": "Any",
+                  "targetMode": "Any"
+                }
+              },
+              {
+                "Type": "luli_general_target_condition",
+                "ActionId": null,
+                "Immediate": true,
+                "Target": null,
+                "BuffId": null,
+                "Mode": null,
+                "Regex": null,
+                "Value": null,
+                "Negate": false,
+                "Params": {
+                  "target": "0",
+                  "enabled": "True",
+                  "changeSelectorMode": "False",
+                  "selectorMode": "0",
+                  "needTargetable": "False",
+                  "secondary": "0",
+                  "filters": "[{\u0022Filter\u0022:4,\u0022Remark\u0022:\u0022\u0022,\u0022StrParam1\u0022:\u0022\u0022,\u0022UintParam1\u0022:2594,\u0022FloatParam1\u0022:0,\u0022LeftTime\u0022:0,\u0022CompareType\u0022:5,\u0022BuffCompareType\u0022:3,\u0022Nearest\u0022:false}]"
+                }
+              }
+            ],
+            "Action": null,
+            "Actions": null,
+            "Children": null
+          },{
+            "Id": 5,
+            "Name": "\u65B0\u884C\u4E3A\u8282\u70B9",
+            "Type": "action",
+            "Enabled": true,
+            "Remark": null,
+            "DelayMs": null,
+            "Mode": null,
+            "UseAndLogic": null,
+            "Condition": null,
+            "Conditions": null,
+            "Action": null,
+            "Actions": [
+              {
+                "Type": "ForceUseSkill",
+                "Qt": null,
+                "Enabled": false,
+                "Message": null,
+                "ActionId": 24388,
+                "SkillType": "Gcd",
+                "Target": "Target",
+                "HighPriority": false,
+                "TargetMode": null,
+                "Mode": null
+              }
+            ],
+            "Children": null
+          }]
+      }
+    },{
+      "Guid": "ae38a929-f4f5-4bb1-883b-1da7c75971bd",
+      "Name": "\u884C\u4E3A\u7EC4 11",
+      "StartAnchorGuid": "4374b54a-fd0d-43e6-afcc-136dcb780264",
+      "Offset": 4,
+      "Enabled": true,
+      "Remark": null,
+      "EntryGroup": {
+        "Id": 1,
+        "Name": "\u884C\u4E3A\u7EC4",
+        "Type": "serial",
+        "Enabled": true,
+        "Remark": null,
+        "DelayMs": null,
+        "Mode": null,
+        "UseAndLogic": null,
+        "Condition": null,
+        "Conditions": null,
+        "Action": null,
+        "Actions": null,
+        "Children": [{
+            "Id": 2,
+            "Name": "\u65B0\u6761\u4EF6\u8282\u70B9",
+            "Type": "condition",
+            "Enabled": true,
+            "Remark": null,
+            "DelayMs": null,
+            "Mode": "wait",
+            "UseAndLogic": null,
+            "Condition": null,
+            "Conditions": [
+              {
+                "Type": "luli_general_target_condition",
+                "ActionId": null,
+                "Immediate": true,
+                "Target": null,
+                "BuffId": null,
+                "Mode": null,
+                "Regex": null,
+                "Value": null,
+                "Negate": false,
+                "Params": {
+                  "target": "1",
+                  "enabled": "True",
+                  "changeSelectorMode": "False",
+                  "selectorMode": "0",
+                  "needTargetable": "False",
+                  "secondary": "0",
+                  "filters": "[{\u0022Filter\u0022:3,\u0022Remark\u0022:\u0022\u0022,\u0022StrParam1\u0022:\u0022\u0022,\u0022UintParam1\u0022:0,\u0022FloatParam1\u0022:3,\u0022LeftTime\u0022:0,\u0022CompareType\u0022:5,\u0022BuffCompareType\u0022:3,\u0022Nearest\u0022:false}]"
+                }
+              }
+            ],
+            "Action": null,
+            "Actions": null,
+            "Children": null
+          },{
+            "Id": 3,
+            "Name": "\u65B0\u884C\u4E3A\u8282\u70B9",
+            "Type": "action",
+            "Enabled": true,
+            "Remark": null,
+            "DelayMs": null,
+            "Mode": null,
+            "UseAndLogic": null,
+            "Condition": null,
+            "Conditions": null,
+            "Action": null,
+            "Actions": [
+              {
+                "Type": "luli_reaper_trigger_qt2",
+                "Qt": null,
+                "Enabled": true,
+                "Message": null,
+                "ActionId": null,
+                "SkillType": null,
+                "Target": null,
+                "HighPriority": false,
+                "TargetMode": null,
+                "Mode": null,
+                "Params": {
+                  "qtValues": "{\u0022\\u9690\\u533F\\u6325\\u5272\u0022:false,\u0022\\u6B7B\\u4EA1\\u4E4B\\u5F71\u0022:false}"
+                }
+              },
+              {
+                "Type": "ForceUseSkill",
+                "Qt": null,
+                "Enabled": false,
+                "Message": null,
+                "ActionId": 24385,
+                "SkillType": "Gcd",
+                "Target": "Target",
+                "HighPriority": false,
+                "TargetMode": null,
+                "Mode": null
+              }
+            ],
+            "Children": null
+          }]
+      }
+    },{
+      "Guid": "0a3f0568-6993-4a33-95ee-76b29d93d555",
+      "Name": "\u884C\u4E3A\u7EC4 12",
+      "StartAnchorGuid": "707126e9-925a-496b-a519-34eea069e835",
+      "Offset": 0,
+      "Enabled": true,
+      "Remark": null,
+      "EntryGroup": {
+        "Id": 1,
+        "Name": "\u884C\u4E3A\u7EC4",
+        "Type": "serial",
+        "Enabled": true,
+        "Remark": null,
+        "DelayMs": null,
+        "Mode": null,
+        "UseAndLogic": null,
+        "Condition": null,
+        "Conditions": null,
+        "Action": null,
+        "Actions": null,
+        "Children": [
+          {
+            "Id": 2,
+            "Name": "\u65B0\u884C\u4E3A\u8282\u70B9",
+            "Type": "action",
+            "Enabled": true,
+            "Remark": null,
+            "DelayMs": null,
+            "Mode": null,
+            "UseAndLogic": null,
+            "Condition": null,
+            "Conditions": null,
+            "Action": null,
+            "Actions": [
+              {
+                "Type": "luli_reaper_trigger_qt2",
+                "Qt": null,
+                "Enabled": true,
+                "Message": null,
+                "ActionId": null,
+                "SkillType": null,
+                "Target": null,
+                "HighPriority": false,
+                "TargetMode": null,
+                "Mode": null,
+                "Params": {
+                  "qtValues": "{\u0022\\u53EA\\u6253\\u5927\\u4E30\\u6536\\u9644\\u4F53\u0022:true,\u0022\\u5927\\u4E30\\u6536\u0022:false}"
+                }
+              }
+            ],
+            "Children": null
+          }
+        ]
+      }
+    },{
+      "Guid": "8169c9ef-fd56-4bc9-b4ed-b37df423bf92",
+      "Name": "\u884C\u4E3A\u7EC4 13",
+      "StartAnchorGuid": "d56d9142-d1df-4c48-8d95-bc3d3257cf29",
+      "Offset": 0,
+      "Enabled": true,
+      "Remark": null,
+      "EntryGroup": {
+        "Id": 1,
+        "Name": "\u884C\u4E3A\u7EC4",
+        "Type": "serial",
+        "Enabled": true,
+        "Remark": null,
+        "DelayMs": null,
+        "Mode": null,
+        "UseAndLogic": null,
+        "Condition": null,
+        "Conditions": null,
+        "Action": null,
+        "Actions": null,
+        "Children": [
+          {
+            "Id": 2,
+            "Name": "\u65B0\u6761\u4EF6\u8282\u70B9",
+            "Type": "condition",
+            "Enabled": true,
+            "Remark": null,
+            "DelayMs": null,
+            "Mode": "wait",
+            "UseAndLogic": null,
+            "Condition": null,
+            "Conditions": [
+              {
+                "Type": "luli_general_target_condition",
+                "ActionId": null,
+                "Immediate": true,
+                "Target": null,
+                "BuffId": null,
+                "Mode": null,
+                "Regex": null,
+                "Value": null,
+                "Negate": false,
+                "Params": {
+                  "target": "0",
+                  "enabled": "True",
+                  "changeSelectorMode": "False",
+                  "selectorMode": "0",
+                  "needTargetable": "False",
+                  "secondary": "0",
+                  "filters": "[{\u0022Filter\u0022:4,\u0022Remark\u0022:\u0022\u0022,\u0022StrParam1\u0022:\u0022\u0022,\u0022UintParam1\u0022:3905,\u0022FloatParam1\u0022:0,\u0022LeftTime\u0022:2000,\u0022CompareType\u0022:5,\u0022BuffCompareType\u0022:5,\u0022Nearest\u0022:false}]"
+                }
+              }
+            ],
+            "Action": null,
+            "Actions": null,
+            "Children": null
+          },
+          {
+            "Id": 3,
+            "Name": "\u65B0\u884C\u4E3A\u8282\u70B9",
+            "Type": "action",
+            "Enabled": true,
+            "Remark": null,
+            "DelayMs": null,
+            "Mode": null,
+            "UseAndLogic": null,
+            "Condition": null,
+            "Conditions": null,
+            "Action": null,
+            "Actions": [
+              {
+                "Type": "ForceUseSkill",
+                "Qt": null,
+                "Enabled": false,
+                "Message": null,
+                "ActionId": 24394,
+                "SkillType": "OffGcd",
+                "Target": "Self",
+                "HighPriority": false,
+                "TargetMode": null,
+                "Mode": null
+              }
+            ],
+            "Children": null
+          }
+        ]
+      }
+    },{
+      "Guid": "d953c0c5-0136-432e-9bac-63158bf4813c",
+      "Name": "\u884C\u4E3A\u7EC4 14",
+      "StartAnchorGuid": "d470fa3b-2fc0-4c78-9872-e6bf7f7f3e2f",
+      "Offset": 0,
+      "Enabled": true,
+      "Remark": null,
+      "EntryGroup": {
+        "Id": 1,
+        "Name": "\u884C\u4E3A\u7EC4",
+        "Type": "serial",
+        "Enabled": true,
+        "Remark": null,
+        "DelayMs": null,
+        "Mode": null,
+        "UseAndLogic": null,
+        "Condition": null,
+        "Conditions": null,
+        "Action": null,
+        "Actions": null,
+        "Children": [{
+            "Id": 2,
+            "Name": "\u65B0\u884C\u4E3A\u8282\u70B9",
+            "Type": "action",
+            "Enabled": true,
+            "Remark": null,
+            "DelayMs": null,
+            "Mode": null,
+            "UseAndLogic": null,
+            "Condition": null,
+            "Conditions": null,
+            "Action": null,
+            "Actions": [
+              {
+                "Type": "luli_reaper_trigger_qt2",
+                "Qt": null,
+                "Enabled": true,
+                "Message": null,
+                "ActionId": null,
+                "SkillType": null,
+                "Target": null,
+                "HighPriority": false,
+                "TargetMode": null,
+                "Mode": null,
+                "Params": {
+                  "qtValues": "{\u0022\\u9690\\u533F\\u6325\\u5272\u0022:true,\u0022\\u9644\\u4F53\u0022:true,\u0022\\u5927\\u4E30\\u6536\u0022:true,\u0022\\u6B7B\\u4EA1\\u4E4B\\u5F71\u0022:true,\u0022\\u53EA\\u6253\\u5927\\u4E30\\u6536\\u9644\\u4F53\u0022:false,\u0022\\u7206\\u53D1\\u836F\u0022:true}"
+                }
+              }
+            ],
+            "Children": null
+          }]
+      }
+    },{
+      "Guid": "faf1bf12-a9bb-41a7-aaa9-8aa9c515d36c",
+      "Name": "\u505C\u624B\u76F8\u5173",
+      "StartAnchorGuid": "626cbafd-6bf9-48bd-82c2-20a0b81a044e",
+      "Offset": 0,
+      "Enabled": true,
+      "Remark": null,
+      "EntryGroup": {
+        "Id": 1,
+        "Name": "\u884C\u4E3A\u7EC4",
+        "Type": "serial",
+        "Enabled": true,
+        "Remark": null,
+        "DelayMs": null,
+        "Mode": null,
+        "UseAndLogic": null,
+        "Condition": null,
+        "Conditions": null,
+        "Action": null,
+        "Actions": null,
+        "Children": [
+          {
+            "Id": 2,
+            "Name": "\u65B0\u6761\u4EF6\u8282\u70B9",
+            "Type": "condition",
+            "Enabled": true,
+            "Remark": null,
+            "DelayMs": null,
+            "Mode": "wait",
+            "UseAndLogic": false,
+            "Condition": null,
+            "Conditions": [
+              {
+                "Type": "luli_general_target_condition",
+                "ActionId": null,
+                "Immediate": true,
+                "Target": null,
+                "BuffId": null,
+                "Mode": null,
+                "Regex": null,
+                "Value": null,
+                "Negate": false,
+                "Params": {
+                  "target": "1",
+                  "enabled": "True",
+                  "changeSelectorMode": "False",
+                  "selectorMode": "0",
+                  "needTargetable": "False",
+                  "secondary": "0",
+                  "filters": "[{\u0022Filter\u0022:4,\u0022Remark\u0022:\u0022\u0022,\u0022StrParam1\u0022:\u0022\u0022,\u0022UintParam1\u0022:3452,\u0022FloatParam1\u0022:0,\u0022LeftTime\u0022:1,\u0022CompareType\u0022:5,\u0022BuffCompareType\u0022:3,\u0022Nearest\u0022:false}]"
+                }
+              },
+              {
+                "Type": "luli_general_target_condition",
+                "ActionId": null,
+                "Immediate": true,
+                "Target": null,
+                "BuffId": null,
+                "Mode": null,
+                "Regex": null,
+                "Value": null,
+                "Negate": false,
+                "Params": {
+                  "target": "1",
+                  "enabled": "True",
+                  "changeSelectorMode": "False",
+                  "selectorMode": "0",
+                  "needTargetable": "False",
+                  "secondary": "0",
+                  "filters": "[{\u0022Filter\u0022:4,\u0022Remark\u0022:\u0022\u0022,\u0022StrParam1\u0022:\u0022\u0022,\u0022UintParam1\u0022:3453,\u0022FloatParam1\u0022:0,\u0022LeftTime\u0022:2,\u0022CompareType\u0022:5,\u0022BuffCompareType\u0022:3,\u0022Nearest\u0022:false}]"
+                }
+              }
+            ],
+            "Action": null,
+            "Actions": null,
+            "Children": null
+          },
+          {
+            "Id": 3,
+            "Name": "\u5EF6\u8FDF8s",
+            "Type": "delay",
+            "Enabled": true,
+            "Remark": null,
+            "DelayMs": 8000,
+            "Mode": null,
+            "UseAndLogic": null,
+            "Condition": null,
+            "Conditions": null,
+            "Action": null,
+            "Actions": null,
+            "Children": null
+          },
+          {
+            "Id": 4,
+            "Name": "\u505C\u624B",
+            "Type": "action",
+            "Enabled": true,
+            "Remark": null,
+            "DelayMs": null,
+            "Mode": null,
+            "UseAndLogic": null,
+            "Condition": null,
+            "Conditions": null,
+            "Action": null,
+            "Actions": [
+              {
+                "Type": "ToggleAcr",
+                "Qt": null,
+                "Enabled": false,
+                "Message": "Hold",
+                "ActionId": null,
+                "SkillType": null,
+                "Target": null,
+                "HighPriority": false,
+                "TargetMode": null,
+                "Mode": null
+              }
+            ],
+            "Children": null
+          },
+          {
+            "Id": 5,
+            "Name": "\u5EF6\u8FDF2s",
+            "Type": "delay",
+            "Enabled": true,
+            "Remark": null,
+            "DelayMs": 2000,
+            "Mode": null,
+            "UseAndLogic": null,
+            "Condition": null,
+            "Conditions": null,
+            "Action": null,
+            "Actions": null,
+            "Children": null
+          },
+          {
+            "Id": 6,
+            "Name": "\u52A8\u624B\uFF01",
+            "Type": "action",
+            "Enabled": true,
+            "Remark": null,
+            "DelayMs": null,
+            "Mode": null,
+            "UseAndLogic": null,
+            "Condition": null,
+            "Conditions": null,
+            "Action": null,
+            "Actions": [
+              {
+                "Type": "ToggleAcr",
+                "Qt": null,
+                "Enabled": false,
+                "Message": "Enable",
+                "ActionId": null,
+                "SkillType": null,
+                "Target": null,
+                "HighPriority": false,
+                "TargetMode": null,
+                "Mode": null
+              }
+            ],
+            "Children": null
+          }
+        ]
+      }
+    },{
+      "Guid": "e7b572c7-d454-49a0-af75-c6c201218270",
+      "Name": "\u884C\u4E3A\u7EC4 16",
+      "StartAnchorGuid": "97f7f98d-cafc-4d3f-be02-7426ec4d9632",
+      "Offset": 3,
+      "Enabled": true,
+      "Remark": null,
+      "EntryGroup": {
+        "Id": 1,
+        "Name": "\u884C\u4E3A\u7EC4",
+        "Type": "serial",
+        "Enabled": true,
+        "Remark": null,
+        "DelayMs": null,
+        "Mode": null,
+        "UseAndLogic": null,
+        "Condition": null,
+        "Conditions": null,
+        "Action": null,
+        "Actions": null,
+        "Children": [{
+            "Id": 2,
+            "Name": "\u87D1\u8782\u8840\u91CF\u5C0F\u4E8E2",
+            "Type": "condition",
+            "Enabled": true,
+            "Remark": null,
+            "DelayMs": null,
+            "Mode": "wait",
+            "UseAndLogic": null,
+            "Condition": null,
+            "Conditions": [
+              {
+                "Type": "luli_general_target_condition",
+                "ActionId": null,
+                "Immediate": true,
+                "Target": null,
+                "BuffId": null,
+                "Mode": null,
+                "Regex": null,
+                "Value": null,
+                "Negate": false,
+                "Params": {
+                  "target": "1",
+                  "enabled": "True",
+                  "changeSelectorMode": "False",
+                  "selectorMode": "0",
+                  "needTargetable": "False",
+                  "secondary": "0",
+                  "filters": "[{\u0022Filter\u0022:3,\u0022Remark\u0022:\u0022\u0022,\u0022StrParam1\u0022:\u0022\u0022,\u0022UintParam1\u0022:0,\u0022FloatParam1\u0022:2,\u0022LeftTime\u0022:0,\u0022CompareType\u0022:5,\u0022BuffCompareType\u0022:3,\u0022Nearest\u0022:false}]"
+                }
+              }
+            ],
+            "Action": null,
+            "Actions": null,
+            "Children": null
+          },{
+            "Id": 3,
+            "Name": "\u5173\u95ED\u70D9\u5370/\u6325\u5272/\u66B4\u98DF",
+            "Type": "action",
+            "Enabled": true,
+            "Remark": null,
+            "DelayMs": null,
+            "Mode": null,
+            "UseAndLogic": null,
+            "Condition": null,
+            "Conditions": null,
+            "Action": null,
+            "Actions": [
+              {
+                "Type": "luli_reaper_trigger_qt2",
+                "Qt": null,
+                "Enabled": true,
+                "Message": null,
+                "ActionId": null,
+                "SkillType": null,
+                "Target": null,
+                "HighPriority": false,
+                "TargetMode": null,
+                "Mode": null,
+                "Params": {
+                  "qtValues": "{\u0022\\u9690\\u533F\\u6325\\u5272\u0022:false,\u0022\\u6B7B\\u4EA1\\u4E4B\\u5F71\u0022:false,\u0022\\u66B4\\u98DF\u0022:false}"
+                }
+              }
+            ],
+            "Children": null
+          }]
+      }
+    },{
+      "Guid": "513e5d48-1c29-4d81-aa77-c9d31154b36d",
+      "Name": "\u884C\u4E3A\u7EC4 19",
+      "StartAnchorGuid": "1f75e23e-6cd7-43a3-b159-c34b0eaf7182",
+      "Offset": 0,
+      "Enabled": true,
+      "Remark": null,
+      "EntryGroup": {
+        "Id": 1,
+        "Name": "\u884C\u4E3A\u7EC4",
+        "Type": "serial",
+        "Enabled": true,
+        "Remark": null,
+        "DelayMs": null,
+        "Mode": null,
+        "UseAndLogic": null,
+        "Condition": null,
+        "Conditions": null,
+        "Action": null,
+        "Actions": null,
+        "Children": [{
+            "Id": 2,
+            "Name": "\u65B0\u884C\u4E3A\u8282\u70B9",
+            "Type": "action",
+            "Enabled": true,
+            "Remark": null,
+            "DelayMs": null,
+            "Mode": null,
+            "UseAndLogic": null,
+            "Condition": null,
+            "Conditions": null,
+            "Action": null,
+            "Actions": [
+              {
+                "Type": "luli_reaper_trigger_qt2",
+                "Qt": null,
+                "Enabled": true,
+                "Message": null,
+                "ActionId": null,
+                "SkillType": null,
+                "Target": null,
+                "HighPriority": false,
+                "TargetMode": null,
+                "Mode": null,
+                "Params": {
+                  "qtValues": "{\u0022\\u66B4\\u98DF\u0022:true,\u0022\\u6B7B\\u4EA1\\u4E4B\\u5F71\u0022:true,\u0022\\u9690\\u533F\\u6325\\u5272\u0022:true,\u0022\\u7206\\u53D1\\u836F\u0022:false}"
+                }
+              }
+            ],
+            "Children": null
+          }]
+      }
+    },{
+      "Guid": "d5ce509f-5a8c-4804-9a8e-0b4de65f2968",
+      "Name": "\u884C\u4E3A\u7EC4 20",
+      "StartAnchorGuid": "9191cf99-0111-44a9-a9fc-41fb443e589a",
+      "Offset": 0,
+      "Enabled": true,
+      "Remark": null,
+      "EntryGroup": {
+        "Id": 1,
+        "Name": "\u884C\u4E3A\u7EC4",
+        "Type": "serial",
+        "Enabled": true,
+        "Remark": null,
+        "DelayMs": null,
+        "Mode": null,
+        "UseAndLogic": null,
+        "Condition": null,
+        "Conditions": null,
+        "Action": null,
+        "Actions": null,
+        "Children": [
+          {
+            "Id": 2,
+            "Name": "\u65B0\u884C\u4E3A\u8282\u70B9",
+            "Type": "action",
+            "Enabled": true,
+            "Remark": null,
+            "DelayMs": null,
+            "Mode": null,
+            "UseAndLogic": null,
+            "Condition": null,
+            "Conditions": null,
+            "Action": null,
+            "Actions": [
+              {
+                "Type": "luli_reaper_trigger_qt2",
+                "Qt": null,
+                "Enabled": true,
+                "Message": null,
+                "ActionId": null,
+                "SkillType": null,
+                "Target": null,
+                "HighPriority": false,
+                "TargetMode": null,
+                "Mode": null,
+                "Params": {
+                  "qtValues": "{\u0022\\u66B4\\u98DF\u0022:true,\u0022\\u9690\\u533F\\u6325\\u5272\u0022:true,\u0022\\u6B7B\\u4EA1\\u4E4B\\u5F71\u0022:true}"
+                }
+              }
+            ],
+            "Children": null
+          }
+        ]
+      }
+    },{
+      "Guid": "b310e6f0-82b5-49b3-bcb7-7309fbb7d7bf",
+      "Name": "\u884C\u4E3A\u7EC4 21",
+      "StartAnchorGuid": "7fff0fc0-bfab-4f21-a578-67c6e86fe2db",
+      "Offset": 0,
+      "Enabled": true,
+      "Remark": null,
+      "EntryGroup": {
+        "Id": 1,
+        "Name": "\u884C\u4E3A\u7EC4",
+        "Type": "serial",
+        "Enabled": true,
+        "Remark": null,
+        "DelayMs": null,
+        "Mode": null,
+        "UseAndLogic": null,
+        "Condition": null,
+        "Conditions": null,
+        "Action": null,
+        "Actions": null,
+        "Children": [
+          {
+            "Id": 2,
+            "Name": "\u65B0\u884C\u4E3A\u8282\u70B9",
+            "Type": "action",
+            "Enabled": true,
+            "Remark": null,
+            "DelayMs": null,
+            "Mode": null,
+            "UseAndLogic": null,
+            "Condition": null,
+            "Conditions": null,
+            "Action": null,
+            "Actions": [
+              {
+                "Type": "luli_reaper_trigger_qt2",
+                "Qt": null,
+                "Enabled": true,
+                "Message": null,
+                "ActionId": null,
+                "SkillType": null,
+                "Target": null,
+                "HighPriority": false,
+                "TargetMode": null,
+                "Mode": null,
+                "Params": {
+                  "qtValues": "{\u0022\\u9644\\u4F53\u0022:false,\u0022\\u795E\\u79D8\\u73AF\u0022:false}"
+                }
+              }
+            ],
+            "Children": null
+          }
+        ]
+      }
+    },{
+      "Guid": "308a7fdd-a4d9-4447-a555-88112d324aee",
+      "Name": "\u884C\u4E3A\u7EC4 22",
+      "StartAnchorGuid": "c40ce366-84ce-4e7c-92e0-4bbaafa32c6c",
+      "Offset": 0,
+      "Enabled": true,
+      "Remark": null,
+      "EntryGroup": {
+        "Id": 1,
+        "Name": "\u884C\u4E3A\u7EC4",
+        "Type": "serial",
+        "Enabled": true,
+        "Remark": null,
+        "DelayMs": null,
+        "Mode": null,
+        "UseAndLogic": null,
+        "Condition": null,
+        "Conditions": null,
+        "Action": null,
+        "Actions": null,
+        "Children": [
+          {
+            "Id": 2,
+            "Name": "\u65B0\u6761\u4EF6\u8282\u70B9",
+            "Type": "condition",
+            "Enabled": true,
+            "Remark": null,
+            "DelayMs": null,
+            "Mode": "wait",
+            "UseAndLogic": null,
+            "Condition": null,
+            "Conditions": [
+              {
+                "Type": "luli_general_target_condition",
+                "ActionId": null,
+                "Immediate": true,
+                "Target": null,
+                "BuffId": null,
+                "Mode": null,
+                "Regex": null,
+                "Value": null,
+                "Negate": false,
+                "Params": {
+                  "target": "0",
+                  "enabled": "True",
+                  "changeSelectorMode": "False",
+                  "selectorMode": "0",
+                  "needTargetable": "False",
+                  "secondary": "0",
+                  "filters": "[{\u0022Filter\u0022:4,\u0022Remark\u0022:\u0022\u0022,\u0022StrParam1\u0022:\u0022\u0022,\u0022UintParam1\u0022:2594,\u0022FloatParam1\u0022:0,\u0022LeftTime\u0022:1,\u0022CompareType\u0022:5,\u0022BuffCompareType\u0022:3,\u0022Nearest\u0022:false}]"
+                }
+              }
+            ],
+            "Action": null,
+            "Actions": null,
+            "Children": null
+          },
+          {
+            "Id": 3,
+            "Name": "\u65B0\u884C\u4E3A\u8282\u70B9",
+            "Type": "action",
+            "Enabled": true,
+            "Remark": null,
+            "DelayMs": null,
+            "Mode": null,
+            "UseAndLogic": null,
+            "Condition": null,
+            "Conditions": null,
+            "Action": null,
+            "Actions": [
+              {
+                "Type": "ForceUseSkill",
+                "Qt": null,
+                "Enabled": false,
+                "Message": null,
+                "ActionId": 24388,
+                "SkillType": "Gcd",
+                "Target": "Target",
+                "HighPriority": false,
+                "TargetMode": null,
+                "Mode": null
+              }
+            ],
+            "Children": null
+          }
+        ]
+      }
+    },{
+      "Guid": "aaed85b0-e130-4ccd-b7d7-76791cccdc65",
+      "Name": "\u884C\u4E3A\u7EC4 22",
+      "StartAnchorGuid": "1717b14f-d60b-4057-98ad-6390232402f7",
+      "Offset": 0,
+      "Enabled": true,
+      "Remark": null,
+      "EntryGroup": {
+        "Id": 1,
+        "Name": "\u884C\u4E3A\u7EC4",
+        "Type": "serial",
+        "Enabled": true,
+        "Remark": null,
+        "DelayMs": null,
+        "Mode": null,
+        "UseAndLogic": null,
+        "Condition": null,
+        "Conditions": null,
+        "Action": null,
+        "Actions": null,
+        "Children": [
+          {
+            "Id": 2,
+            "Name": "\u65B0\u6761\u4EF6\u8282\u70B9",
+            "Type": "condition",
+            "Enabled": true,
+            "Remark": null,
+            "DelayMs": null,
+            "Mode": "wait",
+            "UseAndLogic": null,
+            "Condition": null,
+            "Conditions": [
+              {
+                "Type": "luli_general_target_condition",
+                "ActionId": null,
+                "Immediate": true,
+                "Target": null,
+                "BuffId": null,
+                "Mode": null,
+                "Regex": null,
+                "Value": null,
+                "Negate": false,
+                "Params": {
+                  "target": "0",
+                  "enabled": "True",
+                  "changeSelectorMode": "False",
+                  "selectorMode": "0",
+                  "needTargetable": "False",
+                  "secondary": "0",
+                  "filters": "[{\u0022Filter\u0022:4,\u0022Remark\u0022:\u0022\u0022,\u0022StrParam1\u0022:\u0022\u0022,\u0022UintParam1\u0022:2594,\u0022FloatParam1\u0022:0,\u0022LeftTime\u0022:1,\u0022CompareType\u0022:5,\u0022BuffCompareType\u0022:3,\u0022Nearest\u0022:false}]"
+                }
+              }
+            ],
+            "Action": null,
+            "Actions": null,
+            "Children": null
+          },
+          {
+            "Id": 3,
+            "Name": "\u65B0\u884C\u4E3A\u8282\u70B9",
+            "Type": "action",
+            "Enabled": true,
+            "Remark": null,
+            "DelayMs": null,
+            "Mode": null,
+            "UseAndLogic": null,
+            "Condition": null,
+            "Conditions": null,
+            "Action": null,
+            "Actions": [
+              {
+                "Type": "ForceUseSkill",
+                "Qt": null,
+                "Enabled": false,
+                "Message": null,
+                "ActionId": 24388,
+                "SkillType": "Gcd",
+                "Target": "Target",
+                "HighPriority": false,
+                "TargetMode": null,
+                "Mode": null
+              }
+            ],
+            "Children": null
+          }
+        ]
+      }
+    },{
+      "Guid": "d5db3ad8-6a20-4d2b-baef-cf4de815a28b",
+      "Name": "\u884C\u4E3A\u7EC4 22",
+      "StartAnchorGuid": "8a20d3ff-e39c-492c-b188-a82d6858ec43",
+      "Offset": 0,
+      "Enabled": true,
+      "Remark": null,
+      "EntryGroup": {
+        "Id": 1,
+        "Name": "\u884C\u4E3A\u7EC4",
+        "Type": "serial",
+        "Enabled": true,
+        "Remark": null,
+        "DelayMs": null,
+        "Mode": null,
+        "UseAndLogic": null,
+        "Condition": null,
+        "Conditions": null,
+        "Action": null,
+        "Actions": null,
+        "Children": [
+          {
+            "Id": 2,
+            "Name": "\u65B0\u6761\u4EF6\u8282\u70B9",
+            "Type": "condition",
+            "Enabled": true,
+            "Remark": null,
+            "DelayMs": null,
+            "Mode": "wait",
+            "UseAndLogic": null,
+            "Condition": null,
+            "Conditions": [
+              {
+                "Type": "luli_general_target_condition",
+                "ActionId": null,
+                "Immediate": true,
+                "Target": null,
+                "BuffId": null,
+                "Mode": null,
+                "Regex": null,
+                "Value": null,
+                "Negate": false,
+                "Params": {
+                  "target": "0",
+                  "enabled": "True",
+                  "changeSelectorMode": "False",
+                  "selectorMode": "0",
+                  "needTargetable": "False",
+                  "secondary": "0",
+                  "filters": "[{\u0022Filter\u0022:4,\u0022Remark\u0022:\u0022\u0022,\u0022StrParam1\u0022:\u0022\u0022,\u0022UintParam1\u0022:2594,\u0022FloatParam1\u0022:0,\u0022LeftTime\u0022:1,\u0022CompareType\u0022:5,\u0022BuffCompareType\u0022:3,\u0022Nearest\u0022:false}]"
+                }
+              }
+            ],
+            "Action": null,
+            "Actions": null,
+            "Children": null
+          },
+          {
+            "Id": 3,
+            "Name": "\u65B0\u884C\u4E3A\u8282\u70B9",
+            "Type": "action",
+            "Enabled": true,
+            "Remark": null,
+            "DelayMs": null,
+            "Mode": null,
+            "UseAndLogic": null,
+            "Condition": null,
+            "Conditions": null,
+            "Action": null,
+            "Actions": [
+              {
+                "Type": "ForceUseSkill",
+                "Qt": null,
+                "Enabled": false,
+                "Message": null,
+                "ActionId": 24388,
+                "SkillType": "Gcd",
+                "Target": "Target",
+                "HighPriority": false,
+                "TargetMode": null,
+                "Mode": null
+              }
+            ],
+            "Children": null
+          }
+        ]
+      }
+    },{
+      "Guid": "b3ee21ee-f4f4-4369-9d3a-af381e7bb3ef",
+      "Name": "\u884C\u4E3A\u7EC4 22",
+      "StartAnchorGuid": "67e520eb-0149-4371-bc81-a1132eea497e",
+      "Offset": 0,
+      "Enabled": true,
+      "Remark": null,
+      "EntryGroup": {
+        "Id": 1,
+        "Name": "\u884C\u4E3A\u7EC4",
+        "Type": "serial",
+        "Enabled": true,
+        "Remark": null,
+        "DelayMs": null,
+        "Mode": null,
+        "UseAndLogic": null,
+        "Condition": null,
+        "Conditions": null,
+        "Action": null,
+        "Actions": null,
+        "Children": [
+          {
+            "Id": 2,
+            "Name": "\u65B0\u6761\u4EF6\u8282\u70B9",
+            "Type": "condition",
+            "Enabled": true,
+            "Remark": null,
+            "DelayMs": null,
+            "Mode": "wait",
+            "UseAndLogic": null,
+            "Condition": null,
+            "Conditions": [
+              {
+                "Type": "luli_general_target_condition",
+                "ActionId": null,
+                "Immediate": true,
+                "Target": null,
+                "BuffId": null,
+                "Mode": null,
+                "Regex": null,
+                "Value": null,
+                "Negate": false,
+                "Params": {
+                  "target": "0",
+                  "enabled": "True",
+                  "changeSelectorMode": "False",
+                  "selectorMode": "0",
+                  "needTargetable": "False",
+                  "secondary": "0",
+                  "filters": "[{\u0022Filter\u0022:4,\u0022Remark\u0022:\u0022\u0022,\u0022StrParam1\u0022:\u0022\u0022,\u0022UintParam1\u0022:2594,\u0022FloatParam1\u0022:0,\u0022LeftTime\u0022:1,\u0022CompareType\u0022:5,\u0022BuffCompareType\u0022:3,\u0022Nearest\u0022:false}]"
+                }
+              }
+            ],
+            "Action": null,
+            "Actions": null,
+            "Children": null
+          },
+          {
+            "Id": 3,
+            "Name": "\u65B0\u884C\u4E3A\u8282\u70B9",
+            "Type": "action",
+            "Enabled": true,
+            "Remark": null,
+            "DelayMs": null,
+            "Mode": null,
+            "UseAndLogic": null,
+            "Condition": null,
+            "Conditions": null,
+            "Action": null,
+            "Actions": [
+              {
+                "Type": "ForceUseSkill",
+                "Qt": null,
+                "Enabled": false,
+                "Message": null,
+                "ActionId": 24388,
+                "SkillType": "Gcd",
+                "Target": "Target",
+                "HighPriority": false,
+                "TargetMode": null,
+                "Mode": null
+              }
+            ],
+            "Children": null
+          }
+        ]
+      }
+    },{
+      "Guid": "3d4d7c83-e913-4d98-8700-357ab4c14d93",
+      "Name": "\u884C\u4E3A\u7EC4 26",
+      "StartAnchorGuid": "b2251e87-3017-4946-96b9-556b0058d910",
+      "Offset": 7.5,
+      "Enabled": true,
+      "Remark": null,
+      "EntryGroup": {
+        "Id": 1,
+        "Name": "\u884C\u4E3A\u7EC4",
+        "Type": "serial",
+        "Enabled": true,
+        "Remark": null,
+        "DelayMs": null,
+        "Mode": null,
+        "UseAndLogic": null,
+        "Condition": null,
+        "Conditions": null,
+        "Action": null,
+        "Actions": null,
+        "Children": [
+          {
+            "Id": 2,
+            "Name": "\u65B0\u884C\u4E3A\u8282\u70B9",
+            "Type": "action",
+            "Enabled": true,
+            "Remark": null,
+            "DelayMs": null,
+            "Mode": null,
+            "UseAndLogic": null,
+            "Condition": null,
+            "Conditions": null,
+            "Action": null,
+            "Actions": [
+              {
+                "Type": "luli_reaper_trigger_qt2",
+                "Qt": null,
+                "Enabled": true,
+                "Message": null,
+                "ActionId": null,
+                "SkillType": null,
+                "Target": null,
+                "HighPriority": false,
+                "TargetMode": null,
+                "Mode": null,
+                "Params": {
+                  "qtValues": "{\u0022\\u9690\\u533F\\u6325\\u5272\u0022:false,\u0022\\u6B7B\\u4EA1\\u4E4B\\u5F71\u0022:false}"
+                }
+              }
+            ],
+            "Children": null
+          }
+        ]
+      }
+    },{
+      "Guid": "47d80274-3b61-41a9-9a67-0e8282f2ef8f",
+      "Name": "\u884C\u4E3A\u7EC4 27",
+      "StartAnchorGuid": "b2251e87-3017-4946-96b9-556b0058d910",
+      "Offset": 5,
+      "Enabled": true,
+      "Remark": null,
+      "EntryGroup": {
+        "Id": 1,
+        "Name": "\u884C\u4E3A\u7EC4",
+        "Type": "serial",
+        "Enabled": true,
+        "Remark": null,
+        "DelayMs": null,
+        "Mode": null,
+        "UseAndLogic": null,
+        "Condition": null,
+        "Conditions": null,
+        "Action": null,
+        "Actions": null,
+        "Children": [
+          {
+            "Id": 2,
+            "Name": "\u65B0\u884C\u4E3A\u8282\u70B9",
+            "Type": "action",
+            "Enabled": true,
+            "Remark": null,
+            "DelayMs": null,
+            "Mode": null,
+            "UseAndLogic": null,
+            "Condition": null,
+            "Conditions": null,
+            "Action": null,
+            "Actions": [
+              {
+                "Type": "luli_reaper_trigger_qt2",
+                "Qt": null,
+                "Enabled": true,
+                "Message": null,
+                "ActionId": null,
+                "SkillType": null,
+                "Target": null,
+                "HighPriority": false,
+                "TargetMode": null,
+                "Mode": null,
+                "Params": {
+                  "qtValues": "{\u0022\\u66B4\\u98DF\u0022:false}"
+                }
+              }
+            ],
+            "Children": null
+          }
+        ]
+      }
+    },{
+      "Guid": "8223508b-fc46-449b-9484-e9a56deab376",
+      "Name": "\u884C\u4E3A\u7EC4 28",
+      "StartAnchorGuid": "d54601d8-ab01-459f-bfeb-7db35bdcbaa1",
+      "Offset": 0,
+      "Enabled": true,
+      "Remark": null,
+      "EntryGroup": {
+        "Id": 1,
+        "Name": "\u884C\u4E3A\u7EC4",
+        "Type": "serial",
+        "Enabled": true,
+        "Remark": null,
+        "DelayMs": null,
+        "Mode": null,
+        "UseAndLogic": null,
+        "Condition": null,
+        "Conditions": null,
+        "Action": null,
+        "Actions": null,
+        "Children": [
+          {
+            "Id": 2,
+            "Name": "\u65B0\u884C\u4E3A\u8282\u70B9",
+            "Type": "action",
+            "Enabled": true,
+            "Remark": null,
+            "DelayMs": null,
+            "Mode": null,
+            "UseAndLogic": null,
+            "Condition": null,
+            "Conditions": null,
+            "Action": null,
+            "Actions": [
+              {
+                "Type": "luli_reaper_trigger_qt2",
+                "Qt": null,
+                "Enabled": true,
+                "Message": null,
+                "ActionId": null,
+                "SkillType": null,
+                "Target": null,
+                "HighPriority": false,
+                "TargetMode": null,
+                "Mode": null,
+                "Params": {
+                  "qtValues": "{\u0022\\u6B7B\\u4EA1\\u4E4B\\u5F71\u0022:true,\u0022\\u9690\\u533F\\u6325\\u5272\u0022:true,\u0022\\u9644\\u4F53\u0022:true,\u0022\\u795E\\u79D8\\u73AF\u0022:true,\u0022\\u7206\\u53D1\\u836F\u0022:true}"
+                }
+              }
+            ],
+            "Children": null
+          }
+        ]
+      }
+    },{
+      "Guid": "1a4b0158-7e05-45c9-bb2a-368898ea9881",
+      "Name": "\u884C\u4E3A\u7EC4 17",
+      "StartAnchorGuid": "d7e40f0d-415a-4ee2-9feb-940122ca8914",
+      "Offset": 9.5,
+      "Enabled": true,
+      "Remark": null,
+      "EntryGroup": {
+        "Id": 1,
+        "Name": "\u884C\u4E3A\u7EC4",
+        "Type": "serial",
+        "Enabled": true,
+        "Remark": null,
+        "DelayMs": null,
+        "Mode": null,
+        "UseAndLogic": null,
+        "Condition": null,
+        "Conditions": null,
+        "Action": null,
+        "Actions": null,
+        "Children": [
+          {
+            "Id": 2,
+            "Name": "\u65B0\u884C\u4E3A\u8282\u70B9",
+            "Type": "action",
+            "Enabled": true,
+            "Remark": null,
+            "DelayMs": null,
+            "Mode": null,
+            "UseAndLogic": null,
+            "Condition": null,
+            "Conditions": null,
+            "Action": null,
+            "Actions": [
+              {
+                "Type": "luli_reaper_trigger_qt2",
+                "Qt": null,
+                "Enabled": true,
+                "Message": null,
+                "ActionId": null,
+                "SkillType": null,
+                "Target": null,
+                "HighPriority": false,
+                "TargetMode": null,
+                "Mode": null,
+                "Params": {
+                  "qtValues": "{\u0022\\u6B7B\\u4EA1\\u4E4B\\u5F71\u0022:false,\u0022\\u9690\\u533F\\u6325\\u5272\u0022:false}"
+                }
+              }
+            ],
+            "Children": null
+          }
+        ]
+      }
+    },{
+      "Guid": "4492ebc6-cbe3-4357-a377-cd391efd059a",
+      "Name": "\u884C\u4E3A\u7EC4 19",
+      "StartAnchorGuid": "d7e40f0d-415a-4ee2-9feb-940122ca8914",
+      "Offset": 7.5,
+      "Enabled": true,
+      "Remark": null,
+      "EntryGroup": {
+        "Id": 1,
+        "Name": "\u884C\u4E3A\u7EC4",
+        "Type": "serial",
+        "Enabled": true,
+        "Remark": null,
+        "DelayMs": null,
+        "Mode": null,
+        "UseAndLogic": null,
+        "Condition": null,
+        "Conditions": null,
+        "Action": null,
+        "Actions": null,
+        "Children": [
+          {
+            "Id": 2,
+            "Name": "\u65B0\u884C\u4E3A\u8282\u70B9",
+            "Type": "action",
+            "Enabled": true,
+            "Remark": null,
+            "DelayMs": null,
+            "Mode": null,
+            "UseAndLogic": null,
+            "Condition": null,
+            "Conditions": null,
+            "Action": null,
+            "Actions": [
+              {
+                "Type": "luli_reaper_trigger_qt2",
+                "Qt": null,
+                "Enabled": true,
+                "Message": null,
+                "ActionId": null,
+                "SkillType": null,
+                "Target": null,
+                "HighPriority": false,
+                "TargetMode": null,
+                "Mode": null,
+                "Params": {
+                  "qtValues": "{\u0022\\u66B4\\u98DF\u0022:false}"
+                }
+              }
+            ],
+            "Children": null
+          }
+        ]
+      }
+    },{
+      "Guid": "ff57db90-7df6-4c20-9b36-16627d98582a",
+      "Name": "\u884C\u4E3A\u7EC4 22",
+      "StartAnchorGuid": "73b120ee-2f7d-4863-81c1-0cb6cd012e8d",
+      "Offset": 0,
+      "Enabled": true,
+      "Remark": null,
+      "EntryGroup": {
+        "Id": 1,
+        "Name": "\u884C\u4E3A\u7EC4",
+        "Type": "serial",
+        "Enabled": true,
+        "Remark": null,
+        "DelayMs": null,
+        "Mode": null,
+        "UseAndLogic": null,
+        "Condition": null,
+        "Conditions": null,
+        "Action": null,
+        "Actions": null,
+        "Children": [
+          {
+            "Id": 2,
+            "Name": "\u65B0\u6761\u4EF6\u8282\u70B9",
+            "Type": "condition",
+            "Enabled": true,
+            "Remark": null,
+            "DelayMs": null,
+            "Mode": "wait",
+            "UseAndLogic": null,
+            "Condition": null,
+            "Conditions": [
+              {
+                "Type": "luli_general_target_condition",
+                "ActionId": null,
+                "Immediate": true,
+                "Target": null,
+                "BuffId": null,
+                "Mode": null,
+                "Regex": null,
+                "Value": null,
+                "Negate": false,
+                "Params": {
+                  "target": "0",
+                  "enabled": "True",
+                  "changeSelectorMode": "False",
+                  "selectorMode": "0",
+                  "needTargetable": "False",
+                  "secondary": "0",
+                  "filters": "[{\u0022Filter\u0022:4,\u0022Remark\u0022:\u0022\u0022,\u0022StrParam1\u0022:\u0022\u0022,\u0022UintParam1\u0022:2594,\u0022FloatParam1\u0022:0,\u0022LeftTime\u0022:1,\u0022CompareType\u0022:5,\u0022BuffCompareType\u0022:3,\u0022Nearest\u0022:false}]"
+                }
+              }
+            ],
+            "Action": null,
+            "Actions": null,
+            "Children": null
+          },
+          {
+            "Id": 3,
+            "Name": "\u65B0\u884C\u4E3A\u8282\u70B9",
+            "Type": "action",
+            "Enabled": true,
+            "Remark": null,
+            "DelayMs": null,
+            "Mode": null,
+            "UseAndLogic": null,
+            "Condition": null,
+            "Conditions": null,
+            "Action": null,
+            "Actions": [
+              {
+                "Type": "ForceUseSkill",
+                "Qt": null,
+                "Enabled": false,
+                "Message": null,
+                "ActionId": 24388,
+                "SkillType": "Gcd",
+                "Target": "Target",
+                "HighPriority": false,
+                "TargetMode": null,
+                "Mode": null
+              }
+            ],
+            "Children": null
+          }
+        ]
+      }
+    }]
+}

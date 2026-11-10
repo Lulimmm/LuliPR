@@ -1,0 +1,6052 @@
+{
+  "Version": "1.0.1",
+  "Meta": {
+    "Format": "PTL",
+    "TimelineGuid": "02566ee3-2ba5-49cb-8d05-6853db3a6937",
+    "Name": "\u4F0A\u7538\u8FD1\u6218\u51CF\u4F24",
+    "TerritoryId": 1238,
+    "JobId": 0,
+    "Author": "Cino",
+    "AcrAuthor": null,
+    "CreatedAt": "2026-10-05T03:16:08.854577+08:00",
+    "Opener": null,
+    "CustomOpener": null,
+    "Remark": "\u53EA\u6709d1\u548Cd2\uFF0C\u6709\u51CF\u4F24\u4E0D\u653E\u7684\u95EE\u9898\u8BF7\u5230dc\u53CD\u9988",
+    "Category": "normal",
+    "Roles": ["D1","D2"]
+  },
+  "Variables": [],
+  "Anchors": [{
+      "Guid": "b9c4d941-40b0-4bca-92c3-11c301af63cd",
+      "Name": "--sync--",
+      "Time": 0,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "InCombat",
+        "Params": {},
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 1
+      }
+    },{
+      "Guid": "8d8be693-a772-46c7-bc5c-17bd045e8ee8",
+      "Name": "\u66B4\u98CE\u7834 1 (\u5B9A\u5411) \u5224\u5B9A",
+      "Time": 13.9,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "Regex": "^(?:40144|40148)$"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "0ce3131e-1228-46d4-b54c-7c718deaee2c",
+      "Name": "\u66B4\u98CE\u7834 1 (\u5B9A\u5411) \u5224\u5B9A",
+      "Time": 14.6,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40145"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "4b3e7aa5-68bb-45a5-825d-258c52255728",
+      "Name": "\u66B4\u98CE\u7834 2 (\u540E\u7EED) \u5224\u5B9A",
+      "Time": 16.6,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": null
+    },{
+      "Guid": "1f4b7876-2f40-4ecb-8d2e-ee57c6caff86",
+      "Name": "\u7F6A\u708E/\u7F6A\u96F7 \u5224\u5B9A",
+      "Time": 16.601,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "Regex": "^(?:40147|40149)$"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "3e953358-b470-4f9c-949c-01512211c9d0",
+      "Name": "\u66B4\u98CE\u7834 3 (\u540E\u7EED) \u5224\u5B9A",
+      "Time": 18.6,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": null
+    },{
+      "Guid": "b4380695-3fcc-4819-adf8-38aa9068ba9e",
+      "Name": "\u66B4\u98CE\u7834 4 (\u540E\u7EED) \u5224\u5B9A",
+      "Time": 20.6,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": null
+    },{
+      "Guid": "b29aaeba-f115-4cb8-94da-ababf3b92ec1",
+      "Name": "\u8FDE\u9501\u7206\u5370\u94ED\u523B \u5224\u5B9A",
+      "Time": 24.4,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40168"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "ad9d4cac-58ba-4481-96e8-610b6f7419e5",
+      "Name": "--center-- \u5224\u5B9A",
+      "Time": 28.5,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40173"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "3df77af5-7f9e-416a-913f-14f6cff4dbb7",
+      "Name": "\u4E50\u56ED\u7EDD\u6280 \u5224\u5B9A",
+      "Time": 35.2,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "Regex": "^(?:40154|40155)$"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "4b53abe7-f474-4b40-b8a4-5240dfd8b154",
+      "Name": "--untargetable--",
+      "Time": 35.201,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": null
+    },{
+      "Guid": "98212e1c-d9a5-49c6-86a7-26ff9a506830",
+      "Name": "\u7206\u5370 \u5224\u5B9A",
+      "Time": 40.6,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40169"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "dd4ac40a-a921-4908-8181-293c90bf0b31",
+      "Name": "--sync-- \u5224\u5B9A",
+      "Time": 49.5,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40157"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "6f443883-af53-4062-8b69-f33e59466f2b",
+      "Name": "\u7F6A\u7206\u708E/\u7F6A\u66B4\u96F7 \u5224\u5B9A",
+      "Time": 50.4,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "Regex": "^(?:40159|40160)$"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "c0ae4770-5eb6-4a08-9623-c149d950d39d",
+      "Name": "\u7206\u7834\u9886\u57DF \u5224\u5B9A",
+      "Time": 50.5,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40158"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "12dde852-c708-41fd-a224-12dbdc6b9fc2",
+      "Name": "\u66B4\u98CE\u7834 1 (\u5B9A\u5411) \u5224\u5B9A",
+      "Time": 55.9,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "Regex": "^(?:40329|40330)$"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "c026a301-352a-4766-8e09-384dbcb315dc",
+      "Name": "\u66B4\u98CE\u7834 1 (\u5B9A\u5411) \u5224\u5B9A",
+      "Time": 56.6,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40145"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "b5a785e3-e420-4494-9f20-a954cdff77d6",
+      "Name": "\u66B4\u98CE\u7834 2 (\u540E\u7EED) \u5224\u5B9A",
+      "Time": 58.6,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": null
+    },{
+      "Guid": "babd24cd-ae74-43af-9274-1f1a13fcd0da",
+      "Name": "\u7F6A\u708E/\u7F6A\u96F7 \u5224\u5B9A",
+      "Time": 58.600998,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "Regex": "^(?:40147|40149)$"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "d91966aa-48e5-4fae-8d60-c9a5e04e5636",
+      "Name": "\u66B4\u98CE\u7834 3 (\u540E\u7EED) \u5224\u5B9A",
+      "Time": 60.6,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": null
+    },{
+      "Guid": "b6a5551f-b5eb-4222-97a1-a7e83e6e2b4e",
+      "Name": "\u66B4\u98CE\u7834 4 (\u540E\u7EED) \u5224\u5B9A",
+      "Time": 62.6,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": null
+    },{
+      "Guid": "71f65b57-37c8-4df3-99b9-abf0357970fb",
+      "Name": "\u5149\u8F6E\u53EC\u5524 \u5224\u5B9A",
+      "Time": 63.8,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "Regex": "^(?:40150|40151)$"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "7b52e44a-1cbc-4906-915f-0443817b4957",
+      "Name": "\u71C3\u70E7\u51FB (\u96F7) \u5224\u5B9A",
+      "Time": 64.8,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40163"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "d5ad04e0-d7aa-40aa-8b9d-28b355cbaf3a",
+      "Name": "\u96F7\u71C3\u7206 \u5224\u5B9A",
+      "Time": 66.5,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40164"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "c1a047c0-dd68-446f-8be9-342540cf2120",
+      "Name": "\u71C3\u70E7\u51FB (\u706B) \u5224\u5B9A",
+      "Time": 70.8,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40161"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "1371570e-0329-46d0-9579-e86427845eb8",
+      "Name": "\u706B\u71C3\u7206 \u5224\u5B9A",
+      "Time": 72.8,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40162"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "d0a3f945-3a10-42cb-b5dc-b991648382b2",
+      "Name": "\u6D6E\u6E38\u62D8\u675F \u5224\u5B9A",
+      "Time": 75.4,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40171"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "8f02998c-10b9-4747-9741-84275ea2f2b8",
+      "Name": "\u7F6A\u708E \u5224\u5B9A",
+      "Time": 78.6,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40167"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "ebbc2a00-5f96-4354-ba21-17dd24aa4427",
+      "Name": "--targetable--",
+      "Time": 79.8,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": null
+    },{
+      "Guid": "d286bc54-bdc0-4fac-b6c5-6d9a08583988",
+      "Name": "\u7B2C\u4E00\u6B21\u5149\u7130\u5706\u5149 \u8BFB\u6761",
+      "Time": 81.3,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "CastStart",
+        "Params": {
+          "ActionId": "40170"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 2.5,
+        "WindowAfter": 2.5
+      }
+    },{
+      "Guid": "e47db0ad-ce6d-41c8-a11c-a8a3e73879ce",
+      "Name": "\u5149\u7130\u5706\u5149 \u5224\u5B9A",
+      "Time": 86,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40170"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "6e9d13a8-a0bd-4cc3-b3ed-ba9c291be96f",
+      "Name": "\u7F6A\u58E4\u65AD \u5224\u5B9A",
+      "Time": 101.4,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "Regex": "^(?:40137|40140)$"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "1fb6a2ab-24df-4b4e-8073-dd5dba548ec5",
+      "Name": "\u6D6E\u6E38\u62D8\u675F 1 \u5224\u5B9A",
+      "Time": 102.2,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": null
+    },{
+      "Guid": "b89e9421-6253-4e28-b4d9-fb8ad2641402",
+      "Name": "\u6D6E\u6E38\u62D8\u675F 2 \u5224\u5B9A",
+      "Time": 105.2,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": null
+    },{
+      "Guid": "21851772-2791-4e9e-b677-2d3ac3e4add3",
+      "Name": "\u7F6A\u51B0\u7130/\u7F6A\u96F7 1 \u5224\u5B9A",
+      "Time": 105.5,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": null
+    },{
+      "Guid": "b928fe8c-81d7-4a97-8909-579fe8243ab3",
+      "Name": "\u6D6E\u6E38\u62D8\u675F 3 \u5224\u5B9A",
+      "Time": 107.5,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": null
+    },{
+      "Guid": "34992bf8-54b1-4044-a2ec-7c2fd494062f",
+      "Name": "\u7F6A\u51B0\u7130/\u7F6A\u96F7 2 \u5224\u5B9A",
+      "Time": 108.4,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": null
+    },{
+      "Guid": "09eba2fe-dad2-41d1-afe7-ec9811eaca59",
+      "Name": "\u6D6E\u6E38\u62D8\u675F 4 \u5224\u5B9A",
+      "Time": 109.9,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": null
+    },{
+      "Guid": "0419efa4-a309-422b-b69a-2e6bc8417de1",
+      "Name": "\u7F6A\u51B0\u7130/\u7F6A\u96F7 3 \u5224\u5B9A",
+      "Time": 110.8,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": null
+    },{
+      "Guid": "af78daab-bec1-4434-985b-519ea8331758",
+      "Name": "\u7F6A\u51B0\u7130/\u7F6A\u96F7 4 \u5224\u5B9A",
+      "Time": 113.3,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": null
+    },{
+      "Guid": "69e89ee0-7b7c-4385-b68f-afa681e75b31",
+      "Name": "\u7B2C\u4E8C\u6B21 \u5149\u7130\u5706\u5149 \u8BFB\u6761",
+      "Time": 116.6,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "CastStart",
+        "Params": {
+          "ActionId": "40170"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 2.5,
+        "WindowAfter": 2.5
+      }
+    },{
+      "Guid": "6254f93b-71f1-4d3f-b21d-7ca66fe5f92d",
+      "Name": "\u5149\u7130\u5706\u5149 \u5224\u5B9A",
+      "Time": 121.3,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40170"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "ffccecad-9c7d-49da-a2b9-98103916375d",
+      "Name": "\u8FDE\u9501\u7206\u5370\u94ED\u523B \u5224\u5B9A",
+      "Time": 129.9,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40168"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "ad2e6a1b-ac0a-4cf1-b278-2d38db35c566",
+      "Name": "--center-- \u5224\u5B9A",
+      "Time": 132.3,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40173"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "40365197-b8d0-4018-992f-b659d0aad762",
+      "Name": "\u71C3\u70E7\u51FB \u5224\u5B9A",
+      "Time": 141.3,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "Regex": "^(?:40129|40133)$"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "c78be0e6-6b14-4a4c-ba93-12a9230ba273",
+      "Name": "\u706B\u71C3\u7206/\u96F7\u71C3\u7206 \u5224\u5B9A",
+      "Time": 143.1,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": null
+    },{
+      "Guid": "8d74da44-2134-4df1-a378-92d8135c78b5",
+      "Name": "\u7206\u70B8 \u5224\u5B9A",
+      "Time": 145.1,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": null
+    },{
+      "Guid": "5631f6de-4602-43bb-94a0-0fb0717337d0",
+      "Name": "\u5149\u7130\u5706\u5149 (enrage) \u8BFB\u6761",
+      "Time": 150.5,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "CastStart",
+        "Params": {
+          "ActionId": "40128"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "2945592d-b764-446e-921e-4b08a8a44445",
+      "Name": "\u5149\u7130\u5706\u5149 (enrage) \u5224\u5B9A",
+      "Time": 160.2,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40128"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "a6897e43-028d-48af-bb26-f7c816f4b582",
+      "Name": "--sync--",
+      "Time": 200,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": null
+    },{
+      "Guid": "f51c7213-4d19-46e0-a2d2-9a453f5378ba",
+      "Name": "--targetable--",
+      "Time": 204.1,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": null
+    },{
+      "Guid": "89ba8b50-8a69-4717-b36c-56c6d299a3da",
+      "Name": "\u56DB\u5251\u65A9 1 \u8BFB\u6761",
+      "Time": 210.3,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "CastStart",
+        "Params": {
+          "ActionId": "40191"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "6fede859-5bdf-4889-a520-d8fa2b7b8f7a",
+      "Name": "\u56DB\u5251\u65A9 1 \u5224\u5B9A",
+      "Time": 215.3,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40191"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "2e951e25-6a44-4fa5-a7dc-20d121d6bffe",
+      "Name": "\u56DB\u5251\u65A9 2 \u5224\u5B9A",
+      "Time": 219.4,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40192"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "260909be-654e-46ab-a8df-403ef85a3728",
+      "Name": "--\u8DF3\u5357-- \u5224\u5B9A",
+      "Time": 224.5,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40175"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "8fd4ab13-e67b-4466-94fe-cd40c1082c00",
+      "Name": "\u955C\u4E2D\u663E\u5F71 \u5224\u5B9A",
+      "Time": 228.8,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40180"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "1f43dbf2-c973-4d27-adfa-a67f02ad11ee",
+      "Name": "\u94BB\u77F3\u661F\u8FB0 \u8BFB\u6761",
+      "Time": 231.2,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "CastStart",
+        "Params": {
+          "ActionId": "40197"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 2.5,
+        "WindowAfter": 2.5
+      }
+    },{
+      "Guid": "9adcd36b-0710-422a-99d5-de4f5faa3297",
+      "Name": "\u94BB\u77F3\u661F\u5C18 \u5224\u5B9A",
+      "Time": 235.9,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40197"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "d4a23f02-4c5e-4725-ba66-42bf2eabd4fb",
+      "Name": "--untargetable--",
+      "Time": 239,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": null
+    },{
+      "Guid": "7581a4c3-3c4b-4f13-aacb-18dc541e7338",
+      "Name": "\u9614\u65A7\u56DE\u65CB\u8E22/\u9570\u5F62\u56DE\u65CB\u8E22 \u5224\u5B9A",
+      "Time": 244.6,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "Regex": "^(?:40202|40203)$"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "97f7e895-e954-438b-8dfa-29dbdb42d697",
+      "Name": "\u5149\u4E4B\u6D77\u5578 \u5224\u5B9A",
+      "Time": 245.5,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40206"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "fcc718e4-e4dd-4713-9ceb-764501827d0c",
+      "Name": "\u51B0\u77F3 \u5224\u5B9A",
+      "Time": 247.2,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40199"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "ee6e702d-a477-4722-8c82-507212cabcd0",
+      "Name": "\u51B0\u67F1\u51B2\u51FB \u5224\u5B9A",
+      "Time": 247.6,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40198"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "b113a1fd-8516-43c1-a19f-c30076922bf0",
+      "Name": "--center-- \u5224\u5B9A",
+      "Time": 248.4,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40175"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "7cb8190b-4ec0-4115-b830-28b77cfbee68",
+      "Name": "\u5929\u964D\u4E00\u51FB \u5224\u5B9A",
+      "Time": 251.5,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40207"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "b5394b74-ed74-4722-8c33-5cc7132cbb15",
+      "Name": "\u51B0\u67F1\u51B2\u51FB \u5224\u5B9A",
+      "Time": 251.6,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": null
+    },{
+      "Guid": "e430b784-63be-4eec-9cf7-6dc6f39fdf1b",
+      "Name": "\u51B0\u9488 \u5224\u5B9A",
+      "Time": 254.2,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40200"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "ef39a058-1ad1-45fd-93f5-a87d1ee08478",
+      "Name": "\u7F6A\u795E\u5723 \u8BFB\u6761",
+      "Time": 254.6,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40208"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "7026336c-04b5-486b-a38e-1634d4a4cc30",
+      "Name": "\u51B0\u67F1\u51B2\u51FB \u5224\u5B9A",
+      "Time": 255.5,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40198"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "b1925e3b-750f-4d10-94c6-8cc334c8e1ac",
+      "Name": "\u7F6A\u795E\u5723 1 (\u5708) \u5224\u5B9A",
+      "Time": 255.501,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": null
+    },{
+      "Guid": "e98c8e9e-75b6-4b35-b032-1dfc7bb00fbe",
+      "Name": "\u7F6A\u795E\u5723 2 (\u5708) \u5224\u5B9A",
+      "Time": 256.9,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": null
+    },{
+      "Guid": "6a774cbe-94d5-4283-8243-f30a34528083",
+      "Name": "\u7F6A\u795E\u5723 3 (\u5708) \u5224\u5B9A",
+      "Time": 258.5,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": null
+    },{
+      "Guid": "f242f08d-ef6f-4cd3-9fc8-627a51e61965",
+      "Name": "\u7F6A\u795E\u5723 4 (\u5708) \u5224\u5B9A",
+      "Time": 260.1,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": null
+    },{
+      "Guid": "44eafee0-a940-4a05-9e08-5414bd197c98",
+      "Name": "\u95EA\u5149\u62A4\u7532 \u002B \u51B0\u971C\u62A4\u7532 \u5224\u5B9A",
+      "Time": 263.9,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "Regex": "^(?:40184|40185)$"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "7cb5647f-804e-4162-b0bf-6a809e3feab2",
+      "Name": "\u9759\u5BC2\u7684\u53CC\u5251\u6280/\u95F2\u5BC2\u7684\u53CC\u5251\u6280 \u5224\u5B9A",
+      "Time": 270.5,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "Regex": "^(?:40193|40194)$"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "684a3186-a59f-46a3-8933-2cbbe13a692b",
+      "Name": "\u95F2\u5BC2\u7684\u53CC\u5251\u6280/\u9759\u5BC2\u7684\u53CC\u5251\u6280 \u5224\u5B9A",
+      "Time": 272.6,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "Regex": "^(?:40195|40196)$"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "bd601389-ec84-4a75-aada-c4ac9c431010",
+      "Name": "--targetable--",
+      "Time": 276.2,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": null
+    },{
+      "Guid": "f3c400f6-1982-4a88-814b-9f868a61a582",
+      "Name": "\u795E\u5723\u5C04\u7EBF \u8BFB\u6761",
+      "Time": 278.6,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "CastStart",
+        "Params": {
+          "ActionId": "40210"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 2.5,
+        "WindowAfter": 2.5
+      }
+    },{
+      "Guid": "43f1798b-9af6-4c63-add2-033f8ab24d15",
+      "Name": "\u795E\u5723\u5C04\u7EBF \u5224\u5B9A",
+      "Time": 283.3,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40210"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "8779e5a8-85e1-4c12-aaa7-bf573f96f976",
+      "Name": "\u955C\u4E2D\u5947\u9047 \u5224\u5B9A",
+      "Time": 293,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40179"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "43fd624b-37c7-4bda-8892-c43fe40c6945",
+      "Name": "\u9570\u5F62\u56DE\u65CB\u8E22 \u5224\u5B9A",
+      "Time": 307.1,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40203"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "a5603e3d-87f3-47cd-8d42-2812d9ad7644",
+      "Name": "\u8FDE\u9501\u53CD\u5C04\uFF1A\u9570\u5F62\u56DE\u65CB\u8E22 \u5224\u5B9A",
+      "Time": 317.2,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40205"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "530f1dc8-545e-4dde-86c5-c446726a32ef",
+      "Name": "\u5F3A\u653E\u9010 \u5224\u5B9A",
+      "Time": 323.3,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "Regex": "^(?:40220|40221)$"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "c011a897-73a5-4ff1-bc3f-7820a33712c9",
+      "Name": "--center-- \u5224\u5B9A",
+      "Time": 326.4,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40175"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "ad3b5dea-2ff7-4fc2-826a-57a018fd5980",
+      "Name": "\u5149\u4E4B\u5931\u63A7 \u5224\u5B9A",
+      "Time": 332.7,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40212"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "2bddcaf1-89b7-4da3-aa81-e211d14a39b2",
+      "Name": "--untargetable--",
+      "Time": 335.7,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": null
+    },{
+      "Guid": "f2ba4f56-01d0-454a-be78-ea6e402768ea",
+      "Name": "\u5149\u6D41\u4FB5\u8680 1 \u5224\u5B9A",
+      "Time": 340.7,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": null
+    },{
+      "Guid": "76deeda8-fbc9-486b-9861-372e7f628a65",
+      "Name": "\u5149\u6D41\u4FB5\u8680 2 \u5224\u5B9A",
+      "Time": 342.3,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": null
+    },{
+      "Guid": "b7967edf-8304-408c-873a-63845434fd91",
+      "Name": "\u5149\u6D41\u4FB5\u8680 3 \u5224\u5B9A",
+      "Time": 343.9,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": null
+    },{
+      "Guid": "bb7fafcc-4471-4f6b-8ac1-6cd783a5d257",
+      "Name": "\u4FB5\u8680\u5149 (\u5355\u4EBA\u5854) \u5224\u5B9A",
+      "Time": 344,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40213"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "2984dded-b8a5-45fa-8c80-ada595151462",
+      "Name": "\u5149\u6D41\u4FB5\u8680 4 \u5224\u5B9A",
+      "Time": 345.4,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": null
+    },{
+      "Guid": "c8dfd2ec-11b1-4e05-a428-e459cdd85f5e",
+      "Name": "\u5149\u6D41\u4FB5\u8680 5 \u5224\u5B9A",
+      "Time": 347,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": null
+    },{
+      "Guid": "453dd484-5c86-4263-addd-33f44943dace",
+      "Name": "\u5149\u7206 \u5224\u5B9A",
+      "Time": 349.8,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40217"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "5ca2b68e-994e-4de3-b0f8-2b45dddaa2b6",
+      "Name": "\u7206\u70B8 1 \u5224\u5B9A",
+      "Time": 352.2,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": null
+    },{
+      "Guid": "7792efbe-d24f-4b65-8543-0ed2ba319abf",
+      "Name": "\u7206\u70B8 2 \u5224\u5B9A",
+      "Time": 355.2,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": null
+    },{
+      "Guid": "0e866d07-18ba-4d27-8c72-5a475346aba8",
+      "Name": "\u4FB5\u8680\u5149 (\u5C0F\u961F\u5854) \u5224\u5B9A",
+      "Time": 358.8,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40213"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "c29e31df-84f0-4584-a5f9-eb2421589531",
+      "Name": "\u5F3A\u653E\u9010 \u5224\u5B9A",
+      "Time": 361.9,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "Regex": "^(?:40220|40221)$"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "56f14519-1ac9-46e3-835d-53119dd97903",
+      "Name": "--targetable--",
+      "Time": 364.9,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": null
+    },{
+      "Guid": "6ae8c14e-e8e7-4a8d-af39-1e5baba41b14",
+      "Name": "\u5149\u4E4B\u6D77\u5578 \u5224\u5B9A",
+      "Time": 370.8,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40188"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "073a5401-bee2-423a-9c51-90a315eb49c4",
+      "Name": "--center-- \u5224\u5B9A",
+      "Time": 376.2,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40175"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "6262e3b6-15ce-4d94-95b0-7a63ef419b9f",
+      "Name": "\u7EDD\u5BF9\u96F6\u5EA6 \u8BFB\u6761",
+      "Time": 380.4,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "CastStart",
+        "Params": {
+          "ActionId": "40224"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 2.5,
+        "WindowAfter": 2.5
+      }
+    },{
+      "Guid": "e2d0520c-db3c-41d0-84b5-3225cdfc21ff",
+      "Name": "\u7EDD\u5BF9\u96F6\u5EA6 (enrage) \u5224\u5B9A",
+      "Time": 390.1,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40333"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "76b35573-c3fb-4e4b-9d28-caac444bd572",
+      "Name": "\u5BD2\u6CE2 \u5224\u5B9A",
+      "Time": 392.4,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40225"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "429cf01a-43d7-452a-97c6-eea54010452a",
+      "Name": "--adds targetable--",
+      "Time": 411.4,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": null
+    },{
+      "Guid": "5404724e-d3f2-48dc-93be-d7cae1409f3a",
+      "Name": "\u7F6A\u51B0\u5C01 \u5224\u5B9A",
+      "Time": 424.4,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40258"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 424.4,
+        "WindowAfter": 2.5
+      }
+    },{
+      "Guid": "c660a73f-2114-404e-a2ec-ea6ddb6a23dd",
+      "Name": "\u4E25\u51AC\u98CE\u66B4 \u5224\u5B9A",
+      "Time": 425.4,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40256"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "fda351a4-0592-45e3-88a3-c44d078aa4e8",
+      "Name": "\u4E25\u51AC\u98CE\u66B4 \u5224\u5B9A",
+      "Time": 428.6,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": null
+    },{
+      "Guid": "2917d06d-1b93-4799-806d-dd265973429e",
+      "Name": "\u7F6A\u51B0\u5C01 \u5224\u5B9A",
+      "Time": 429.6,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40258"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "d449d51f-c9bc-42c5-9f8e-dcaa56dfe68e",
+      "Name": "\u4E25\u51AC\u98CE\u66B4 \u5224\u5B9A",
+      "Time": 431.8,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40256"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "6ec1967e-f1fb-46e0-a8da-5ad34b450e77",
+      "Name": "\u7F6A\u51B0\u5C01 \u5224\u5B9A",
+      "Time": 434.7,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40258"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "5f776f5f-5deb-4d4a-82a3-274c108a3e0b",
+      "Name": "\u4E25\u51AC\u98CE\u66B4? \u5224\u5B9A",
+      "Time": 434.9,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": null
+    },{
+      "Guid": "fe1f1aa5-715f-454a-afd7-713983800f4a",
+      "Name": "\u4E25\u51AC\u98CE\u66B4? \u5224\u5B9A",
+      "Time": 438.1,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40256"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "dbd9e4c1-706e-4ab9-a175-6a4e541df811",
+      "Name": "\u7F6A\u51B0\u5C01 \u5224\u5B9A",
+      "Time": 439.9,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40258"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "54803a20-9905-4321-9556-fed6560884ca",
+      "Name": "\u4E25\u51AC\u98CE\u66B4? \u5224\u5B9A",
+      "Time": 441.3,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": null
+    },{
+      "Guid": "9ca8cefe-2aad-4b7c-8836-bf123612a4ce",
+      "Name": "\u4E25\u51AC\u98CE\u66B4? \u5224\u5B9A",
+      "Time": 444.5,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40256"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "d9abad61-98cf-431c-93c8-d3e87478b620",
+      "Name": "\u7F6A\u51B0\u5C01 \u5224\u5B9A",
+      "Time": 445.2,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40258"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "a8e99ab5-56fa-4102-abde-858de0bef2ce",
+      "Name": "\u4E25\u51AC\u98CE\u66B4? \u5224\u5B9A",
+      "Time": 447.7,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": null
+    },{
+      "Guid": "11e3ee3c-4b38-43b1-a7f8-e204d118f116",
+      "Name": "\u7F6A\u51B0\u5C01 \u5224\u5B9A",
+      "Time": 450.5,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40258"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "c81492e3-f1d6-4a00-991b-7c2c0089b89d",
+      "Name": "\u5149\u4E4B\u6CDB\u6EE5 (enrage) \u5224\u5B9A",
+      "Time": 455.7,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40259"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "a25009b5-555c-4864-b27a-bd8c7fe8c45b",
+      "Name": "--sync--",
+      "Time": 488.8,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": null
+    },{
+      "Guid": "e1e0d894-5b08-4d21-8a86-f730b429b1ec",
+      "Name": "\u878D\u5408 \u5224\u5B9A",
+      "Time": 500,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40226"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 500,
+        "WindowAfter": 5
+      }
+    },{
+      "Guid": "a5871201-4da8-464f-825b-4bf89d404b28",
+      "Name": "--targetable--",
+      "Time": 514.3,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": null
+    },{
+      "Guid": "e57db91e-1b56-4cc3-add6-7777f453367c",
+      "Name": "\u5730\u72F1\u5BA1\u5224 \u5224\u5B9A",
+      "Time": 518.3,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40265"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "891bdce3-4182-4327-b527-aac16e0b2c8a",
+      "Name": "--sync-- \u5224\u5B9A",
+      "Time": 521.4,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40117"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "e31dce9f-e66c-44c9-99d3-e94bf5cf4ebb",
+      "Name": "\u65F6\u95F4\u538B\u7F29\u00B7\u7EDD \u8BFB\u6761",
+      "Time": 522.7,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "CastStart",
+        "Params": {
+          "ActionId": "40266"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 2.5,
+        "WindowAfter": 2.5
+      }
+    },{
+      "Guid": "0b317b55-43bd-45a4-a780-aa67f2c703f3",
+      "Name": "\u65F6\u95F4\u538B\u7F29\u00B7\u7EDD \u5224\u5B9A",
+      "Time": 532.4,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40266"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "e57955bc-b4bf-4a0f-b0b5-2e575943614e",
+      "Name": "\u9ED1\u6697\u7206\u708E/\u9ED1\u6697\u795E\u5723 \u5224\u5B9A",
+      "Time": 544.2,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40276"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "a3073388-fa1d-41fd-a553-e77239b3201c",
+      "Name": "\u7F6A\u7194\u6BC1 1 (x10) \u5224\u5B9A",
+      "Time": 549.4,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40235"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "8a025c4b-a66f-4cd9-bbb5-1eaa015e34f6",
+      "Name": "\u9ED1\u6697\u7206\u708E/\u9ED1\u6697\u51B0\u5C01/\u9ED1\u6697\u795E\u5723 \u5224\u5B9A",
+      "Time": 554.3,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40276"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "afbc1630-3a03-413b-a9a4-bc8a2e337890",
+      "Name": "\u7F6A\u7194\u6BC1 2 (x10) \u5224\u5B9A",
+      "Time": 559.4,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40235"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "0b3cea5b-0cdb-40ca-9aea-cad9199e8184",
+      "Name": "\u9ED1\u6697\u7206\u708E/\u9ED1\u6697\u795E\u5723 \u5224\u5B9A",
+      "Time": 564.3,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40276"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "8baac141-c08c-4237-b089-1e199fdde01c",
+      "Name": "\u7F6A\u7194\u6BC1 3 (x10) \u5224\u5B9A",
+      "Time": 570.4,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40235"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "f2e04368-28ad-4ba4-83e4-9628e4cb198c",
+      "Name": "(\u7729\u6655 \u002B \u56DE\u8FD4)",
+      "Time": 573.2,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": null
+    },{
+      "Guid": "e8148dce-2129-4ce5-8b98-3cda7123c2aa",
+      "Name": "\u6697\u5F71\u4E4B\u773C/\u9ED1\u6697\u72C2\u6C34/\u6697\u708E\u55B7\u53D1 \u5224\u5B9A",
+      "Time": 576.2,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40278"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "513718c2-54b4-41f4-b6ba-112930cb1370",
+      "Name": "\u7834\u76FE\u4E00\u51FB \u8BFB\u6761",
+      "Time": 577.4,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "CastStart",
+        "Params": {
+          "ActionId": "40286"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 2.5,
+        "WindowAfter": 2.5
+      }
+    },{
+      "Guid": "5c54e6c3-5ca3-47e1-8ecd-074900ca2873",
+      "Name": "\u7834\u76FE\u4E00\u51FB \u5224\u5B9A",
+      "Time": 580.1,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40286"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "48fd72c5-7ce9-4aa2-9624-d0e23bc6f6a0",
+      "Name": "\u8109\u51B2\u661F\u9707\u6CE2 \u8BFB\u6761",
+      "Time": 583.8,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "CastStart",
+        "Params": {
+          "ActionId": "40282"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 2.5,
+        "WindowAfter": 2.5
+      }
+    },{
+      "Guid": "080b9315-36fb-42c6-a3bb-063abb2045e5",
+      "Name": "\u8109\u51B2\u661F\u9707\u6CE2 \u5224\u5B9A",
+      "Time": 588.5,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40282"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "a3450720-518b-4b69-a7b7-bbcf828a75fd",
+      "Name": "\u9ED1\u8272\u5149\u73AF \u5224\u5B9A",
+      "Time": 596.8,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40290"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "523e6d59-0cc2-42c9-ab0b-e3b39e0439bc",
+      "Name": "\u5EF6\u8FDF\u548F\u5531\u00B7\u9012\u8FDB \u5224\u5B9A",
+      "Time": 605.9,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40269"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "b5c3e50b-37db-4d2b-97dc-e739afacb03e",
+      "Name": "\u542F\u793A \u5224\u5B9A",
+      "Time": 621.2,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40296"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "a91c9b17-c957-4234-9efc-fa55a7bcb609",
+      "Name": "\u9ED1\u6697\u72C2\u6C34 \u5224\u5B9A",
+      "Time": 624.8,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40271"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "90603888-8aee-4602-95d0-5ff18d8cb251",
+      "Name": "\u788E\u7075\u4E00\u51FB \u5224\u5B9A",
+      "Time": 626.3,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40288"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "71002ffb-9be0-4e67-8896-0044d619d886",
+      "Name": "--sync-- \u5224\u5B9A",
+      "Time": 629.5,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40117"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "e26e1a22-d97f-4452-942f-ee950f68c588",
+      "Name": "\u542F\u793A (x6)",
+      "Time": 635.2,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": null
+    },{
+      "Guid": "961e70cd-8ceb-4839-8b9f-994e952a32c8",
+      "Name": "\u6697\u708E\u55B7\u53D1 \u5224\u5B9A",
+      "Time": 637.9,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40274"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "cb2862fd-a29b-48a0-b2b0-e687f4b68748",
+      "Name": "\u9ED1\u6697\u72C2\u6C34 \u5224\u5B9A",
+      "Time": 643.7,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40271"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "e10d7cdd-a36b-46be-8c77-3d1d3016c7f7",
+      "Name": "\u6697\u591C\u821E\u8E48 (\u8DF3) \u5224\u5B9A",
+      "Time": 646,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40182"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "f1152f99-2520-4310-82fa-d19f206d11b7",
+      "Name": "\u6697\u591C\u821E\u8E48 (\u51FB\u9000) \u5224\u5B9A",
+      "Time": 648.9,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40183"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "08a8fa40-4d38-4651-9a80-b48c8d56f810",
+      "Name": "\u9ED1\u6697\u72C2\u6C34 \u5224\u5B9A",
+      "Time": 652.8,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40271"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "01984db3-5739-47d8-9695-ac7cfbf63823",
+      "Name": "\u8109\u51B2\u661F\u9707\u6CE2 \u5224\u5B9A",
+      "Time": 658.2,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40282"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "fd47e0c8-be89-42b2-a7b8-003e58570f70",
+      "Name": "\u8BB0\u5FC6\u7EC8\u7ED3 (enrage) \u5224\u5B9A",
+      "Time": 672,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40300"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "3c4f5b13-3005-40a6-806e-020bde2d6e56",
+      "Name": "--untargetable--",
+      "Time": 675.4,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": null
+    },{
+      "Guid": "65c2c300-de33-493c-96b0-b4b25f7abe23",
+      "Name": "--targetable--",
+      "Time": 680.8,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": null
+    },{
+      "Guid": "aa797f1c-5cf4-4330-92d8-d1b3a630fd4d",
+      "Name": "\u8D4B\u5F62 \u8BFB\u6761",
+      "Time": 686.3,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "CastStart",
+        "Params": {
+          "ActionId": "40246"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 686.3,
+        "WindowAfter": 5
+      }
+    },{
+      "Guid": "91b67a3c-bac5-43e2-9611-8744b15348bf",
+      "Name": "\u8D4B\u5F62 \u5224\u5B9A",
+      "Time": 689.2,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40246"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "4f4bbbe7-0acd-4bc5-b9e9-9cafc3b390ae",
+      "Name": "\u5723\u9F99\u62A4\u7532 \u5224\u5B9A",
+      "Time": 700.4,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40186"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "8ee16706-b83e-4295-bd8d-769d6482d3cb",
+      "Name": "\u5929\u5149\u8F6E\u56DE \u5224\u5B9A",
+      "Time": 702.9,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40237"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "6f9c7302-3059-4616-b5dc-806546500145",
+      "Name": "\u5FD8\u5374\u7684\u6B64\u5CB8 1 \u5224\u5B9A",
+      "Time": 705.4,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40174"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "108af505-6a5c-4f7f-addc-4e235b4e5439",
+      "Name": "--\u5DEB\u5973\u53EF\u9009\u4E2D--",
+      "Time": 706.2,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": null
+    },{
+      "Guid": "3ffd5bbc-eb72-4cfc-8a38-3729d5cea885",
+      "Name": "--sync-- \u5224\u5B9A",
+      "Time": 708.6,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40175"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "fea476b7-f0ca-44b0-a447-2e4a0e660d59",
+      "Name": "\u5149\u4E0E\u6697\u7684\u9F99\u8BD7 \u8BFB\u6761",
+      "Time": 710.2,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "CastStart",
+        "Params": {
+          "ActionId": "40239|40301"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 2.5,
+        "WindowAfter": 2.5
+      }
+    },{
+      "Guid": "15617a48-df72-4c07-bab4-7dec29415292",
+      "Name": "\u5149\u4E0E\u6697\u7684\u9F99\u8BD7 \u5224\u5B9A",
+      "Time": 714.9,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40239"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "4f7a6fa7-a81c-48a2-9cef-2aa48d135fd8",
+      "Name": "\u4FB5\u8680\u5149 \u5224\u5B9A",
+      "Time": 726.1,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40213"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "cb464450-2b89-446c-9486-6f5bb0eaa811",
+      "Name": "\u5149\u4E4B\u6CE2\u52A8 \u5224\u5B9A",
+      "Time": 727,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40190"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "f21e8201-6a13-489b-b18a-32ed3eeec8d8",
+      "Name": "\u788E\u7075\u4E00\u51FB (\u8DF3) \u5224\u5B9A",
+      "Time": 729.1,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40288"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "c072cbaa-24dd-4cbe-a1c5-fc426e4fcffd",
+      "Name": "\u788E\u7075\u4E00\u51FB (\u4F24\u5BB3) \u5224\u5B9A",
+      "Time": 729.5,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40289"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "f585c0aa-9916-4556-9b1b-de76e045cd22",
+      "Name": "\u9ED1\u6697\u72C2\u6C34 \u002B \u795E\u5723\u4E4B\u7FFC \u5224\u5B9A",
+      "Time": 734.1,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40271"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "7db68224-1787-4f0e-a287-dc0a3cca9380",
+      "Name": "\u771F\u591C\u821E\u8E48 (\u8FDC) \u5224\u5B9A",
+      "Time": 737.7,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40284"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "c208dd9a-6dbe-4291-b809-024fc773d32b",
+      "Name": "\u771F\u591C\u821E\u8E48 (\u8FD1) \u5224\u5B9A",
+      "Time": 741,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40285"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "8a2a7211-8b82-44f0-af70-57d4c3f05be2",
+      "Name": "\u5FD8\u5374\u7684\u6B64\u5CB8 2 \u5224\u5B9A",
+      "Time": 744.4,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40174"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "636154df-0e0e-450c-9ac7-5c08123be44d",
+      "Name": "--\u5DEB\u5973\u4E2D\u592E-- \u5224\u5B9A",
+      "Time": 745.4,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40117"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "5f72db44-31ea-45b3-8ccd-c3ccc1fcf2b6",
+      "Name": "\u6B7B\u4EA1\u8F6E\u56DE (x5) \u5224\u5B9A",
+      "Time": 750.7,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40302"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "89af8c8a-b195-43b5-8039-3bd6653d3245",
+      "Name": "\u65E0\u5C3D\u987F\u609F \u5224\u5B9A",
+      "Time": 760.8,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40304"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "7e7cf11f-dd26-4385-b355-b90a80f11897",
+      "Name": "--\u5F52\u4F4D-- \u5224\u5B9A",
+      "Time": 765.1,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40117"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "ba96741e-efec-4151-8926-7588ca8b2da4",
+      "Name": "\u65F6\u95F4\u7ED3\u6676 \u8BFB\u6761",
+      "Time": 766.6,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "CastStart",
+        "Params": {
+          "ActionId": "40240|40298"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 2.5,
+        "WindowAfter": 2.5
+      }
+    },{
+      "Guid": "15c89c65-3dc0-46cb-9035-79ce63ad1178",
+      "Name": "\u65F6\u95F4\u7ED3\u6676 \u5224\u5B9A",
+      "Time": 776.3,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40240"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "80acfb67-b5a7-4343-91f3-5f630dc392ff",
+      "Name": "--\u5E0C\u74E6\u00B7\u7C73\u7279\u9686\u4E0D\u53EF\u9009\u4E2D--",
+      "Time": 779.3,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": null
+    },{
+      "Guid": "ff955294-7513-4fca-b4bf-a3f5a7907964",
+      "Name": "--\u5DEB\u5973\u4E0D\u53EF\u9009\u4E2D--",
+      "Time": 780.3,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": null
+    },{
+      "Guid": "af734bf0-680b-4770-8b35-98ccb2780d30",
+      "Name": "\u5FD8\u5374\u7684\u6B64\u5CB8 3 \u5224\u5B9A",
+      "Time": 782.4,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40174"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "e44dbd90-4107-40f8-a45d-f8201c59826b",
+      "Name": "\u5DE8\u6F29\u6DA1 (\u5FEB) \u5224\u5B9A",
+      "Time": 788.3,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40299"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "5f4c8fc4-9f7c-4429-b67f-1be8a462e473",
+      "Name": "\u9ED1\u6697\u72C2\u6C34 \u5224\u5B9A",
+      "Time": 789.3,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40271"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "36915e46-c055-471e-b17b-0c747f5f7e89",
+      "Name": "\u9ED1\u6697\u51B0\u5C01 \u002B \u6697\u708E\u55B7\u53D1 \u002B \u9ED1\u6697\u66B4\u98CE \u5224\u5B9A",
+      "Time": 791.3,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40279"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "775ff82a-4b3a-431a-b5e2-5ed84b368518",
+      "Name": "--sync-- \u5224\u5B9A",
+      "Time": 793.4,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40175"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "21e17856-b8ea-4849-9089-bd3229574cc4",
+      "Name": "\u5DE8\u6F29\u6DA1 (\u6B63\u5E38) \u5224\u5B9A",
+      "Time": 793.9,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40299"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "30a92dcb-88c3-4f5f-bfca-2419fc5f2ed7",
+      "Name": "\u9ED1\u6697\u795E\u5723 \u5224\u5B9A",
+      "Time": 794.3,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40277"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "1ec60104-ec8e-4ea5-ae0a-6bd2a7679bfc",
+      "Name": "\u5149\u4E4B\u5DE8\u6D6A (x4) \u5224\u5B9A",
+      "Time": 797.7,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40251"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "2a84c570-2ee5-4853-a71e-1115b9868f1d",
+      "Name": "\u5DE8\u6F29\u6DA1 (\u6162) \u5224\u5B9A",
+      "Time": 798.8,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": null
+    },{
+      "Guid": "b78a9632-09b2-4cff-a823-6f8eb9d06373",
+      "Name": "--sync-- \u5224\u5B9A",
+      "Time": 799.8,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40175"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "c09897f6-a24c-48ed-91d2-c96aadd2b49b",
+      "Name": "\u5149\u4E4B\u5DE8\u6D6A (x4) \u5224\u5B9A",
+      "Time": 804,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40251"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "8f8128a0-6a62-437d-9da8-33085daea66b",
+      "Name": "\u5BC2\u706D \u5224\u5B9A",
+      "Time": 808.2,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40281"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "388ee057-54b0-4be1-a66b-128065c46c57",
+      "Name": "(\u653E\u7F6E\u56DE\u8FD4)",
+      "Time": 810.2,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": null
+    },{
+      "Guid": "7a10a948-22d0-48b6-80bd-9ebfbce247c2",
+      "Name": "\u788E\u7075\u4E00\u51FB \u5224\u5B9A",
+      "Time": 813.8,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40289"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "ffe6d6ab-8a50-4cda-b181-2e176f731538",
+      "Name": "(\u7729\u6655 \u002B \u56DE\u8FD4)",
+      "Time": 817.2,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": null
+    },{
+      "Guid": "c6e602cd-ca7d-4368-8a54-78ea7378420b",
+      "Name": "\u795E\u5723\u4E4B\u7FFC 1 \u5224\u5B9A",
+      "Time": 819.4,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40332"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "0e2cd90c-da9b-474b-a453-a1bc39f72a53",
+      "Name": "\u795E\u5723\u4E4B\u7FFC 2 \u5224\u5B9A",
+      "Time": 824,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": null
+    },{
+      "Guid": "da82bcb0-73aa-48f7-a1ae-909d79ca8191",
+      "Name": "--center-- \u5224\u5B9A",
+      "Time": 828.1,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40117"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "0c809dcd-fbba-4ec2-accc-9dece10d90d5",
+      "Name": "--targetable--",
+      "Time": 829.4,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": null
+    },{
+      "Guid": "6d184f2b-be30-4c9e-aa8b-68f1396a5b07",
+      "Name": "\u6B7B\u4EA1\u8F6E\u56DE (x5) \u5224\u5B9A",
+      "Time": 833.3,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40302"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "9b890052-c9ad-4d94-8457-604077a992d4",
+      "Name": "\u5FD8\u5374\u7684\u6B64\u5CB8 4 \u5224\u5B9A",
+      "Time": 841.3,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40174"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "e222123a-9abb-4c23-9e66-e1287400f900",
+      "Name": "\u65E0\u5C3D\u987F\u609F \u5224\u5B9A",
+      "Time": 843.3,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40304"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "bee8b818-7989-4155-a876-eb840956eacc",
+      "Name": "\u8BB0\u5FC6\u7EC8\u7ED3 \u002B \u7EDD\u5BF9\u96F6\u5EA6 (enrage) \u8BFB\u6761",
+      "Time": 846.5,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "CastStart",
+        "Params": {
+          "Regex": "^(?:40305|40245)$"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "f2b7dbc1-c759-471d-9114-dfc055be4aba",
+      "Name": "\u8BB0\u5FC6\u7EC8\u7ED3 \u002B \u7EDD\u5BF9\u96F6\u5EA6 (enrage) \u5224\u5B9A",
+      "Time": 856.5,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "Regex": "^(?:40305|40245)$"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "59765c31-7ff1-46c0-8258-068e7b48910a",
+      "Name": "--sync--",
+      "Time": 956,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": "TODO(LogSystem): ActorControl sync \u6682\u672A\u8FC1\u79FB\uFF0C\u5F53\u524D\u6309\u7EAF\u5EF6\u8FDF\u951A\u70B9\u6267\u884C\u3002\n\u539F\u59CB\u5BFC\u5165\u884C: 956.0 \u0022--sync--\u0022 ActorControlExtra { category: \u00220197\u0022, param1: \u00221E43\u0022 } window 150,5 # limited lookbehind due to re-use",
+      "Sync": null
+    },{
+      "Guid": "2e23b41a-0b21-43b6-bb63-be3cad9691f7",
+      "Name": "(\u7729\u6655 \u002B \u52A8\u753B) \u5224\u5B9A",
+      "Time": 962,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40232"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 962,
+        "WindowAfter": 5
+      }
+    },{
+      "Guid": "5aba12ef-57fa-43e2-b133-4e3d88d242b8",
+      "Name": "--targetable--",
+      "Time": 1029.6,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": null
+    },{
+      "Guid": "85378a0c-cfc1-4d1c-9f8d-d46abfc33be0",
+      "Name": "\u5149\u5C18\u4E4B\u5251 \u8BFB\u6761",
+      "Time": 1034.8,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "CastStart",
+        "Params": {
+          "ActionId": "40306"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 1034.8,
+        "WindowAfter": 5
+      }
+    },{
+      "Guid": "6d44a59a-a9c5-43a2-be83-8ba46328ab61",
+      "Name": "\u5149\u5C18\u4E4B\u5251 \u5224\u5B9A",
+      "Time": 1040.8,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40306"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "5d7caadd-c0b4-464e-abeb-e81ea037a46d",
+      "Name": "\u6697\u4E4B\u6CE2\u52A8 \u002B \u5149\u4E4B\u6CE2\u52A8 \u5224\u5B9A",
+      "Time": 1052,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40118"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "2f890257-cef6-40a7-8fba-ccca9985f462",
+      "Name": "\u7B2C\u4E00\u6B21\u6B7B\u4EA1\u8F6E\u56DE \u8BFB\u6761",
+      "Time": 1052.1,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "CastStart",
+        "Params": {
+          "ActionId": "40310"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 2.5,
+        "WindowAfter": 2.5
+      }
+    },{
+      "Guid": "86e04812-bd85-47c8-b21f-ec5f981b4ae8",
+      "Name": "\u6B7B\u4EA1\u8F6E\u56DE \u5224\u5B9A",
+      "Time": 1067.8,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40310"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "b9be11b8-b27c-4601-afc8-3c9952ae931d",
+      "Name": "\u590D\u4E50\u56ED \u5224\u5B9A",
+      "Time": 1076,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40319"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "cd69d881-89d2-4505-b910-69f4c5c51327",
+      "Name": "\u5149\u4E0E\u6697\u7684\u5B64\u7FFC \u5224\u5B9A",
+      "Time": 1086,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "Regex": "^(?:40233|40313)$"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "0b749c63-bc1d-44fd-a4c1-b6c94ea3a92d",
+      "Name": "\u7206\u70B8 \u5224\u5B9A",
+      "Time": 1086.4,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40320"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "39a248d3-b72f-452b-ab40-8204f2dcb2a1",
+      "Name": "\u5149\u4E0E\u6697\u7684\u5B64\u7FFC \u002B \u7206\u70B8 \u5224\u5B9A",
+      "Time": 1089.9,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": null
+    },{
+      "Guid": "f058d8f3-b9eb-48be-bf91-11fdb2b8e34a",
+      "Name": "\u7206\u70B8 \u5224\u5B9A",
+      "Time": 1093.4,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40320"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "d4cf0bab-ba34-416e-bf3c-1c7aeac4acb9",
+      "Name": "\u661F\u7075\u4E4B\u5251 \u5224\u5B9A",
+      "Time": 1107.4,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40316"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "08b1257e-60a8-4b53-a0e3-880f15820920",
+      "Name": "\u661F\u7075\u4E4B\u5251 \u5224\u5B9A",
+      "Time": 1112,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40234"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "1a727457-1dab-49e2-b390-b7d50e44aae6",
+      "Name": "\u661F\u7075\u4E4B\u5251 \u5224\u5B9A",
+      "Time": 1116.6,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": null
+    },{
+      "Guid": "956ba0be-2da4-4f50-ade4-d31d632d98d7",
+      "Name": "\u661F\u7075\u4E4B\u5251 \u5224\u5B9A",
+      "Time": 1121.2,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40234"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "8c94e82d-80e8-4aa0-a72e-4392834deb90",
+      "Name": "\u6F58\u591A\u62C9\u9B54\u76D2 \u5224\u5B9A",
+      "Time": 1141.7,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40326"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "bff41bbd-df18-4de2-8b79-72e20b6594b5",
+      "Name": "\u7B2C\u4E8C\u6B21\u5149\u5C18\u4E4B\u5251\u8BFB\u6761",
+      "Time": 1148.1,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "CastStart",
+        "Params": {
+          "ActionId": "40306"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 2.5,
+        "WindowAfter": 2.5
+      }
+    },{
+      "Guid": "64d41986-cf72-4fb9-8f38-a46fd3fee14f",
+      "Name": "\u5149\u5C18\u4E4B\u5251 \u5224\u5B9A",
+      "Time": 1153.8,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40306"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "1ddcf24f-ddb3-42f2-890e-35cb5ce05e34",
+      "Name": "\u6697\u4E4B\u6CE2\u52A8 \u002B \u5149\u4E4B\u6CE2\u52A8 \u5224\u5B9A",
+      "Time": 1164.9,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40118"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "d4168252-1d51-4dc9-befa-ec9df9815e11",
+      "Name": "\u7B2C\u4E8C\u6B21\u6B7B\u4EA1\u8F6E\u56DE \u8BFB\u6761",
+      "Time": 1173,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "CastStart",
+        "Params": {
+          "ActionId": "40310"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 2.5,
+        "WindowAfter": 2.5
+      }
+    },{
+      "Guid": "1c91f0d3-0bcc-4026-8826-134801126540",
+      "Name": "\u6B7B\u4EA1\u8F6E\u56DE \u5224\u5B9A",
+      "Time": 1180.7,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40310"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "f8bac367-bcee-4d61-8a8f-613e3948a7c8",
+      "Name": "\u590D\u4E50\u56ED \u5224\u5B9A",
+      "Time": 1193,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40319"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "a76a4a5f-e159-48ba-aeb6-0411e5384161",
+      "Name": "\u5149\u4E0E\u6697\u7684\u5B64\u7FFC \u5224\u5B9A",
+      "Time": 1203,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "Regex": "^(?:40233|40313)$"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "1cf5d98f-3d30-4246-a718-055f6b195801",
+      "Name": "\u7206\u70B8 \u5224\u5B9A",
+      "Time": 1203.4,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40320"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "15858d43-2c01-4e4e-b968-caf732f1edb0",
+      "Name": "\u5149\u4E0E\u6697\u7684\u5B64\u7FFC \u002B \u7206\u70B8 \u5224\u5B9A",
+      "Time": 1206.9,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": null
+    },{
+      "Guid": "fff80a40-2ec0-4373-a465-afb19bab75a8",
+      "Name": "\u7206\u70B8 \u5224\u5B9A",
+      "Time": 1210.4,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40320"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "7e0cfc7d-bff6-422e-a887-d74dcda5285b",
+      "Name": "\u661F\u7075\u4E4B\u5251 \u5224\u5B9A",
+      "Time": 1219.2,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40316"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "9f69d666-02d0-4570-b420-a32d3f84b319",
+      "Name": "\u661F\u7075\u4E4B\u5251 \u5224\u5B9A",
+      "Time": 1223.8,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40234"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "b1b0dbf3-1e2f-42ca-8426-1dfb35a91c07",
+      "Name": "\u661F\u7075\u4E4B\u5251 \u5224\u5B9A",
+      "Time": 1228.4,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": null
+    },{
+      "Guid": "05f64dd2-cb4a-48e6-a71d-7441bdcb8737",
+      "Name": "\u661F\u7075\u4E4B\u5251 \u5224\u5B9A",
+      "Time": 1233,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40234"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "58dcc080-ac77-4c17-9a8f-9e79c8b1e060",
+      "Name": "\u7B2C\u4E09\u6B21\u5149\u5C18\u4E4B\u5251\u8BFB\u6761",
+      "Time": 1238.6,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "CastStart",
+        "Params": {
+          "ActionId": "40306"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 2.5,
+        "WindowAfter": 2.5
+      }
+    },{
+      "Guid": "b7b958b5-4ee0-4c6b-bd19-92455ab62beb",
+      "Name": "\u5149\u5C18\u4E4B\u5251 \u5224\u5B9A",
+      "Time": 1244.3,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40306"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "edccd711-ec4c-4a23-b3a3-ff511991c772",
+      "Name": "\u6697\u4E4B\u6CE2\u52A8 \u002B \u5149\u4E4B\u6CE2\u52A8 \u5224\u5B9A",
+      "Time": 1255.3,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40118"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "07274986-6553-46ce-ad60-c8a85fa0e552",
+      "Name": "\u7B2C\u4E09\u6B21\u6B7B\u4EA1\u8F6E\u56DE \u8BFB\u6761",
+      "Time": 1263.6,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "CastStart",
+        "Params": {
+          "ActionId": "40310"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 2.5,
+        "WindowAfter": 2.5
+      }
+    },{
+      "Guid": "f56e1f3c-c4a6-4473-b5f2-c2cdcd26b917",
+      "Name": "\u6B7B\u4EA1\u8F6E\u56DE \u5224\u5B9A",
+      "Time": 1271.3,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40310"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "c04bce00-44ec-40a3-aca0-3d495bec26ba",
+      "Name": "\u5931\u4E50\u56ED (enrage) \u8BFB\u6761",
+      "Time": 1279.8,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "CastStart",
+        "Params": {
+          "ActionId": "40328"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "b9d89ce8-d406-4c66-b2da-3fc01ea262e3",
+      "Name": "\u5931\u4E50\u56ED (enrage) \u5224\u5B9A",
+      "Time": 1301.3,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": false,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": {
+        "Type": "ActionEffect",
+        "Params": {
+          "ActionId": "40328"
+        },
+        "MatchTime": null,
+        "JumpTargetTime": null,
+        "IsForceJump": false,
+        "WindowBefore": 0,
+        "WindowAfter": 0
+      }
+    },{
+      "Guid": "ad8dc723-4deb-4d1d-bf17-1aacf5c5820f",
+      "Name": "\u7ED3\u675F",
+      "Time": 1331.3,
+      "IsPhaseAnchor": false,
+      "IsEndAnchor": true,
+      "IsCommentAnchor": false,
+      "IsTechnicalAnchor": false,
+      "Enabled": true,
+      "Remark": null,
+      "Sync": null
+    }],
+  "Entries": [{
+      "Guid": "85b5183c-c435-4c96-b033-9ecf3e74959f",
+      "Name": "\u884C\u4E3A\u7EC4 1",
+      "StartAnchorGuid": "69e89ee0-7b7c-4385-b68f-afa681e75b31",
+      "Offset": 0,
+      "Enabled": true,
+      "Remark": null,
+      "EntryGroup": {
+        "Id": 1,
+        "Name": "\u884C\u4E3A\u7EC4",
+        "Type": "serial",
+        "Enabled": true,
+        "Remark": null,
+        "DelayMs": null,
+        "Mode": null,
+        "UseAndLogic": null,
+        "Condition": null,
+        "Conditions": null,
+        "Action": null,
+        "Actions": null,
+        "Children": [
+          {
+            "Id": 2,
+            "Name": "\u68C0\u6D4BD1",
+            "Type": "condition",
+            "Enabled": true,
+            "Remark": null,
+            "DelayMs": null,
+            "Mode": "wait",
+            "UseAndLogic": null,
+            "Condition": null,
+            "Conditions": [
+              {
+                "Type": "TimelineRole",
+                "ActionId": null,
+                "Immediate": false,
+                "Target": null,
+                "BuffId": null,
+                "Mode": null,
+                "Regex": null,
+                "Value": null,
+                "Negate": false,
+                "Params": {
+                  "role": "D1"
+                }
+              }
+            ],
+            "Action": null,
+            "Actions": null,
+            "Children": null
+          },
+          {
+            "Id": 3,
+            "Name": "\u65B0\u884C\u4E3A\u8282\u70B9",
+            "Type": "action",
+            "Enabled": true,
+            "Remark": null,
+            "DelayMs": null,
+            "Mode": null,
+            "UseAndLogic": null,
+            "Condition": null,
+            "Conditions": null,
+            "Action": null,
+            "Actions": [
+              {
+                "Type": "ForceUseSkill",
+                "Qt": null,
+                "Enabled": false,
+                "Message": null,
+                "ActionId": 7549,
+                "SkillType": "OffGcd",
+                "Target": "Target",
+                "HighPriority": false,
+                "TargetMode": null,
+                "Mode": null
+              }
+            ],
+            "Children": null
+          }
+        ]
+      }
+    },{
+      "Guid": "1b42c19c-4579-4349-890a-0293962e0710",
+      "Name": "\u884C\u4E3A\u7EC4 2",
+      "StartAnchorGuid": "d286bc54-bdc0-4fac-b6c5-6d9a08583988",
+      "Offset": 0,
+      "Enabled": true,
+      "Remark": null,
+      "EntryGroup": {
+        "Id": 1,
+        "Name": "\u884C\u4E3A\u7EC4",
+        "Type": "serial",
+        "Enabled": true,
+        "Remark": null,
+        "DelayMs": null,
+        "Mode": null,
+        "UseAndLogic": null,
+        "Condition": null,
+        "Conditions": null,
+        "Action": null,
+        "Actions": null,
+        "Children": [
+          {
+            "Id": 2,
+            "Name": "D2",
+            "Type": "condition",
+            "Enabled": true,
+            "Remark": null,
+            "DelayMs": null,
+            "Mode": "wait",
+            "UseAndLogic": null,
+            "Condition": null,
+            "Conditions": [
+              {
+                "Type": "TimelineRole",
+                "ActionId": null,
+                "Immediate": false,
+                "Target": null,
+                "BuffId": null,
+                "Mode": null,
+                "Regex": null,
+                "Value": null,
+                "Negate": false,
+                "Params": {
+                  "role": "D2"
+                }
+              }
+            ],
+            "Action": null,
+            "Actions": null,
+            "Children": null
+          },
+          {
+            "Id": 3,
+            "Name": "\u65B0\u884C\u4E3A\u8282\u70B9",
+            "Type": "action",
+            "Enabled": true,
+            "Remark": null,
+            "DelayMs": null,
+            "Mode": null,
+            "UseAndLogic": null,
+            "Condition": null,
+            "Conditions": null,
+            "Action": null,
+            "Actions": [
+              {
+                "Type": "ForceUseSkill",
+                "Qt": null,
+                "Enabled": false,
+                "Message": null,
+                "ActionId": 7549,
+                "SkillType": "OffGcd",
+                "Target": "Target",
+                "HighPriority": false,
+                "TargetMode": null,
+                "Mode": null
+              }
+            ],
+            "Children": null
+          }
+        ]
+      }
+    },{
+      "Guid": "9fddaa0a-c7ee-4ca0-b117-fe9359ffd1c7",
+      "Name": "D1\u7275\u5236",
+      "StartAnchorGuid": "b9c4d941-40b0-4bca-92c3-11c301af63cd",
+      "Offset": 5,
+      "Enabled": true,
+      "Remark": null,
+      "EntryGroup": {
+        "Id": 1,
+        "Name": "\u884C\u4E3A\u7EC4",
+        "Type": "serial",
+        "Enabled": true,
+        "Remark": null,
+        "DelayMs": null,
+        "Mode": null,
+        "UseAndLogic": null,
+        "Condition": null,
+        "Conditions": null,
+        "Action": null,
+        "Actions": null,
+        "Children": [{
+            "Id": 2,
+            "Name": "\u65B0\u6761\u4EF6\u8282\u70B9",
+            "Type": "condition",
+            "Enabled": true,
+            "Remark": null,
+            "DelayMs": null,
+            "Mode": "wait",
+            "UseAndLogic": true,
+            "Condition": null,
+            "Conditions": [
+              {
+                "Type": "TimelineRole",
+                "ActionId": null,
+                "Immediate": false,
+                "Target": null,
+                "BuffId": null,
+                "Mode": null,
+                "Regex": null,
+                "Value": null,
+                "Negate": false,
+                "Params": {
+                  "role": "D1"
+                }
+              }
+            ],
+            "Action": null,
+            "Actions": null,
+            "Children": null
+          },{
+            "Id": 3,
+            "Name": "\u65B0\u884C\u4E3A\u8282\u70B9",
+            "Type": "action",
+            "Enabled": true,
+            "Remark": null,
+            "DelayMs": null,
+            "Mode": null,
+            "UseAndLogic": null,
+            "Condition": null,
+            "Conditions": null,
+            "Action": null,
+            "Actions": [
+              {
+                "Type": "ForceUseSkill",
+                "Qt": null,
+                "Enabled": false,
+                "Message": null,
+                "ActionId": 7549,
+                "SkillType": "OffGcd",
+                "Target": "Target",
+                "HighPriority": false,
+                "TargetMode": null,
+                "Mode": null
+              }
+            ],
+            "Children": null
+          }]
+      }
+    },{
+      "Guid": "9878f4ea-8c36-4b57-ad26-97dadac955dc",
+      "Name": "\u884C\u4E3A\u7EC4 4",
+      "StartAnchorGuid": "f3c400f6-1982-4a88-814b-9f868a61a582",
+      "Offset": 1,
+      "Enabled": true,
+      "Remark": null,
+      "EntryGroup": {
+        "Id": 1,
+        "Name": "\u884C\u4E3A\u7EC4",
+        "Type": "serial",
+        "Enabled": true,
+        "Remark": null,
+        "DelayMs": null,
+        "Mode": null,
+        "UseAndLogic": null,
+        "Condition": null,
+        "Conditions": null,
+        "Action": null,
+        "Actions": null,
+        "Children": [
+          {
+            "Id": 2,
+            "Name": "\u65B0\u6761\u4EF6\u8282\u70B9",
+            "Type": "condition",
+            "Enabled": true,
+            "Remark": null,
+            "DelayMs": null,
+            "Mode": "wait",
+            "UseAndLogic": null,
+            "Condition": null,
+            "Conditions": [
+              {
+                "Type": "TimelineRole",
+                "ActionId": null,
+                "Immediate": false,
+                "Target": null,
+                "BuffId": null,
+                "Mode": null,
+                "Regex": null,
+                "Value": null,
+                "Negate": false,
+                "Params": {
+                  "role": "D1"
+                }
+              }
+            ],
+            "Action": null,
+            "Actions": null,
+            "Children": null
+          },
+          {
+            "Id": 3,
+            "Name": "\u65B0\u884C\u4E3A\u8282\u70B9",
+            "Type": "action",
+            "Enabled": true,
+            "Remark": null,
+            "DelayMs": null,
+            "Mode": null,
+            "UseAndLogic": null,
+            "Condition": null,
+            "Conditions": null,
+            "Action": null,
+            "Actions": [
+              {
+                "Type": "ForceUseSkill",
+                "Qt": null,
+                "Enabled": false,
+                "Message": null,
+                "ActionId": 7549,
+                "SkillType": "OffGcd",
+                "Target": "Target",
+                "HighPriority": false,
+                "TargetMode": null,
+                "Mode": null
+              }
+            ],
+            "Children": null
+          }
+        ]
+      }
+    },{
+      "Guid": "7e09ac33-bdfb-4f6a-bce3-4f0e8237961e",
+      "Name": "\u884C\u4E3A\u7EC4 5",
+      "StartAnchorGuid": "6262e3b6-15ce-4d94-95b0-7a63ef419b9f",
+      "Offset": 3,
+      "Enabled": true,
+      "Remark": null,
+      "EntryGroup": {
+        "Id": 1,
+        "Name": "\u884C\u4E3A\u7EC4",
+        "Type": "serial",
+        "Enabled": true,
+        "Remark": null,
+        "DelayMs": null,
+        "Mode": null,
+        "UseAndLogic": null,
+        "Condition": null,
+        "Conditions": null,
+        "Action": null,
+        "Actions": null,
+        "Children": [
+          {
+            "Id": 2,
+            "Name": "\u65B0\u6761\u4EF6\u8282\u70B9",
+            "Type": "condition",
+            "Enabled": true,
+            "Remark": null,
+            "DelayMs": null,
+            "Mode": "wait",
+            "UseAndLogic": null,
+            "Condition": null,
+            "Conditions": [
+              {
+                "Type": "TimelineRole",
+                "ActionId": null,
+                "Immediate": false,
+                "Target": null,
+                "BuffId": null,
+                "Mode": null,
+                "Regex": null,
+                "Value": null,
+                "Negate": false,
+                "Params": {
+                  "role": "D1"
+                }
+              }
+            ],
+            "Action": null,
+            "Actions": null,
+            "Children": null
+          },
+          {
+            "Id": 3,
+            "Name": "\u65B0\u884C\u4E3A\u8282\u70B9",
+            "Type": "action",
+            "Enabled": true,
+            "Remark": null,
+            "DelayMs": null,
+            "Mode": null,
+            "UseAndLogic": null,
+            "Condition": null,
+            "Conditions": null,
+            "Action": null,
+            "Actions": [
+              {
+                "Type": "ForceUseSkill",
+                "Qt": null,
+                "Enabled": false,
+                "Message": null,
+                "ActionId": 7549,
+                "SkillType": "OffGcd",
+                "Target": "Target",
+                "HighPriority": false,
+                "TargetMode": null,
+                "Mode": null
+              }
+            ],
+            "Children": null
+          }
+        ]
+      }
+    },{
+      "Guid": "b64f5325-db0c-41a1-9ef8-2d90995433fe",
+      "Name": "\u884C\u4E3A\u7EC4 6",
+      "StartAnchorGuid": "1f43dbf2-c973-4d27-adfa-a67f02ad11ee",
+      "Offset": 0,
+      "Enabled": true,
+      "Remark": null,
+      "EntryGroup": {
+        "Id": 1,
+        "Name": "\u884C\u4E3A\u7EC4",
+        "Type": "serial",
+        "Enabled": true,
+        "Remark": null,
+        "DelayMs": null,
+        "Mode": null,
+        "UseAndLogic": null,
+        "Condition": null,
+        "Conditions": null,
+        "Action": null,
+        "Actions": null,
+        "Children": [
+          {
+            "Id": 2,
+            "Name": "\u65B0\u6761\u4EF6\u8282\u70B9",
+            "Type": "condition",
+            "Enabled": true,
+            "Remark": null,
+            "DelayMs": null,
+            "Mode": "wait",
+            "UseAndLogic": null,
+            "Condition": null,
+            "Conditions": [
+              {
+                "Type": "TimelineRole",
+                "ActionId": null,
+                "Immediate": false,
+                "Target": null,
+                "BuffId": null,
+                "Mode": null,
+                "Regex": null,
+                "Value": null,
+                "Negate": false,
+                "Params": {
+                  "role": "D2"
+                }
+              }
+            ],
+            "Action": null,
+            "Actions": null,
+            "Children": null
+          },
+          {
+            "Id": 3,
+            "Name": "\u65B0\u884C\u4E3A\u8282\u70B9",
+            "Type": "action",
+            "Enabled": true,
+            "Remark": null,
+            "DelayMs": null,
+            "Mode": null,
+            "UseAndLogic": null,
+            "Condition": null,
+            "Conditions": null,
+            "Action": null,
+            "Actions": [
+              {
+                "Type": "ForceUseSkill",
+                "Qt": null,
+                "Enabled": false,
+                "Message": null,
+                "ActionId": 7549,
+                "SkillType": "OffGcd",
+                "Target": "Target",
+                "HighPriority": false,
+                "TargetMode": null,
+                "Mode": null
+              }
+            ],
+            "Children": null
+          }
+        ]
+      }
+    },{
+      "Guid": "16225b04-7899-478d-a06c-6cb58ff1487b",
+      "Name": "\u884C\u4E3A\u7EC4 7",
+      "StartAnchorGuid": "a5603e3d-87f3-47cd-8d42-2812d9ad7644",
+      "Offset": 5,
+      "Enabled": true,
+      "Remark": null,
+      "EntryGroup": {
+        "Id": 1,
+        "Name": "\u884C\u4E3A\u7EC4",
+        "Type": "serial",
+        "Enabled": true,
+        "Remark": null,
+        "DelayMs": null,
+        "Mode": null,
+        "UseAndLogic": null,
+        "Condition": null,
+        "Conditions": null,
+        "Action": null,
+        "Actions": null,
+        "Children": [
+          {
+            "Id": 2,
+            "Name": "\u65B0\u6761\u4EF6\u8282\u70B9",
+            "Type": "condition",
+            "Enabled": true,
+            "Remark": null,
+            "DelayMs": null,
+            "Mode": "wait",
+            "UseAndLogic": null,
+            "Condition": null,
+            "Conditions": [
+              {
+                "Type": "TimelineRole",
+                "ActionId": null,
+                "Immediate": false,
+                "Target": null,
+                "BuffId": null,
+                "Mode": null,
+                "Regex": null,
+                "Value": null,
+                "Negate": false,
+                "Params": {
+                  "role": "D2"
+                }
+              }
+            ],
+            "Action": null,
+            "Actions": null,
+            "Children": null
+          },
+          {
+            "Id": 3,
+            "Name": "\u65B0\u884C\u4E3A\u8282\u70B9",
+            "Type": "action",
+            "Enabled": true,
+            "Remark": null,
+            "DelayMs": null,
+            "Mode": null,
+            "UseAndLogic": null,
+            "Condition": null,
+            "Conditions": null,
+            "Action": null,
+            "Actions": [
+              {
+                "Type": "ForceUseSkill",
+                "Qt": null,
+                "Enabled": false,
+                "Message": null,
+                "ActionId": 7549,
+                "SkillType": "OffGcd",
+                "Target": "Target",
+                "HighPriority": false,
+                "TargetMode": null,
+                "Mode": null
+              }
+            ],
+            "Children": null
+          }
+        ]
+      }
+    },{
+      "Guid": "fe8935ae-68e3-413d-8a98-9f629c9ce6b8",
+      "Name": "\u884C\u4E3A\u7EC4 8",
+      "StartAnchorGuid": "e31dce9f-e66c-44c9-99d3-e94bf5cf4ebb",
+      "Offset": 6,
+      "Enabled": true,
+      "Remark": null,
+      "EntryGroup": {
+        "Id": 1,
+        "Name": "\u884C\u4E3A\u7EC4",
+        "Type": "serial",
+        "Enabled": true,
+        "Remark": null,
+        "DelayMs": null,
+        "Mode": null,
+        "UseAndLogic": null,
+        "Condition": null,
+        "Conditions": null,
+        "Action": null,
+        "Actions": null,
+        "Children": [
+          {
+            "Id": 2,
+            "Name": "\u65B0\u6761\u4EF6\u8282\u70B9",
+            "Type": "condition",
+            "Enabled": true,
+            "Remark": null,
+            "DelayMs": null,
+            "Mode": "wait",
+            "UseAndLogic": null,
+            "Condition": null,
+            "Conditions": [
+              {
+                "Type": "TimelineRole",
+                "ActionId": null,
+                "Immediate": false,
+                "Target": null,
+                "BuffId": null,
+                "Mode": null,
+                "Regex": null,
+                "Value": null,
+                "Negate": false,
+                "Params": {
+                  "role": "D1"
+                }
+              }
+            ],
+            "Action": null,
+            "Actions": null,
+            "Children": null
+          },
+          {
+            "Id": 3,
+            "Name": "\u65B0\u884C\u4E3A\u8282\u70B9",
+            "Type": "action",
+            "Enabled": true,
+            "Remark": null,
+            "DelayMs": null,
+            "Mode": null,
+            "UseAndLogic": null,
+            "Condition": null,
+            "Conditions": null,
+            "Action": null,
+            "Actions": [
+              {
+                "Type": "ForceUseSkill",
+                "Qt": null,
+                "Enabled": false,
+                "Message": null,
+                "ActionId": 7549,
+                "SkillType": "OffGcd",
+                "Target": "Target",
+                "HighPriority": false,
+                "TargetMode": null,
+                "Mode": null
+              }
+            ],
+            "Children": null
+          }
+        ]
+      }
+    },{
+      "Guid": "231e9da1-73d9-4d90-9042-50f50e700120",
+      "Name": "\u884C\u4E3A\u7EC4 9",
+      "StartAnchorGuid": "48fd72c5-7ce9-4aa2-9624-d0e23bc6f6a0",
+      "Offset": 1,
+      "Enabled": true,
+      "Remark": null,
+      "EntryGroup": {
+        "Id": 1,
+        "Name": "\u884C\u4E3A\u7EC4",
+        "Type": "serial",
+        "Enabled": true,
+        "Remark": null,
+        "DelayMs": null,
+        "Mode": null,
+        "UseAndLogic": null,
+        "Condition": null,
+        "Conditions": null,
+        "Action": null,
+        "Actions": null,
+        "Children": [
+          {
+            "Id": 2,
+            "Name": "\u65B0\u6761\u4EF6\u8282\u70B9",
+            "Type": "condition",
+            "Enabled": true,
+            "Remark": null,
+            "DelayMs": null,
+            "Mode": "wait",
+            "UseAndLogic": null,
+            "Condition": null,
+            "Conditions": [
+              {
+                "Type": "TimelineRole",
+                "ActionId": null,
+                "Immediate": false,
+                "Target": null,
+                "BuffId": null,
+                "Mode": null,
+                "Regex": null,
+                "Value": null,
+                "Negate": false,
+                "Params": {
+                  "role": "D1"
+                }
+              },
+              {
+                "Type": "SkillCooldown",
+                "ActionId": 7549,
+                "Immediate": false,
+                "Target": null,
+                "BuffId": null,
+                "Mode": "\u003C=",
+                "Regex": null,
+                "Value": 3,
+                "Negate": false
+              }
+            ],
+            "Action": null,
+            "Actions": null,
+            "Children": null
+          },
+          {
+            "Id": 3,
+            "Name": "\u65B0\u884C\u4E3A\u8282\u70B9",
+            "Type": "action",
+            "Enabled": true,
+            "Remark": null,
+            "DelayMs": null,
+            "Mode": null,
+            "UseAndLogic": null,
+            "Condition": null,
+            "Conditions": null,
+            "Action": null,
+            "Actions": [
+              {
+                "Type": "ForceUseSkill",
+                "Qt": null,
+                "Enabled": false,
+                "Message": null,
+                "ActionId": 7549,
+                "SkillType": "OffGcd",
+                "Target": "Target",
+                "HighPriority": false,
+                "TargetMode": null,
+                "Mode": null
+              }
+            ],
+            "Children": null
+          }
+        ]
+      }
+    },{
+      "Guid": "3b86e1ff-b418-4acd-8e9c-4aabbd7b4217",
+      "Name": "\u884C\u4E3A\u7EC4 10",
+      "StartAnchorGuid": "513718c2-54b4-41f4-b6ba-112930cb1370",
+      "Offset": 0,
+      "Enabled": true,
+      "Remark": null,
+      "EntryGroup": {
+        "Id": 1,
+        "Name": "\u884C\u4E3A\u7EC4",
+        "Type": "serial",
+        "Enabled": true,
+        "Remark": null,
+        "DelayMs": null,
+        "Mode": null,
+        "UseAndLogic": null,
+        "Condition": null,
+        "Conditions": null,
+        "Action": null,
+        "Actions": null,
+        "Children": [
+          {
+            "Id": 2,
+            "Name": "\u65B0\u6761\u4EF6\u8282\u70B9",
+            "Type": "condition",
+            "Enabled": true,
+            "Remark": null,
+            "DelayMs": null,
+            "Mode": "wait",
+            "UseAndLogic": null,
+            "Condition": null,
+            "Conditions": [
+              {
+                "Type": "TimelineRole",
+                "ActionId": null,
+                "Immediate": false,
+                "Target": null,
+                "BuffId": null,
+                "Mode": null,
+                "Regex": null,
+                "Value": null,
+                "Negate": false,
+                "Params": {
+                  "role": "D2"
+                }
+              }
+            ],
+            "Action": null,
+            "Actions": null,
+            "Children": null
+          },
+          {
+            "Id": 3,
+            "Name": "\u65B0\u884C\u4E3A\u8282\u70B9",
+            "Type": "action",
+            "Enabled": true,
+            "Remark": null,
+            "DelayMs": null,
+            "Mode": null,
+            "UseAndLogic": null,
+            "Condition": null,
+            "Conditions": null,
+            "Action": null,
+            "Actions": [
+              {
+                "Type": "ForceUseSkill",
+                "Qt": null,
+                "Enabled": false,
+                "Message": null,
+                "ActionId": 7549,
+                "SkillType": "OffGcd",
+                "Target": "Target",
+                "HighPriority": false,
+                "TargetMode": null,
+                "Mode": null
+              }
+            ],
+            "Children": null
+          }
+        ]
+      }
+    },{
+      "Guid": "89b5a82c-c281-4507-ac85-2b9664ebbb87",
+      "Name": "\u884C\u4E3A\u7EC4 11",
+      "StartAnchorGuid": "ba96741e-efec-4151-8926-7588ca8b2da4",
+      "Offset": 0,
+      "Enabled": true,
+      "Remark": null,
+      "EntryGroup": {
+        "Id": 1,
+        "Name": "\u884C\u4E3A\u7EC4",
+        "Type": "serial",
+        "Enabled": true,
+        "Remark": null,
+        "DelayMs": null,
+        "Mode": null,
+        "UseAndLogic": null,
+        "Condition": null,
+        "Conditions": null,
+        "Action": null,
+        "Actions": null,
+        "Children": [
+          {
+            "Id": 2,
+            "Name": "\u65B0\u6761\u4EF6\u8282\u70B9",
+            "Type": "condition",
+            "Enabled": true,
+            "Remark": null,
+            "DelayMs": null,
+            "Mode": "wait",
+            "UseAndLogic": null,
+            "Condition": null,
+            "Conditions": [
+              {
+                "Type": "TimelineRole",
+                "ActionId": null,
+                "Immediate": false,
+                "Target": null,
+                "BuffId": null,
+                "Mode": null,
+                "Regex": null,
+                "Value": null,
+                "Negate": false,
+                "Params": {
+                  "role": "D1"
+                }
+              }
+            ],
+            "Action": null,
+            "Actions": null,
+            "Children": null
+          },
+          {
+            "Id": 3,
+            "Name": "\u65B0\u884C\u4E3A\u8282\u70B9",
+            "Type": "action",
+            "Enabled": true,
+            "Remark": null,
+            "DelayMs": null,
+            "Mode": null,
+            "UseAndLogic": null,
+            "Condition": null,
+            "Conditions": null,
+            "Action": null,
+            "Actions": [
+              {
+                "Type": "ForceUseSkill",
+                "Qt": null,
+                "Enabled": false,
+                "Message": null,
+                "ActionId": 7549,
+                "SkillType": "OffGcd",
+                "Target": "Target",
+                "HighPriority": false,
+                "TargetMode": null,
+                "TargetDataId": 17835,
+                "Mode": null
+              }
+            ],
+            "Children": null
+          }
+        ]
+      }
+    },{
+      "Guid": "a80986bf-86a7-4007-9f99-cb7d06e2b755",
+      "Name": "\u884C\u4E3A\u7EC4 12",
+      "StartAnchorGuid": "fea476b7-f0ca-44b0-a447-2e4a0e660d59",
+      "Offset": 0,
+      "Enabled": true,
+      "Remark": null,
+      "EntryGroup": {
+        "Id": 1,
+        "Name": "\u884C\u4E3A\u7EC4",
+        "Type": "serial",
+        "Enabled": true,
+        "Remark": null,
+        "DelayMs": null,
+        "Mode": null,
+        "UseAndLogic": null,
+        "Condition": null,
+        "Conditions": null,
+        "Action": null,
+        "Actions": null,
+        "Children": [
+          {
+            "Id": 2,
+            "Name": "\u65B0\u6761\u4EF6\u8282\u70B9",
+            "Type": "condition",
+            "Enabled": true,
+            "Remark": null,
+            "DelayMs": null,
+            "Mode": "wait",
+            "UseAndLogic": null,
+            "Condition": null,
+            "Conditions": [
+              {
+                "Type": "TimelineRole",
+                "ActionId": null,
+                "Immediate": false,
+                "Target": null,
+                "BuffId": null,
+                "Mode": null,
+                "Regex": null,
+                "Value": null,
+                "Negate": false,
+                "Params": {
+                  "role": "D2"
+                }
+              }
+            ],
+            "Action": null,
+            "Actions": null,
+            "Children": null
+          },
+          {
+            "Id": 3,
+            "Name": "\u65B0\u884C\u4E3A\u8282\u70B9",
+            "Type": "action",
+            "Enabled": true,
+            "Remark": null,
+            "DelayMs": null,
+            "Mode": null,
+            "UseAndLogic": null,
+            "Condition": null,
+            "Conditions": null,
+            "Action": null,
+            "Actions": [
+              {
+                "Type": "ForceUseSkill",
+                "Qt": null,
+                "Enabled": false,
+                "Message": null,
+                "ActionId": 7549,
+                "SkillType": "OffGcd",
+                "Target": "Target",
+                "HighPriority": false,
+                "TargetMode": null,
+                "TargetDataId": 17833,
+                "Mode": null
+              }
+            ],
+            "Children": null
+          }
+        ]
+      }
+    },{
+      "Guid": "d20f24ea-0783-4097-8579-b0125db16e51",
+      "Name": "\u884C\u4E3A\u7EC4 13",
+      "StartAnchorGuid": "0c809dcd-fbba-4ec2-accc-9dece10d90d5",
+      "Offset": 0,
+      "Enabled": true,
+      "Remark": null,
+      "EntryGroup": {
+        "Id": 1,
+        "Name": "\u884C\u4E3A\u7EC4",
+        "Type": "serial",
+        "Enabled": true,
+        "Remark": null,
+        "DelayMs": null,
+        "Mode": null,
+        "UseAndLogic": null,
+        "Condition": null,
+        "Conditions": null,
+        "Action": null,
+        "Actions": null,
+        "Children": [
+          {
+            "Id": 2,
+            "Name": "\u65B0\u6761\u4EF6\u8282\u70B9",
+            "Type": "condition",
+            "Enabled": true,
+            "Remark": null,
+            "DelayMs": null,
+            "Mode": "wait",
+            "UseAndLogic": null,
+            "Condition": null,
+            "Conditions": [
+              {
+                "Type": "TimelineRole",
+                "ActionId": null,
+                "Immediate": false,
+                "Target": null,
+                "BuffId": null,
+                "Mode": null,
+                "Regex": null,
+                "Value": null,
+                "Negate": false,
+                "Params": {
+                  "role": "D2"
+                }
+              }
+            ],
+            "Action": null,
+            "Actions": null,
+            "Children": null
+          },
+          {
+            "Id": 3,
+            "Name": "\u65B0\u884C\u4E3A\u8282\u70B9",
+            "Type": "action",
+            "Enabled": true,
+            "Remark": null,
+            "DelayMs": null,
+            "Mode": null,
+            "UseAndLogic": null,
+            "Condition": null,
+            "Conditions": null,
+            "Action": null,
+            "Actions": [
+              {
+                "Type": "ForceUseSkill",
+                "Qt": null,
+                "Enabled": false,
+                "Message": null,
+                "ActionId": 7549,
+                "SkillType": "OffGcd",
+                "Target": "Target",
+                "HighPriority": false,
+                "TargetMode": null,
+                "TargetDataId": 17833,
+                "Mode": null
+              }
+            ],
+            "Children": null
+          }
+        ]
+      }
+    },{
+      "Guid": "63389a84-a283-4df5-b942-2e3ddd703617",
+      "Name": "\u884C\u4E3A\u7EC4 14",
+      "StartAnchorGuid": "85378a0c-cfc1-4d1c-9f8d-d46abfc33be0",
+      "Offset": 0,
+      "Enabled": true,
+      "Remark": null,
+      "EntryGroup": {
+        "Id": 1,
+        "Name": "\u884C\u4E3A\u7EC4",
+        "Type": "serial",
+        "Enabled": true,
+        "Remark": null,
+        "DelayMs": null,
+        "Mode": null,
+        "UseAndLogic": null,
+        "Condition": null,
+        "Conditions": null,
+        "Action": null,
+        "Actions": null,
+        "Children": [
+          {
+            "Id": 2,
+            "Name": "\u65B0\u6761\u4EF6\u8282\u70B9",
+            "Type": "condition",
+            "Enabled": true,
+            "Remark": null,
+            "DelayMs": null,
+            "Mode": "wait",
+            "UseAndLogic": null,
+            "Condition": null,
+            "Conditions": [
+              {
+                "Type": "TimelineRole",
+                "ActionId": null,
+                "Immediate": false,
+                "Target": null,
+                "BuffId": null,
+                "Mode": null,
+                "Regex": null,
+                "Value": null,
+                "Negate": false,
+                "Params": {
+                  "role": "D1"
+                }
+              }
+            ],
+            "Action": null,
+            "Actions": null,
+            "Children": null
+          },
+          {
+            "Id": 3,
+            "Name": "\u65B0\u884C\u4E3A\u8282\u70B9",
+            "Type": "action",
+            "Enabled": true,
+            "Remark": null,
+            "DelayMs": null,
+            "Mode": null,
+            "UseAndLogic": null,
+            "Condition": null,
+            "Conditions": null,
+            "Action": null,
+            "Actions": [
+              {
+                "Type": "ForceUseSkill",
+                "Qt": null,
+                "Enabled": false,
+                "Message": null,
+                "ActionId": 7549,
+                "SkillType": "OffGcd",
+                "Target": "Target",
+                "HighPriority": false,
+                "TargetMode": null,
+                "Mode": null
+              }
+            ],
+            "Children": null
+          }
+        ]
+      }
+    },{
+      "Guid": "93e09b6b-ff93-4429-aa06-4a186f9583b7",
+      "Name": "\u884C\u4E3A\u7EC4 15",
+      "StartAnchorGuid": "bff41bbd-df18-4de2-8b79-72e20b6594b5",
+      "Offset": 0,
+      "Enabled": true,
+      "Remark": null,
+      "EntryGroup": {
+        "Id": 1,
+        "Name": "\u884C\u4E3A\u7EC4",
+        "Type": "serial",
+        "Enabled": true,
+        "Remark": null,
+        "DelayMs": null,
+        "Mode": null,
+        "UseAndLogic": null,
+        "Condition": null,
+        "Conditions": null,
+        "Action": null,
+        "Actions": null,
+        "Children": [
+          {
+            "Id": 2,
+            "Name": "\u65B0\u6761\u4EF6\u8282\u70B9",
+            "Type": "condition",
+            "Enabled": true,
+            "Remark": null,
+            "DelayMs": null,
+            "Mode": "wait",
+            "UseAndLogic": null,
+            "Condition": null,
+            "Conditions": [
+              {
+                "Type": "TimelineRole",
+                "ActionId": null,
+                "Immediate": false,
+                "Target": null,
+                "BuffId": null,
+                "Mode": null,
+                "Regex": null,
+                "Value": null,
+                "Negate": false,
+                "Params": {
+                  "role": "D1"
+                }
+              }
+            ],
+            "Action": null,
+            "Actions": null,
+            "Children": null
+          },
+          {
+            "Id": 3,
+            "Name": "\u65B0\u884C\u4E3A\u8282\u70B9",
+            "Type": "action",
+            "Enabled": true,
+            "Remark": null,
+            "DelayMs": null,
+            "Mode": null,
+            "UseAndLogic": null,
+            "Condition": null,
+            "Conditions": null,
+            "Action": null,
+            "Actions": [
+              {
+                "Type": "ForceUseSkill",
+                "Qt": null,
+                "Enabled": false,
+                "Message": null,
+                "ActionId": 7549,
+                "SkillType": "OffGcd",
+                "Target": "Target",
+                "HighPriority": false,
+                "TargetMode": null,
+                "Mode": null
+              }
+            ],
+            "Children": null
+          }
+        ]
+      }
+    },{
+      "Guid": "cb9e0f2e-cc5b-447f-aec7-447589e9d32d",
+      "Name": "\u884C\u4E3A\u7EC4 16",
+      "StartAnchorGuid": "58dcc080-ac77-4c17-9a8f-9e79c8b1e060",
+      "Offset": 0,
+      "Enabled": true,
+      "Remark": null,
+      "EntryGroup": {
+        "Id": 1,
+        "Name": "\u884C\u4E3A\u7EC4",
+        "Type": "serial",
+        "Enabled": true,
+        "Remark": null,
+        "DelayMs": null,
+        "Mode": null,
+        "UseAndLogic": null,
+        "Condition": null,
+        "Conditions": null,
+        "Action": null,
+        "Actions": null,
+        "Children": [
+          {
+            "Id": 2,
+            "Name": "\u65B0\u6761\u4EF6\u8282\u70B9",
+            "Type": "condition",
+            "Enabled": true,
+            "Remark": null,
+            "DelayMs": null,
+            "Mode": "wait",
+            "UseAndLogic": null,
+            "Condition": null,
+            "Conditions": [
+              {
+                "Type": "TimelineRole",
+                "ActionId": null,
+                "Immediate": false,
+                "Target": null,
+                "BuffId": null,
+                "Mode": null,
+                "Regex": null,
+                "Value": null,
+                "Negate": false,
+                "Params": {
+                  "role": "D1"
+                }
+              }
+            ],
+            "Action": null,
+            "Actions": null,
+            "Children": null
+          },
+          {
+            "Id": 3,
+            "Name": "\u65B0\u884C\u4E3A\u8282\u70B9",
+            "Type": "action",
+            "Enabled": true,
+            "Remark": null,
+            "DelayMs": null,
+            "Mode": null,
+            "UseAndLogic": null,
+            "Condition": null,
+            "Conditions": null,
+            "Action": null,
+            "Actions": [
+              {
+                "Type": "ForceUseSkill",
+                "Qt": null,
+                "Enabled": false,
+                "Message": null,
+                "ActionId": 7549,
+                "SkillType": "OffGcd",
+                "Target": "Target",
+                "HighPriority": false,
+                "TargetMode": null,
+                "Mode": null
+              }
+            ],
+            "Children": null
+          }
+        ]
+      }
+    },{
+      "Guid": "3faab304-dd3d-46cb-a652-3e82fbc4a625",
+      "Name": "\u884C\u4E3A\u7EC4 17",
+      "StartAnchorGuid": "2f890257-cef6-40a7-8fba-ccca9985f462",
+      "Offset": 0,
+      "Enabled": true,
+      "Remark": null,
+      "EntryGroup": {
+        "Id": 1,
+        "Name": "\u884C\u4E3A\u7EC4",
+        "Type": "serial",
+        "Enabled": true,
+        "Remark": null,
+        "DelayMs": null,
+        "Mode": null,
+        "UseAndLogic": null,
+        "Condition": null,
+        "Conditions": null,
+        "Action": null,
+        "Actions": null,
+        "Children": [
+          {
+            "Id": 2,
+            "Name": "\u65B0\u6761\u4EF6\u8282\u70B9",
+            "Type": "condition",
+            "Enabled": true,
+            "Remark": null,
+            "DelayMs": null,
+            "Mode": "wait",
+            "UseAndLogic": null,
+            "Condition": null,
+            "Conditions": [
+              {
+                "Type": "TimelineRole",
+                "ActionId": null,
+                "Immediate": false,
+                "Target": null,
+                "BuffId": null,
+                "Mode": null,
+                "Regex": null,
+                "Value": null,
+                "Negate": false,
+                "Params": {
+                  "role": "D2"
+                }
+              }
+            ],
+            "Action": null,
+            "Actions": null,
+            "Children": null
+          },
+          {
+            "Id": 3,
+            "Name": "\u65B0\u884C\u4E3A\u8282\u70B9",
+            "Type": "action",
+            "Enabled": true,
+            "Remark": null,
+            "DelayMs": null,
+            "Mode": null,
+            "UseAndLogic": null,
+            "Condition": null,
+            "Conditions": null,
+            "Action": null,
+            "Actions": [
+              {
+                "Type": "ForceUseSkill",
+                "Qt": null,
+                "Enabled": false,
+                "Message": null,
+                "ActionId": 7549,
+                "SkillType": "OffGcd",
+                "Target": "Target",
+                "HighPriority": false,
+                "TargetMode": null,
+                "Mode": null
+              }
+            ],
+            "Children": null
+          }
+        ]
+      }
+    },{
+      "Guid": "c84799df-5eb4-4f4e-a0da-73f44121d600",
+      "Name": "\u884C\u4E3A\u7EC4 18",
+      "StartAnchorGuid": "d4168252-1d51-4dc9-befa-ec9df9815e11",
+      "Offset": 0,
+      "Enabled": true,
+      "Remark": null,
+      "EntryGroup": {
+        "Id": 1,
+        "Name": "\u884C\u4E3A\u7EC4",
+        "Type": "serial",
+        "Enabled": true,
+        "Remark": null,
+        "DelayMs": null,
+        "Mode": null,
+        "UseAndLogic": null,
+        "Condition": null,
+        "Conditions": null,
+        "Action": null,
+        "Actions": null,
+        "Children": [
+          {
+            "Id": 2,
+            "Name": "\u65B0\u6761\u4EF6\u8282\u70B9",
+            "Type": "condition",
+            "Enabled": true,
+            "Remark": null,
+            "DelayMs": null,
+            "Mode": "wait",
+            "UseAndLogic": null,
+            "Condition": null,
+            "Conditions": [
+              {
+                "Type": "TimelineRole",
+                "ActionId": null,
+                "Immediate": false,
+                "Target": null,
+                "BuffId": null,
+                "Mode": null,
+                "Regex": null,
+                "Value": null,
+                "Negate": false,
+                "Params": {
+                  "role": "D2"
+                }
+              }
+            ],
+            "Action": null,
+            "Actions": null,
+            "Children": null
+          },
+          {
+            "Id": 3,
+            "Name": "\u65B0\u884C\u4E3A\u8282\u70B9",
+            "Type": "action",
+            "Enabled": true,
+            "Remark": null,
+            "DelayMs": null,
+            "Mode": null,
+            "UseAndLogic": null,
+            "Condition": null,
+            "Conditions": null,
+            "Action": null,
+            "Actions": [
+              {
+                "Type": "ForceUseSkill",
+                "Qt": null,
+                "Enabled": false,
+                "Message": null,
+                "ActionId": 7549,
+                "SkillType": "OffGcd",
+                "Target": "Target",
+                "HighPriority": false,
+                "TargetMode": null,
+                "Mode": null
+              }
+            ],
+            "Children": null
+          }
+        ]
+      }
+    },{
+      "Guid": "73f3379d-8e26-4f29-8072-da1bb6bbb36a",
+      "Name": "\u884C\u4E3A\u7EC4 19",
+      "StartAnchorGuid": "07274986-6553-46ce-ad60-c8a85fa0e552",
+      "Offset": 0,
+      "Enabled": true,
+      "Remark": null,
+      "EntryGroup": {
+        "Id": 1,
+        "Name": "\u884C\u4E3A\u7EC4",
+        "Type": "serial",
+        "Enabled": true,
+        "Remark": null,
+        "DelayMs": null,
+        "Mode": null,
+        "UseAndLogic": null,
+        "Condition": null,
+        "Conditions": null,
+        "Action": null,
+        "Actions": null,
+        "Children": [
+          {
+            "Id": 2,
+            "Name": "\u65B0\u6761\u4EF6\u8282\u70B9",
+            "Type": "condition",
+            "Enabled": true,
+            "Remark": null,
+            "DelayMs": null,
+            "Mode": "wait",
+            "UseAndLogic": null,
+            "Condition": null,
+            "Conditions": [
+              {
+                "Type": "TimelineRole",
+                "ActionId": null,
+                "Immediate": false,
+                "Target": null,
+                "BuffId": null,
+                "Mode": null,
+                "Regex": null,
+                "Value": null,
+                "Negate": false,
+                "Params": {
+                  "role": "D2"
+                }
+              }
+            ],
+            "Action": null,
+            "Actions": null,
+            "Children": null
+          },
+          {
+            "Id": 3,
+            "Name": "\u65B0\u884C\u4E3A\u8282\u70B9",
+            "Type": "action",
+            "Enabled": true,
+            "Remark": null,
+            "DelayMs": null,
+            "Mode": null,
+            "UseAndLogic": null,
+            "Condition": null,
+            "Conditions": null,
+            "Action": null,
+            "Actions": [
+              {
+                "Type": "ForceUseSkill",
+                "Qt": null,
+                "Enabled": false,
+                "Message": null,
+                "ActionId": 7549,
+                "SkillType": "OffGcd",
+                "Target": "Target",
+                "HighPriority": false,
+                "TargetMode": null,
+                "Mode": null
+              }
+            ],
+            "Children": null
+          }
+        ]
+      }
+    }]
+}

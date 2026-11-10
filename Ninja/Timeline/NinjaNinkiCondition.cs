@@ -4,7 +4,7 @@ using System.Linq;
 using System.Numerics;
 using System.Text.Json;
 using Dalamud.Bindings.ImGui;
-using ErosUI;
+using MewUI;
 using PromeRotation.Core;
 using PromeRotation.Data;
 using PromeRotation.Helpers;
@@ -54,7 +54,7 @@ public sealed class NinjaHotkeyAction : IAction, ISerializableAction, IJobNodeDe
     private const string TypeKey = "luli_ninja_trigger_hotkey";
     private string hotkey = string.Empty;
 
-    private static string[] HotkeyNames => ErosUIFramework.GetHotkeyNames();
+    private static string[] HotkeyNames => MewUIFramework.GetHotkeyNames();
 
     public string NodeDisplayName => "Ninja/HotKey";
     public NodeParamInfo[] Params => new[]
@@ -81,7 +81,7 @@ public sealed class NinjaHotkeyAction : IAction, ISerializableAction, IJobNodeDe
         if (fieldName == "hotkey") hotkey = value;
     }
 
-    public void Execute() => ErosUIFramework.ExecuteHotkey(hotkey);
+    public void Execute() => MewUIFramework.ExecuteHotkey(hotkey);
 
     public ActionDto ToDto() => new()
     {

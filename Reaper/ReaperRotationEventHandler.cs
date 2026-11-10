@@ -4,7 +4,7 @@ using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Bindings.ImGui;
 using ECommons.DalamudServices;
 using LuliPR.Common;
-using ErosUI;
+using MewUI;
 using PromeRotation.Core;
 using PromeRotation.Data;
 using PromeRotation.Extensions;
@@ -68,11 +68,13 @@ internal sealed class ReaperEventHandler : IRotationEventHandler, IDisposable
 
     public void OnUpdate()
     {
+        BundledTimelineSync.UpdateLoginSession();
         UsageStatistics.Update();
         ReaperHooks.Update();
     }
     public void OnOutOfBattleUpdate()
     {
+        BundledTimelineSync.UpdateLoginSession();
         UsageStatistics.Update();
         InBattle = false;
         ReaperPositionDrawer.Clear();
@@ -94,10 +96,11 @@ internal sealed class ReaperEventHandler : IRotationEventHandler, IDisposable
     {
         ReaperPositionDrawer.Clear();
         ReaperHooks.Update();
-        ErosUIFramework.RestoreQtIfHostCleared();
+        MewUIFramework.RestoreQtIfHostCleared();
     }
     public void OnBattleUpdate()
     {
+        BundledTimelineSync.UpdateLoginSession();
         UsageStatistics.Update();
         InBattle = true;
         OpenerPositionalRuntime.Update();

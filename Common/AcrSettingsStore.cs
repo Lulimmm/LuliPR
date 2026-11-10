@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Concurrent;
 using System.IO;
 using System.Text.Json;
 
@@ -9,6 +10,14 @@ internal sealed class AcrSettingsDocument
     public NinjaSettingsData Ninja { get; set; } = new();
     public ReaperSettingsData Reaper { get; set; } = new();
     public UsageStatisticsData Usage { get; set; } = new();
+    public ConcurrentDictionary<string, BundledTimelineSyncState> BundledTimelines { get; set; } = new(StringComparer.OrdinalIgnoreCase);
+}
+
+internal sealed class BundledTimelineSyncState
+{
+    public string FileName { get; set; } = string.Empty;
+    public string Sha256 { get; set; } = string.Empty;
+    public bool Disabled { get; set; }
 }
 
 internal sealed class NinjaSettingsData
@@ -90,6 +99,8 @@ internal static class AcrSettingsStore
         settings.Ninja ??= new NinjaSettingsData();
         settings.Reaper ??= new ReaperSettingsData();
         settings.Usage ??= new UsageStatisticsData();
+        settings.BundledTimelines = new ConcurrentDictionary<string, BundledTimelineSyncState>(
+            settings.BundledTimelines ?? [], StringComparer.OrdinalIgnoreCase);
         settings.Usage.Restore();
 
         // Read the two pre-unification files only when setting.json did not exist.

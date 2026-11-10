@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Bindings.ImGui;
 using ECommons.DalamudServices;
-using ErosUI;
+using MewUI;
 using LuliPR.Common;
 using PromeRotation.Core;
 using PromeRotation.Data;
@@ -20,7 +20,7 @@ using PromeRotation.UI.HotKey;
 
 namespace Reaper.PR;
 
-[RotationMetadata(39u, "Luli Reaper PR", "Cino", "1.3.8", ContentScope = AcrContentScope.HighEnd)]
+[RotationMetadata(39u, "Luli Reaper PR", "Cino", "1.3.9", ContentScope = AcrContentScope.HighEnd)]
 public sealed partial class ReaperRotation : IRotation, IRotationLifecycle
 {
     public string AuthorName => "Cino";
@@ -148,7 +148,7 @@ public sealed partial class ReaperRotation : IRotation, IRotationLifecycle
     internal static float MoveCasting => openerConfig.MoveCasting;
     public ReaperRotation()
     {
-        ErosUIFramework.Configure(
+        MewUIFramework.Configure(
             jobTag: "RPR",
             jobName: "ACR",
             qtAll: QtList,
@@ -186,8 +186,8 @@ public sealed partial class ReaperRotation : IRotation, IRotationLifecycle
         }
 
         // 这些开关只作为高级调试/特殊循环选项，默认不放进 QT 悬浮面板；
-        // 用户仍可在 ErosUI 设置的 QT 显隐页手动重新显示。
-        var uiSettings = ErosUISettings.Instance;
+        // 用户仍可在 MewUI 设置的 QT 显隐页手动重新显示。
+        var uiSettings = MewUISettings.Instance;
         foreach (var key in new[]
         {
             "基础连", "完人", "大丰收", "团契", "牲祭", "勾刃", "只打大丰收附体"
@@ -269,18 +269,20 @@ public sealed partial class ReaperRotation : IRotation, IRotationLifecycle
     public IRotationEventHandler GetEventHandler() => events;
     public void OnEnterAcr()
     {
+        BundledTimelineSync.Enter();
         UsageStatistics.Start("Reaper");
         events.Attach();
         ReaperHooks.Update();
-        ErosUIFramework.Install();
+        MewUIFramework.Install();
     }
 
     public void OnExitAcr()
     {
+        BundledTimelineSync.Exit();
         UsageStatistics.Stop("Reaper");
         events.Dispose();
         ReaperPositionDrawer.Clear();
-        ErosUIFramework.Uninstall();
+        MewUIFramework.Uninstall();
         ReaperHooks.Dispose();
     }
 

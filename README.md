@@ -18,6 +18,12 @@ After publishing a GitHub Release, add this URL to PromeRotation's remote ACR li
 
 The checked-in [`repo.json`](repo.json) is a metadata template. The release workflow replaces it in the release artifact with the actual package SHA-256 value.
 
+## Timeline maintenance
+
+The shared UI framework is in `Reaper/MewUI`. Timeline sources are in `Timeline/NewTimeline`.
+
+See [时间轴维护说明](Timeline/维护说明.md) for the GitHub update path, runtime installation paths, version rules, MewUI management page, packaging, and troubleshooting.
+
 ## Release
 
 Push a version tag such as `v1.1.0` or run the `Build and Release` workflow manually. The workflow builds the ACR assembly and packages it with its dependency manifest.

@@ -1,0 +1,144 @@
+using System.Numerics;
+
+namespace MewUI;
+
+// MewUI 各窗口共用配色：通用主色调（可自定义覆盖）+ Dark/Light 双色彩方案（布局共用，配色由方案区分）。
+// 只用于窗口全局样式 Push/Pop，不做卡片/高亮/发光。
+public static class SimplePalette
+{
+    // 色彩方案：Dark = 夜间模式（深底浅字），Light = 日间模式（浅底深字）。
+    public enum UIColorScheme { Dark, Light }
+
+    private static UIColorScheme currentScheme = UIColorScheme.Dark;
+
+    // 切换色彩方案（由各窗口在 PreDraw 按设置的主题每帧写入）。
+    public static void ApplyScheme(UIColorScheme scheme)
+    {
+        if (currentScheme == scheme) return;
+        currentScheme = scheme;
+        Recompute();
+    }
+
+    // === 主色自定义（设置窗「主题」页 RGB 调色）：全局唯一一份，日/夜方案都生效 ===
+    private static Vector3? primaryOverride;
+
+    // 是否设置了自定义主色（无则用内置配色）。
+    public static bool HasPrimaryOverride => primaryOverride != null;
+
+    // 读取自定义主色（RGB 0~1；未设置返回 null）。
+    public static Vector3? GetPrimaryOverride() => primaryOverride;
+
+    // 设置/清除（null = 恢复内置配色）自定义主色，立即重算生效。
+    public static void SetPrimaryOverride(Vector3? rgb)
+    {
+        primaryOverride = rgb is { } c
+            ? new Vector3(Math.Clamp(c.X, 0f, 1f), Math.Clamp(c.Y, 0f, 1f), Math.Clamp(c.Z, 0f, 1f))
+            : null;
+        Recompute();
+    }
+
+    // 主色调
+    public static Vector4 Primary { get; private set; }
+    public static Vector4 PrimaryHover { get; private set; }
+    public static Vector4 PrimaryActive { get; private set; }
+
+    // 强调色：勾选、滑条 grab、导航激活。浅色方案用暗一档的 PrimaryActive 保证白底对比度。
+    public static Vector4 Accent => currentScheme == UIColorScheme.Light ? PrimaryActive : Primary;
+
+    // === 语义文字色（随方案：日间浅底自动换深色变体，与背景区分；夜间保持亮色） ===
+
+    // 高难模式文字（夜间亮橙 / 日间深琥珀）。
+    public static Vector4 ModeHighEndText => currentScheme == UIColorScheme.Light
+        ? new Vector4(0.75f, 0.55f, 0.10f, 1f)
+        : new Vector4(1f, 0.80f, 0.20f, 1f);
+
+    // 日随模式文字（夜间亮绿 / 日间深绿）。
+    public static Vector4 ModeDailyText => currentScheme == UIColorScheme.Light
+        ? new Vector4(0.05f, 0.72f, 0.22f, 1f)
+        : new Vector4(0.20f, 1f, 0.40f, 1f);
+
+    // 文字（随方案）
+    public static Vector4 TextPrimary { get; private set; }
+    public static Vector4 TextSecondary { get; private set; }
+    public static Vector4 TextDisabled { get; private set; }
+
+    public static Vector4 FrameBg { get; private set; }
+    public static Vector4 FrameBgHovered { get; private set; }
+    public static Vector4 FrameBgActive { get; private set; }
+
+    // 弹窗底（Combo 下拉/右键菜单; 近实底保可读性, 随方案换深/浅）
+    public static Vector4 PopupBg { get; private set; }
+
+    // 边框与分隔（随方案）
+    public static Vector4 Border { get; private set; }
+    public static Vector4 BorderStrong { get; private set; }
+
+    // 侧边栏导航激活项（随方案：Dark = 主色淡染胶囊，Light = 白色胶囊）
+    public static Vector4 NavActiveBg { get; private set; }
+    public static Vector4 NavActiveText { get; private set; }
+
+    // 运行状态色（战斗控制窗口，两种方案共用）
+    public static readonly Vector4 StateRunning = new(0.30f, 0.85f, 0.45f, 1f);   // 绿
+    public static readonly Vector4 StateHold = new(0.96f, 0.62f, 0.20f, 1f);       // 橙
+    public static readonly Vector4 StateOff = new(0.92f, 0.30f, 0.32f, 1f);        // 红
+
+    static SimplePalette() => Recompute();
+
+    private static void Recompute()
+    {
+        // 内置默认主色（hover/active 与自定义覆盖同一套明暗关系: 提亮 20% / 加深 12%）
+        // Fleet-Snowfluff arcade palette: neon pink against a blue-violet glass base.
+        Primary = new(1.000f, 0.608f, 0.855f, 1f); // #FF9BDA
+        PrimaryHover = new(1.000f, 0.718f, 0.902f, 1f); // #FFB7E6
+        PrimaryActive = new(0.855f, 0.360f, 0.675f, 1f); // #DA5CAD
+
+        // 自定义主色盖过内置配色：hover 提亮 / active 加深一档，保持相同的明暗关系
+        if (primaryOverride is { } custom)
+        {
+            var c = new Vector4(custom.X, custom.Y, custom.Z, 1f);
+            Primary = c;
+            PrimaryHover = Vector4.Lerp(c, Vector4.One, 0.2f);
+            PrimaryActive = Vector4.Lerp(c, Vector4.Zero, 0.12f);
+        }
+
+        if (currentScheme == UIColorScheme.Light)
+        {
+            TextPrimary = new(0.969f, 0.945f, 1.000f, 1f);
+            TextSecondary = new(0.969f, 0.945f, 1.000f, 0.78f);
+            TextDisabled = new(0.969f, 0.945f, 1.000f, 0.50f);
+            FrameBg = new(0.42f, 0.33f, 0.66f, 0.38f);
+            FrameBgHovered = new(0.62f, 0.47f, 0.82f, 0.52f);
+            FrameBgActive = new(0.78f, 0.52f, 0.78f, 0.62f);
+            PopupBg = new(0.18f, 0.12f, 0.34f, 0.96f);
+            Border = new(0.55f, 0.43f, 0.77f, 0.65f);
+            BorderStrong = WithAlpha(Primary, 0.84f);
+            NavActiveBg = WithAlpha(Primary, 0.25f);
+            NavActiveText = TextPrimary;
+        }
+        else
+        {
+            TextPrimary = new(0.957f, 0.925f, 1.000f, 1f);
+            TextSecondary = new(0.839f, 0.784f, 1.000f, 0.72f);
+            TextDisabled = new(0.839f, 0.784f, 1.000f, 0.44f);
+            FrameBg = new(0.20f, 0.15f, 0.36f, 0.64f);
+            FrameBgHovered = new(0.32f, 0.24f, 0.52f, 0.78f);
+            FrameBgActive = new(0.45f, 0.30f, 0.63f, 0.88f);
+            PopupBg = new(0.16f, 0.11f, 0.29f, 0.98f);
+            Border = new(0.35f, 0.28f, 0.55f, 0.78f);
+            BorderStrong = WithAlpha(PrimaryHover, 0.88f);
+            NavActiveBg = WithAlpha(Primary, 0.24f);
+            NavActiveText = TextPrimary;
+        }
+    }
+
+    public static uint ToU32(Vector4 c)
+    {
+        var r = (byte)(Math.Clamp(c.X, 0f, 1f) * 255);
+        var g = (byte)(Math.Clamp(c.Y, 0f, 1f) * 255);
+        var b = (byte)(Math.Clamp(c.Z, 0f, 1f) * 255);
+        var a = (byte)(Math.Clamp(c.W, 0f, 1f) * 255);
+        return (uint)((a << 24) | (b << 16) | (g << 8) | r);
+    }
+
+    public static Vector4 WithAlpha(Vector4 c, float a) => new(c.X, c.Y, c.Z, a);
+}

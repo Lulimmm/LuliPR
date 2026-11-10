@@ -71,6 +71,7 @@ jobs:
       - name: Build
         shell: pwsh
         run: |
+          ./tools/verify-timelines.ps1
           dotnet build Luli.csproj --configuration Release -p:DalamudReferenceRoot="$env:GITHUB_WORKSPACE\lib" -p:PromeRotationInstalledRoot="$env:GITHUB_WORKSPACE\lib" -p:PromeRotationReferenceRoot="$env:GITHUB_WORKSPACE\lib"
           if (-not (Test-Path "$env:APPDATA\XIVLauncherCN\pluginConfigs\PromeRotation\ACR\Cino\LuliReaperPR.dll")) { throw "ACR assembly was not built" }
 
@@ -84,6 +85,9 @@ jobs:
           $output = "$env:APPDATA\XIVLauncherCN\pluginConfigs\PromeRotation\ACR\Cino"
           Copy-Item "$output\LuliReaperPR.dll" $package -Force
           Copy-Item "$output\LuliReaperPR.deps.json" $package -Force
+          if (-not (Test-Path "$output\Timelines")) { throw "Bundled timeline files were not copied to the build output" }
+          Copy-Item "$output\Timelines" $package -Recurse -Force
+          ./tools/verify-timelines.ps1 -PackageDirectory $package
           Compress-Archive -Path $package -DestinationPath "$dist\latest.zip" -Force
           $sha = (Get-FileHash -Algorithm SHA256 "$dist\latest.zip").Hash.ToLowerInvariant()
           $manifest = Get-Content -Raw -Encoding UTF8 "repo.json" | ConvertFrom-Json

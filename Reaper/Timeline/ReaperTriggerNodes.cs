@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
 using Dalamud.Bindings.ImGui;
-using ErosUI;
+using MewUI;
 using PromeRotation.Core;
 using PromeRotation.Helpers;
 using PromeRotation.Timeline.Core;
@@ -17,7 +17,7 @@ internal static class ReaperTriggerNodeData
     internal static void SetQt(string key, bool value)
     {
         if (ReaperRotation.QtList.ContainsKey(key))
-            ErosUIFramework.设置QT(key, value);
+            MewUIFramework.设置QT(key, value);
     }
 }
 
@@ -233,7 +233,7 @@ public sealed class ReaperHotkeyAction : IAction, ISerializableAction, IJobNodeD
 {
     private const string TypeKey = "luli_reaper_trigger_hotkey";
     private string hotkey = string.Empty;
-    private static string[] HotkeyNames => ErosUIFramework.GetHotkeyNames();
+    private static string[] HotkeyNames => MewUIFramework.GetHotkeyNames();
 
     public string NodeDisplayName => "Reaper/HotKey";
     public NodeParamInfo[] Params => new[]
@@ -259,7 +259,7 @@ public sealed class ReaperHotkeyAction : IAction, ISerializableAction, IJobNodeD
         if (fieldName == "hotkey") hotkey = value;
     }
 
-    public void Execute() => ErosUIFramework.ExecuteHotkey(hotkey);
+    public void Execute() => MewUIFramework.ExecuteHotkey(hotkey);
 
     public ActionDto ToDto() => new()
     {

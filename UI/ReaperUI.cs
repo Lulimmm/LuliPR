@@ -1,7 +1,7 @@
 using System;
 using System.Numerics;
 using Dalamud.Bindings.ImGui;
-using ErosUI;
+using MewUI;
 using PromeRotation.Core;
 using PromeRotation.Data;
 using PromeRotation.Helpers;
@@ -14,7 +14,7 @@ namespace Reaper.PR;
 
 public sealed partial class ReaperRotation
 {
-    // 职业专属设置绘制到 ErosUI 的「基础设置」页，配置保存在 setting.json。
+    // 职业专属设置绘制到 MewUI 的「基础设置」页，配置保存在 setting.json。
 
     internal static void DrawGeneralSettings()
     {
@@ -107,7 +107,7 @@ public sealed partial class ReaperRotation
 
 public void DrawSettings()
     {
-        ErosUIFramework.OpenSettings();
+        MewUIFramework.OpenSettings();
         return;
         /*
         EnforceHiddenPanels();

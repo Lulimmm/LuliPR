@@ -5,7 +5,7 @@ using System.Reflection;
 using System.Diagnostics;
 using Dalamud.Game.Command;
 using Dalamud.Bindings.ImGui;
-using ErosUI;
+using MewUI;
 using PromeRotation.Core;
 using PromeRotation.Data;
 using PromeRotation.Extensions;
@@ -34,7 +34,7 @@ using Ninja.PR.UI;
 
 namespace Ninja.PR;
 
-[RotationMetadata(30u, "Luli Ninja PR", "Cino", "1.3.8", ContentScope = AcrContentScope.HighEnd)]
+[RotationMetadata(30u, "Luli Ninja PR", "Cino", "1.3.9", ContentScope = AcrContentScope.HighEnd)]
 public sealed class NinjaRotation : IRotation, IRotationLifecycle
 {
     private static readonly HashSet<string> DefaultHiddenQtKeys = new(StringComparer.Ordinal)
@@ -129,7 +129,7 @@ public sealed class NinjaRotation : IRotation, IRotationLifecycle
         // remain in the Always list above.
         ogcd = new() { priorityBhavacakra, new NinjaMugResolver(), new NinjaBunshinResolver(), new NinjaTenChiJinResolver(), new NinjaMeisuiResolver(), tenriJindo, new NinjaAssassinateResolver(), new NinjaOgcdResolver(IsComboResolverFirst, IsRaijuResolverFirst), new NinjaTrueNorthResolver(IsComboResolverFirst) };
         MigrateLegacyPositionalQt();
-        ErosUIFramework.Configure(
+        MewUIFramework.Configure(
             jobTag: "NIN",
             jobName: "Ninja",
             qtAll: QtList,
@@ -152,7 +152,7 @@ public sealed class NinjaRotation : IRotation, IRotationLifecycle
             PromeSettings.Instance.AddQt(qt.Key, GetQtDefault(qt.Key));
         }
 
-        var uiSettings = ErosUISettings.Instance;
+        var uiSettings = MewUISettings.Instance;
         foreach (var key in DefaultHiddenQtKeys)
         {
             if (!uiSettings.QtVisibleHighEnd.ContainsKey(key))
@@ -320,7 +320,7 @@ public sealed class NinjaRotation : IRotation, IRotationLifecycle
 
     public void DrawSettings()
     {
-        ErosUIFramework.DrawSettingsEntry();
+        MewUIFramework.DrawSettingsEntry();
     }
 
     private static void DrawGeneralSettings()
@@ -542,17 +542,19 @@ public sealed class NinjaRotation : IRotation, IRotationLifecycle
     public IRotationEventHandler GetEventHandler() => events;
     public void OnEnterAcr()
     {
+        BundledTimelineSync.Enter();
         UsageStatistics.Start("Ninja");
         NinjaWeavePolicy.Enter();
         events.Attach();
         NinjaActionInputGuard.Attach();
         NinjaHooks.Update();
         RegisterCommands();
-        ErosUIFramework.Install();
+        MewUIFramework.Install();
     }
 
     public void OnExitAcr()
     {
+        BundledTimelineSync.Exit();
         UsageStatistics.Stop("Ninja");
         NinjaPositionDrawer.ResetLifecycle();
         NinjaWeavePolicy.Exit();
@@ -560,7 +562,7 @@ public sealed class NinjaRotation : IRotation, IRotationLifecycle
         NinjaActionInputGuard.Dispose();
         events.Dispose();
         UnregisterCommands();
-        ErosUIFramework.Uninstall();
+        MewUIFramework.Uninstall();
     }
 
     private void RegisterCommands()
@@ -814,6 +816,7 @@ internal sealed class NinjaEventHandler : IRotationEventHandler, IDisposable
 
     public void OnUpdate()
     {
+        BundledTimelineSync.UpdateLoginSession();
         UsageStatistics.Update();
         NinjaHooks.Update();
         NinjaPositionDrawer.Update();
@@ -823,6 +826,7 @@ internal sealed class NinjaEventHandler : IRotationEventHandler, IDisposable
     }
     public void OnOutOfBattleUpdate()
     {
+        BundledTimelineSync.UpdateLoginSession();
         UsageStatistics.Update();
         NinjaHooks.Update();
         NinjaPositionDrawer.Update();
@@ -843,6 +847,7 @@ internal sealed class NinjaEventHandler : IRotationEventHandler, IDisposable
     }
     public void OnBattleUpdate()
     {
+        BundledTimelineSync.UpdateLoginSession();
         UsageStatistics.Update();
         NinjaHooks.Update();
         NinjaAttemptDebug.Update();
@@ -1178,7 +1183,7 @@ internal sealed class NinjaEventHandler : IRotationEventHandler, IDisposable
 
     public void OnNoTarget()
     {
-        ErosUIFramework.RestoreQtIfHostCleared();
+        MewUIFramework.RestoreQtIfHostCleared();
         TryPrepareSuiton();
     }
 
