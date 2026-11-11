@@ -27,6 +27,8 @@ internal static class BundledTimelineSync
     [
         new("伊甸近战减伤-02566ee3.json", "02566ee3-2ba5-49cb-8d05-6853db3a6937", "伊甸近战减伤"),
         new("伊甸镰刀-614f92f2.json", "614f92f2-8e9b-4a66-94f8-9f7bdf8111ca", "伊甸镰刀"),
+        new("M12S近战减伤-e53d2162.json", "e53d2162-cc9a-43fb-bfc9-d3f5abb5ebac", "M12S近战减伤"),
+        new("M12S镰刀-bc0a5751.json", "bc0a5751-8c84-469a-88bd-98c2289dd601", "M12S镰刀"),
         new("妖星镰刀.json", "396a5f80-f1c4-4e75-90ad-7d60e611bf3a", "妖星镰刀"),
         new("绝欧镰刀.json", "2011beac-efee-44a1-8243-eae2f08ed351", "绝欧镰刀")
     ];

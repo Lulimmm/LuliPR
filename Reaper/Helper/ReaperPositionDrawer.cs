@@ -119,14 +119,10 @@ internal static class ReaperPositionDrawer
     {
         var gibbet = R.Adjust(R.Gibbet);
         var gallows = R.Adjust(R.Gallows);
-        return ReaperEventHandler.RecentlyConfirmed(R.Gibbet, (int)PositionalWindow)
-            || ReaperEventHandler.RecentlyConfirmed(R.Gallows, (int)PositionalWindow)
-            || ReaperEventHandler.RecentlyConfirmed(gibbet, (int)PositionalWindow)
-            || ReaperEventHandler.RecentlyConfirmed(gallows, (int)PositionalWindow)
-            || R.Recently(R.Gibbet, (int)PositionalWindow)
-            || R.Recently(R.Gallows, (int)PositionalWindow)
-            || R.Recently(gibbet, (int)PositionalWindow)
-            || R.Recently(gallows, (int)PositionalWindow);
+        return ReaperSpellHistory.RecentlyUsed(R.Gibbet, (int)PositionalWindow)
+            || ReaperSpellHistory.RecentlyUsed(R.Gallows, (int)PositionalWindow)
+            || ReaperSpellHistory.RecentlyUsed(gibbet, (int)PositionalWindow)
+            || ReaperSpellHistory.RecentlyUsed(gallows, (int)PositionalWindow);
     }
 
     private static void CreateStaticDrawings(

@@ -23,13 +23,13 @@ public sealed class EnshroudGcd : Gcd
 {
     public override CheckResult Check()
     {
-        if (!R.InEnshroud) return No;
+        if (JobGaugeHelper.RPR.夜游魂 == 0) return No;
         if (!R.Has(2593u)) return No;
         if (R.Has(2587u) || R.Has(3858u)) return No;
         if (R.Has(3860u)) return No;
         if (JobGaugeHelper.RPR.夜游魂 < 2 && ActionHelper.IsUnlocked(R.Communio))
         {
-            if (MoveManager.IsLocalPlayerMoving) return No;
+            if (MoveManager.IsLocalPlayerActuallyMoving) return No;
             return Ok;
         }
         return R.Near() ? Ok : No;
@@ -38,7 +38,7 @@ public sealed class EnshroudGcd : Gcd
     {
         if (JobGaugeHelper.RPR.夜游魂 < 2 && ActionHelper.IsUnlocked(R.Communio))
         {
-            if (MoveManager.IsLocalPlayerMoving && !R.Qt("移动读条"))
+            if (MoveManager.IsLocalPlayerActuallyMoving && !R.Qt("移动读条"))
             {
                 if (R.Has(2594u) && R.Qt("收获月")) return R.A(R.HarvestMoon);
                 return R.A(R.ShadowOfDeath);

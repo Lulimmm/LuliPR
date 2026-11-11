@@ -1,12 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Numerics;
 using System.Text.Json;
 using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Bindings.ImGui;
 using ECommons.DalamudServices;
 using FfxivActionManager = FFXIVClientStructs.FFXIV.Client.Game.ActionManager;
 using FfxivActionType = FFXIVClientStructs.FFXIV.Client.Game.ActionType;
+using FfxivGameObject = FFXIVClientStructs.FFXIV.Client.Game.Object.GameObject;
 using PromeRotation.Core;
 using PromeRotation.Data;
 using PromeRotation.Extensions;
@@ -32,6 +34,9 @@ internal static class R
     public const uint Communio = 24398u, LemuresSlice = 24399u, LemuresScythe = 24400u, Ingress = 24401u, ArcaneCircle = 24405u;
     public const uint TrueNorth = 7546u, Sacrificium = 36969u, Perfectio = 36973u, Potion = 846u;
     public const uint EnhancedGibbet = 36970u, EnhancedGallows = 36971u;
+    private static IBattleChara[] nearbyAttackableEnemies = [];
+    private static ulong nearbyEnemySourceId;
+    private static long nearbyEnemyCacheAt;
 
     public static IBattleChara? Target => Core.Target;
     public static bool Has(uint id) => Core.Me?.HasStatus(id) == true;
@@ -40,8 +45,11 @@ internal static class R
     {
         var target = Target;
         var me = Core.Me;
-        if (target == null || me == null || !target.StatusList.Any(status => status.StatusId == id && status.SourceId == me.EntityId)) return false;
-        return seconds <= 0 || target.GetStatusLeftTime(id) >= seconds;
+        if (target == null || me == null) return false;
+        foreach (var status in target.StatusList)
+            if (status.StatusId == id && status.SourceId == me.EntityId && status.RemainingTime >= seconds)
+                return true;
+        return false;
     }
     public static bool TargetHasAny(uint id, float seconds = 0)
     {
@@ -63,6 +71,45 @@ internal static class R
     }
     public static bool Near() => Distance <= Range();
     public static bool Ready(uint id) => ActionHelper.IsReady(id);
+    public static bool CanCast(uint id, IBattleChara? target = null)
+    {
+        if (!CanUseAction(id, target)) return false;
+        var adjustedId = Adjust(id);
+        if (adjustedId == 0) return false;
+        if (Charges(adjustedId) >= 1f) return true;
+
+        var queueWindowMs = ActionHelper.ResolveActionType(adjustedId) == ActionType.OffGcd
+            ? 100f : PromeSettings.Instance.Hacks.GcdQueueWindowMs;
+        return ActionHelper.GetActionCooldown(adjustedId) * 1000f <= queueWindowMs;
+    }
+    public static bool HasUsableCharge(uint id, IBattleChara? target)
+    {
+        if (!CanUseAction(id, target)) return false;
+        var adjustedId = Adjust(id);
+        return adjustedId != 0 && Charges(adjustedId) >= 1f;
+    }
+    public static bool CooldownBeforeNextWindowEnd(uint id, int windowCount)
+    {
+        var cooldownEndOffset = ActionHelper.GetGcdElapsed() - .3f + Cd(id);
+        var windowEnd = 2.5f * (windowCount + 1)
+            - PromeSettings.Instance.Hacks.GcdQueueWindowMs / 1000f;
+        return cooldownEndOffset < windowEnd;
+    }
+    private static unsafe bool CanUseAction(uint id, IBattleChara? target)
+    {
+        var adjustedId = Adjust(id);
+        if (adjustedId == 0 || Core.Me == null || GameData.IsPlayerOccupied()
+            || !ActionHelper.IsActionAvailableByLevelAndQuest(adjustedId)
+            || ReaperSpellHistory.RecentlyUsed(id, 500)
+            || ReaperSpellHistory.RecentlyUsed(adjustedId, 500)) return false;
+
+        target ??= ActionHelper.TryResolveActionTargetType(adjustedId, out var targetType)
+            && targetType == ActionTargetType.Self ? Core.Me : Core.Target;
+        if (target == null || !target.IsTargetable) return false;
+
+        var nativeTarget = (FfxivGameObject*)target.Address;
+        return nativeTarget != null && FfxivActionManager.CanUseActionOnTarget(adjustedId, nativeTarget);
+    }
     public static float Cd(uint id) => ActionHelper.GetActionCooldown(id);
     public static float Charges(uint id) => ActionHelper.GetActionCharges(id);
     public static bool Qt(string id) => PromeSettings.Instance.GetQt(id);
@@ -73,7 +120,6 @@ internal static class R
     public static bool Targetable => Target?.CanUseAttackActionOn() == true;
     public static PAction A(uint id, ActionType type = ActionType.Gcd, ActionTargetType target = ActionTargetType.Target) => new(id, type, target);
     public static uint Adjust(uint id) => ActionHelper.GetAdjustedActionId(id);
-    public static bool Recently(uint id, int ms) => ActionHelper.RecentlyUsed(id, ms);
     public static unsafe bool Is1ChargesNextMs(uint id, long time = 30L)
     {
         if (id == 0)
@@ -120,7 +166,45 @@ internal static class R
 
         return (recastGroupDetail->Elapsed + time / 1000f) / recastTime >= 1f;
     }
-    public static int NearbyEnemies(float range = 5) => Target == null ? 0 : (int)TargetHelper.EnemyInRangeTarget(Target, range);
+    public static int NearbyEnemies(float attackRange, float radius = 5f)
+    {
+        var me = Core.Me;
+        var target = Target;
+        if (me == null || target == null || Distance >= attackRange) return 0;
+
+        var enemies = GetNearbyAttackableEnemies(me);
+        var count = 0;
+        foreach (var enemy in enemies)
+            if (Vector2.Distance(target.PositionXY(), enemy.PositionXY()) - target.HitboxRadius <= radius)
+                count++;
+        return count;
+    }
+    private static IBattleChara[] GetNearbyAttackableEnemies(IBattleChara me)
+    {
+        var now = Environment.TickCount64;
+        if (nearbyEnemySourceId == me.EntityId && now - nearbyEnemyCacheAt < 100)
+            return nearbyAttackableEnemies;
+
+        var enemies = new List<IBattleChara>();
+        for (var i = 0; i < Svc.Objects.Length; i++)
+        {
+            if (Svc.Objects[i] is IBattleChara enemy && IsValidAttackUnit(enemy)
+                && Vector2.Distance(me.PositionXY(), enemy.PositionXY())
+                    < 24f + me.HitboxRadius + enemy.HitboxRadius)
+                enemies.Add(enemy);
+        }
+
+        nearbyAttackableEnemies = enemies.ToArray();
+        nearbyEnemySourceId = me.EntityId;
+        nearbyEnemyCacheAt = now;
+        return nearbyAttackableEnemies;
+    }
+    private static unsafe bool IsValidAttackUnit(IBattleChara unit)
+    {
+        if (!unit.IsValid() || !unit.IsTargetable || unit.CurrentHp == 0) return false;
+        var nativeTarget = (FfxivGameObject*)unit.Address;
+        return nativeTarget != null && FfxivActionManager.CanUseActionOnTarget(142u, nativeTarget);
+    }
     public static bool HasSingleTargetFirewall => Has(3499u) || Has(3500u) || Has(4192u) || Has(4194u);
     public static bool ChargeSoon(uint id, float seconds)
     {

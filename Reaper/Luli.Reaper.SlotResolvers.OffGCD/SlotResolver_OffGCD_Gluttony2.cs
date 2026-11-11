@@ -23,9 +23,9 @@ public sealed class SacrificiumOgcd : Ogcd
 {
     public override CheckResult Check()
     {
-        if (!R.Weave || ActionHelper.GetGcdRemain() < .8f) return No;
+        if (ActionHelper.GetGcdRemain() < .8f) return No;
         if (!R.Has(3857u)) return No;
-        if (!R.Ready(R.Sacrificium)) return No;
+        if (!R.CanCast(R.Sacrificium, R.Target)) return No;
         if (!R.TargetHasAny(2586u)) return No;
         if (R.Cd(R.ArcaneCircle) < 5) return No;
         if (R.Cd(R.ArcaneCircle) > 110 && !R.Has(2599u)) return No;

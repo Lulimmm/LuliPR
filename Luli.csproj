@@ -27,7 +27,8 @@
     <ItemGroup>
       <!-- The project contains only PR ACR sources. Keep the template's
            convention of compiling the source tree once. -->
-      <Compile Include="**\*.cs" Exclude="bin\**\*;obj\**\*;**\bin\**\*;**\obj\**\*" />
+      <Compile Include="**\*.cs" Exclude="bin\**\*;obj\**\*;Reaper参考\**\*;**\bin\**\*;**\obj\**\*" />
+      <Compile Remove="Reaper参考\**\*.cs" />
       <EmbeddedResource Include="Reaper\MewUI\Resources\bg2.webp">
         <LogicalName>MewUI.Resources.bg2.webp</LogicalName>
       </EmbeddedResource>

@@ -25,8 +25,8 @@ public sealed class GibbetGcd : Gcd
     public override CheckResult Check()
     {
         if (!R.Near()) return No;
-        if (R.Has(3858u)) return R.Ready(ActionId) ? Ok : No;
-        if (R.Has(2587u)) return R.Ready(ActionId) ? Ok : No;
+        if (R.Has(3858u)) return Ok;
+        if (R.Has(2587u)) return Ok;
         return No;
     }
     public override PAction GetAction() => R.A(R.Adjust(ActionId));

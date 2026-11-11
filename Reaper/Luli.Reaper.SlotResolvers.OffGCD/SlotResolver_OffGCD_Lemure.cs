@@ -21,7 +21,10 @@ namespace Reaper.PR;
 
 public sealed class LemureOgcd : Ogcd
 {
-    public override CheckResult Check() => R.InShroud && JobGaugeHelper.RPR.虚无魂 >= 2 && R.Weave && !R.Recently(R.ArcaneCircle, 1500) && !R.Recently(R.Sacrificium, 1500) ? Ok : No;
+    public override CheckResult Check() => R.Has(2593u) && JobGaugeHelper.RPR.虚无魂 >= 2
+        && ActionHelper.GetGcdRemain() >= .6f
+        && !ReaperSpellHistory.RecentlyUsed(R.ArcaneCircle, 1500)
+        && !ReaperSpellHistory.RecentlyUsed(R.Sacrificium, 1500) ? Ok : No;
     public override PAction GetAction()
     {
         var actionId = R.Adjust(R.LemuresSlice);

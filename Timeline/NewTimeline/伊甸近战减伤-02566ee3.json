@@ -1,5 +1,5 @@
 {
-  "Version": "1.0.1",
+  "Version": "1.0.2",
   "Meta": {
     "Format": "PTL",
     "TimelineGuid": "02566ee3-2ba5-49cb-8d05-6853db3a6937",
@@ -1008,8 +1008,8 @@
         "MatchTime": null,
         "JumpTargetTime": null,
         "IsForceJump": false,
-        "WindowBefore": 2.5,
-        "WindowAfter": 2.5
+        "WindowBefore": 0,
+        "WindowAfter": 0
       }
     },{
       "Guid": "9adcd36b-0710-422a-99d5-de4f5faa3297",

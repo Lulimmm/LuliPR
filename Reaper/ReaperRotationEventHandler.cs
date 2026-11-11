@@ -1,5 +1,5 @@
 using System;
-using System.Collections.Generic;
+using System.Reflection;
 using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Bindings.ImGui;
 using ECommons.DalamudServices;
@@ -10,8 +10,6 @@ using PromeRotation.Data;
 using PromeRotation.Extensions;
 using PromeRotation.Helpers;
 using PromeRotation.Managers;
-using PromeRotation.Managers.CombatEventManager;
-using PromeRotation.Managers.CombatEventManager.Events;
 using PromeRotation.PureTimeline;
 using PromeRotation.Resolvers;
 using PromeRotation.Rotation;
@@ -24,46 +22,36 @@ namespace Reaper.PR;
 internal sealed class ReaperEventHandler : IRotationEventHandler, IDisposable
 {
     internal static bool InBattle { get; private set; }
-    // AE's CurrGcdAbilityCount equivalent. Void/Cross Reaping consume one
-    // GCD ability slot; all other confirmed self actions use the normal value.
-    internal static int CurrGcdAbilityCount { get; private set; } = 2;
     private static long soulsowAttemptAt;
-    private static readonly Dictionary<uint, long> confirmedActionAt = new();
-    private bool actionEffectAttached;
+    private ActionFlowManager? actionFlowManager;
+    private bool actionFlowAttached;
 
     internal void Attach()
     {
-        if (actionEffectAttached) return;
-        CombatEventManager.OnActionEffect += OnActionEffect;
-        actionEffectAttached = true;
+        if (actionFlowAttached) return;
+        var plugin = PromeRotation.Plugin.Instance;
+        var managerField = typeof(PromeRotation.Plugin).GetField("_actionFlowManager", BindingFlags.Instance | BindingFlags.NonPublic);
+        actionFlowManager = plugin == null ? null : managerField?.GetValue(plugin) as ActionFlowManager;
+        if (actionFlowManager != null)
+            actionFlowManager.OnAction += OnActionFlow;
+        else
+            Svc.Log.Warning("Reaper: unable to access PR ActionFlowManager; RecentlyUsed tracking is unavailable.");
+        actionFlowAttached = true;
     }
 
     public void Dispose()
     {
-        if (!actionEffectAttached) return;
-        CombatEventManager.OnActionEffect -= OnActionEffect;
-        actionEffectAttached = false;
+        if (!actionFlowAttached) return;
+        if (actionFlowManager != null)
+            actionFlowManager.OnAction -= OnActionFlow;
+        actionFlowManager = null;
+        actionFlowAttached = false;
     }
 
-    private static void OnActionEffect(ActionEffectEvent action)
+    private static void OnActionFlow(ActionFlowManager.ActionEvent action)
     {
-        var me = Core.Me;
-        if (me == null || action.SourceId != me.EntityId) return;
-
-        var now = Environment.TickCount64;
-        confirmedActionAt[action.ActionId] = now;
-        if (action.ActionId == R.Gluttony || action.ActionId == R.Adjust(R.Gluttony))
-            confirmedActionAt[R.Gluttony] = now;
-        if (action.ActionId == R.BloodStalk || action.ActionId == R.Adjust(R.BloodStalk))
-            confirmedActionAt[R.BloodStalk] = now;
-
-        CurrGcdAbilityCount = action.ActionId is R.VoidReaping or R.CrossReaping ? 1 : 2;
-    }
-
-    internal static bool RecentlyConfirmed(uint actionId, int milliseconds)
-    {
-        if (!confirmedActionAt.TryGetValue(actionId, out var timestamp)) return false;
-        return Environment.TickCount64 - timestamp <= milliseconds;
+        if (action.Accepted)
+            ReaperSpellHistory.RecordAction(action.ActionId);
     }
 
     public void OnUpdate()
@@ -86,8 +74,6 @@ internal sealed class ReaperEventHandler : IRotationEventHandler, IDisposable
         InBattle = false;
         ReaperPositionDrawer.Clear();
         soulsowAttemptAt = 0;
-        CurrGcdAbilityCount = 2;
-        confirmedActionAt.Clear();
         OpenerPositionalRuntime.Reset();
         PromeSettings.Instance.OpenerHasBeenExecuted = false;
         ReaperHooks.Update();
@@ -112,8 +98,6 @@ internal sealed class ReaperEventHandler : IRotationEventHandler, IDisposable
         InBattle = false;
         ReaperPositionDrawer.Clear();
         soulsowAttemptAt = 0;
-        CurrGcdAbilityCount = 2;
-        confirmedActionAt.Clear();
         OpenerPositionalRuntime.Reset();
         PromeSettings.Instance.OpenerHasBeenExecuted = false;
         ReaperHooks.Update();
@@ -125,7 +109,6 @@ internal sealed class ReaperEventHandler : IRotationEventHandler, IDisposable
         soulsowAttemptAt = 0;
         OpenerPositionalRuntime.Reset();
         PromeSettings.Instance.OpenerHasBeenExecuted = false;
-        confirmedActionAt.Clear();
         ReaperHooks.Dispose();
     }
 

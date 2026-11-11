@@ -24,16 +24,16 @@ public sealed class GluttonyOgcd : Ogcd
     public override CheckResult Check()
     {
         if (!R.Qt("暴食")) return No;
-        if (!R.Ready(R.Gluttony)) return No;
+        if (!R.CanCast(R.Gluttony, R.Target)) return No;
         if (!R.Weave) return No;
         if (R.Has(2587u)) return No;
-        if (R.Recently(R.BloodStalk, 2500)) return No;
+        if (ReaperSpellHistory.RecentlyUsed(R.BloodStalk, 2500)) return No;
         if (R.Distance > R.Range() + 25) return No;
-        if (R.Qt("提高完人优先级") && R.Has(3860u)) return No;
         var battleTime = EngageManager.GetBattleTime();
-        if (ReaperRotation.IsSelectedOpener("烙印3G团辅起手") && (battleTime < 6 || !R.Has(2599u))) return No;
+        if (ReaperRotation.IsSelectedOpener("烙印3G团辅起手") && battleTime < 6) return No;
         if (JobGaugeHelper.RPR.灵魂值 < 50) return No;
-        if (R.Qt("暴食前置") && R.Has(3905u) && !R.Ready(R.PlentifulHarvest)) return Ok;
+        if (R.Qt("暴食前置") && R.Has(3905u) && !R.CanCast(R.PlentifulHarvest, R.Target)) return Ok;
+        if (R.Qt("提高完人优先级") && R.Has(3860u)) return No;
         if (!R.TargetHas(2586u, 5) && !(ReaperRotation.IsSelectedOpener("特化1g暴食0g团辅") && battleTime < 6)) return No;
         if (R.Has(2593u)) return No;
         if (R.Has(3905u)) return R.Qt("暴食前置") ? Ok : No;
@@ -41,10 +41,10 @@ public sealed class GluttonyOgcd : Ogcd
         if (R.Has(2972u) && JobGaugeHelper.RPR.灵魂值 >= 50) return JobGaugeHelper.RPR.魂衣值 < 50 ? Ok : No;
         if (R.Has(2592u) && R.Qt("大丰收")) return No;
         if (R.Cd(R.Enshroud) > 0 && R.Cd(R.Enshroud) <= 1 && R.Qt("双附体") && R.Qt("附体") && (JobGaugeHelper.RPR.魂衣值 >= 50 || R.Has(3905u))) return No;
-        if (R.Qt("灵魂切割") && R.Charges(R.SoulSlice) >= 1.83f && JobGaugeHelper.RPR.灵魂值 == 50 && !R.Has(2599u) && !R.Has(49u)
-            && R.NearbyEnemies() < 2 && !R.HasSingleTargetFirewall) return No;
-        if (ActionHelper.GetComboLeftTime() is > 0 and < 6 && !R.Has(2972u) && !R.Has(49u)
-            && R.NearbyEnemies() < 2 && !R.HasSingleTargetFirewall) return No;
+        if (R.Qt("灵魂切割") && Core.Me.Level >= 78 && R.Charges(R.SoulSlice) >= 1.83f && JobGaugeHelper.RPR.灵魂值 == 50 && !R.Has(2599u) && !R.Has(49u)
+            && R.NearbyEnemies(R.Range(), 5f) < 2 && !R.HasSingleTargetFirewall) return No;
+        if (ActionHelper.GetComboLeftTime() is > 0 and < 5 && !R.Has(2972u) && !R.Has(49u)
+            && R.NearbyEnemies(R.Range(), 5f) < 2 && !R.HasSingleTargetFirewall) return No;
         return Ok;
     }
     public override PAction GetAction() => R.A(R.Gluttony, ActionType.OffGcd);
