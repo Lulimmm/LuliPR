@@ -39,6 +39,8 @@ internal static class R
     private static long nearbyEnemyCacheAt;
 
     public static IBattleChara? Target => Core.Target;
+    public static bool Recently(uint actionId, int spanMs = 1200)
+        => ReaperSpellHistory.RecentlyUsed(actionId, spanMs);
     public static bool Has(uint id) => Core.Me?.HasStatus(id) == true;
     public static bool HasFor(uint id, float seconds) => Core.Me?.HasStatus(id) == true && Core.Me.GetStatusLeftTime(id) >= seconds;
     public static bool TargetHas(uint id, float seconds = 0)
@@ -179,6 +181,8 @@ internal static class R
                 count++;
         return count;
     }
+    public static int NearbyEnemies() => NearbyEnemies(Range(), 5f);
+
     private static IBattleChara[] GetNearbyAttackableEnemies(IBattleChara me)
     {
         var now = Environment.TickCount64;

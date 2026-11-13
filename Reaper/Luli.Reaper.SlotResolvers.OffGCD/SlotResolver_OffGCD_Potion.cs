@@ -26,10 +26,10 @@ public sealed class PotionOgcd : Ogcd
         if (!R.Qt("爆发药") || !R.Weave) return No;
         var potion = GameData.GetBestPotionId();
         if (potion == 0) return No;
-        if (ActionHelper.GetItemCooldown(potion) != 0f) return No;
+        if (ActionHelper.IsItemOnCooldown(potion)) return No;
         var cd = R.Cd(R.ArcaneCircle);
         var battleTime = EngageManager.GetBattleTime();
-        if (ReaperRotation.PotionType == 2 && battleTime <= 110f) return No;
+        if (ReaperRotation.PotionType == 2 && battleTime < 110f) return No;
         if (ReaperRotation.PotionType == 0)
         {
             if (cd is > 2.5f and < 5 && !R.Qt("三附体")) return Ok;

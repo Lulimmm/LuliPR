@@ -26,9 +26,9 @@ public sealed class BaseGcd : Gcd
         if (!R.Qt("基础连")) return No;
         if (!R.Near()) return No;
         if (R.Has(3858u) || R.Has(2587u)) return No;
-        if (ReaperSpellHistory.RecentlyUsed(R.BloodStalk, 1500) || ReaperSpellHistory.RecentlyUsed(R.Gluttony, 1500)) return No;
+        if (R.Recently(R.BloodStalk, 1500) || R.Recently(R.Gluttony, 1500)) return No;
         if (R.Has(2593u)) return No;
-        return Ok;
+        return R.Ready(R.Slice) ? Ok : No;
     }
     public override PAction GetAction()
     {

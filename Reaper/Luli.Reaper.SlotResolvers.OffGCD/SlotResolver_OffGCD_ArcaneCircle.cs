@@ -23,7 +23,7 @@ public sealed class ArcaneCircleOgcd : Ogcd
 {
     public override CheckResult Check()
     {
-        if (!R.Qt("神秘环") || !R.CanCast(R.ArcaneCircle) || ActionHelper.GetGcdRemain() < .2f) return No;
+        if (!R.Qt("神秘环") || !R.Ready(R.ArcaneCircle) || ActionHelper.GetGcdRemain() < .2f) return No;
 
         var cooldown = R.Cd(R.ArcaneCircle);
         var gcdRemain = ActionHelper.GetGcdRemain();

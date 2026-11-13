@@ -10,6 +10,11 @@ internal static class MewUIUpdatesPage
     private static readonly Notice[] Notices =
     [
         new(
+            "1.4.2", "2026-11-13", "Reaper 战斗逻辑回退与时间轴更新",
+            "Reaper 战斗逻辑回退到 1.4.0，并补齐 PR 侧技能近期使用记录和周围敌人数检测接口。\n\n" +
+            "更新伊甸近战减伤与伊甸镰刀时间轴。",
+            "#RPR #LOGIC #TIMELINE"),
+        new(
             "1.4.0", "2026-11-11", "时间轴直接云端更新",
             "直接比较 GitHub 与 PureTimelines 中的时间轴版本并更新，DLL 目录不再附带时间轴副本。\n\n" +
             "删除后可从云端恢复；自动清理旧版随包目录、更新备份和失效临时文件。",
@@ -31,7 +36,7 @@ internal static class MewUIUpdatesPage
         new(
             "1.3.7", "2026-11-09", "面板显隐记忆与 UI 性能优化",
             "QT 与 Hotkey 面板按职业记住显隐状态，重新上线、加载 ACR 或重建面板时自动恢复。\n\n" +
-            "新增指定账号可见的 UI 性能分析页，支持手动采样 CPU 耗时、托管分配和峰值。\n\n" +
+            "新增 UI 性能分析页，支持手动采样 CPU 耗时、托管分配和峰值。\n\n" +
             "优化 QT、Hotkey、侧栏和时长页面的绘制缓存，减少每帧内存分配和重复计算。",
             "#UI #QT #HOTKEY #PERF"),
         new(

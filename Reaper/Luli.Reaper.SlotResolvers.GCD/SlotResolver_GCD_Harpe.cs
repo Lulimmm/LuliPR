@@ -24,13 +24,13 @@ public sealed class HarpeGcd : Gcd
     public override CheckResult Check()
     {
         if (!R.Qt("勾刃")) return No;
-        if (ReaperSpellHistory.RecentlyUsed(R.BloodStalk, 2500) && ReaperSpellHistory.RecentlyUsed(R.Gluttony, 5000)) return No;
+        if (R.Recently(R.BloodStalk, 2500) && R.Recently(R.Gluttony, 5000)) return No;
         if (R.Has(3858u)) return No;
         if (R.Has(2587u)) return No;
-        if (R.Distance < R.Range()) return No;
-        if (MoveManager.IsLocalPlayerActuallyMoving) return No;
+        if (R.Near()) return No;
+        if (MoveManager.IsLocalPlayerMoving) return No;
         if (R.Has(2593u)) return No;
-        return Ok;
+        return R.Ready(R.Harpe) ? Ok : No;
     }
     public override PAction GetAction() => R.A(R.Harpe);
 }

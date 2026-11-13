@@ -1,5 +1,5 @@
 {
-  "Version": "1.0.2",
+  "Version": "1.0.3",
   "Meta": {"CustomOpener":null,"Format":"PTL","TimelineGuid":"614f92f2-8e9b-4a66-94f8-9f7bdf8111ca","Category":"normal","Roles":["D1","D2"],
     "Name": "\u4F0A\u7538\u9570\u5200",
     "TerritoryId": 1238,
@@ -4711,18 +4711,6 @@
                 "HighPriority": false,
                 "TargetMode": null,
                 "Mode": null
-              },
-              {
-                "Type": "TriggerQt",
-                "Qt": "\u795E\u79D8\u73AF",
-                "Enabled": false,
-                "Message": null,
-                "ActionId": null,
-                "SkillType": null,
-                "Target": null,
-                "HighPriority": false,
-                "TargetMode": null,
-                "Mode": null
               }
             ],
             "Children": null
@@ -5142,8 +5130,7 @@
         "Conditions": null,
         "Action": null,
         "Actions": null,
-        "Children": [
-          {
+        "Children": [{
             "Id": 2,
             "Name": "\u65B0\u884C\u4E3A\u8282\u70B9",
             "Type": "action",
@@ -5159,7 +5146,7 @@
               {
                 "Type": "TriggerQt",
                 "Qt": "\u9690\u533F\u6325\u5272",
-                "Enabled": true,
+                "Enabled": false,
                 "Message": null,
                 "ActionId": null,
                 "SkillType": null,
@@ -5170,8 +5157,7 @@
               }
             ],
             "Children": null
-          }
-        ]
+          }]
       }
     },{
       "Guid": "9df42427-4f83-4382-8f5f-f41d3d0c36b1",
@@ -5193,8 +5179,7 @@
         "Conditions": null,
         "Action": null,
         "Actions": null,
-        "Children": [
-          {
+        "Children": [{
             "Id": 2,
             "Name": "\u65B0\u884C\u4E3A\u8282\u70B9",
             "Type": "action",
@@ -5254,11 +5239,25 @@
                 "HighPriority": false,
                 "TargetMode": null,
                 "Mode": null
+              },
+              {
+                "Type": "luli_reaper_trigger_qt2",
+                "Qt": null,
+                "Enabled": true,
+                "Message": null,
+                "ActionId": null,
+                "SkillType": null,
+                "Target": null,
+                "HighPriority": false,
+                "TargetMode": null,
+                "Mode": null,
+                "Params": {
+                  "qtValues": "{\u0022\\u795E\\u79D8\\u73AF\u0022:false}"
+                }
               }
             ],
             "Children": null
-          }
-        ]
+          }]
       }
     },{
       "Guid": "5022463c-bc62-4a0c-a7ed-741718213504",
@@ -6819,6 +6818,196 @@
             ],
             "Children": null
           }]
+      }
+    },{
+      "Guid": "ca5bf3c6-f5de-461e-a1b2-60b6f438b99e",
+      "Name": "\u884C\u4E3A\u7EC4 28",
+      "StartAnchorGuid": "c71c5983-2761-4536-9fc6-d808261f112e",
+      "Offset": 0.5,
+      "Enabled": true,
+      "Remark": null,
+      "EntryGroup": {
+        "Id": 1,
+        "Name": "\u884C\u4E3A\u7EC4",
+        "Type": "serial",
+        "Enabled": true,
+        "Remark": null,
+        "DelayMs": null,
+        "Mode": null,
+        "UseAndLogic": null,
+        "Condition": null,
+        "Conditions": null,
+        "Action": null,
+        "Actions": null,
+        "Children": [
+          {
+            "Id": 2,
+            "Name": "\u65B0\u6761\u4EF6\u8282\u70B9",
+            "Type": "condition",
+            "Enabled": true,
+            "Remark": null,
+            "DelayMs": null,
+            "Mode": "wait",
+            "UseAndLogic": null,
+            "Condition": null,
+            "Conditions": [
+              {
+                "Type": "ActionEffect",
+                "ActionId": null,
+                "Immediate": false,
+                "Target": null,
+                "BuffId": null,
+                "Mode": null,
+                "Regex": "24380",
+                "Value": null,
+                "Negate": false,
+                "Params": {
+                  "sourceMode": "Any",
+                  "targetMode": "Any"
+                }
+              }
+            ],
+            "Action": null,
+            "Actions": null,
+            "Children": null
+          },
+          {
+            "Id": 3,
+            "Name": "\u65B0\u884C\u4E3A\u8282\u70B9",
+            "Type": "action",
+            "Enabled": true,
+            "Remark": null,
+            "DelayMs": null,
+            "Mode": null,
+            "UseAndLogic": null,
+            "Condition": null,
+            "Conditions": null,
+            "Action": null,
+            "Actions": [
+              {
+                "Type": "UsePotion",
+                "Qt": null,
+                "Enabled": false,
+                "Message": null,
+                "ActionId": null,
+                "SkillType": null,
+                "Target": null,
+                "HighPriority": false,
+                "TargetMode": null,
+                "Mode": "ForceUse"
+              }
+            ],
+            "Children": null
+          }
+        ]
+      }
+    },{
+      "Guid": "fbbb2ac3-061f-459b-ad59-48286640ac0b",
+      "Name": "\u884C\u4E3A\u7EC4 29",
+      "StartAnchorGuid": "e062774c-af95-4a03-aec9-08e8529e5f8f",
+      "Offset": 0,
+      "Enabled": true,
+      "Remark": null,
+      "EntryGroup": {
+        "Id": 1,
+        "Name": "\u884C\u4E3A\u7EC4",
+        "Type": "serial",
+        "Enabled": true,
+        "Remark": null,
+        "DelayMs": null,
+        "Mode": null,
+        "UseAndLogic": null,
+        "Condition": null,
+        "Conditions": null,
+        "Action": null,
+        "Actions": null,
+        "Children": [
+          {
+            "Id": 2,
+            "Name": "\u65B0\u884C\u4E3A\u8282\u70B9",
+            "Type": "action",
+            "Enabled": true,
+            "Remark": null,
+            "DelayMs": null,
+            "Mode": null,
+            "UseAndLogic": null,
+            "Condition": null,
+            "Conditions": null,
+            "Action": null,
+            "Actions": [
+              {
+                "Type": "luli_reaper_trigger_qt2",
+                "Qt": null,
+                "Enabled": true,
+                "Message": null,
+                "ActionId": null,
+                "SkillType": null,
+                "Target": null,
+                "HighPriority": false,
+                "TargetMode": null,
+                "Mode": null,
+                "Params": {
+                  "qtValues": "{\u0022\\u9690\\u533F\\u6325\\u5272\u0022:false,\u0022\\u6B7B\\u4EA1\\u4E4B\\u5F71\u0022:false}"
+                }
+              }
+            ],
+            "Children": null
+          }
+        ]
+      }
+    },{
+      "Guid": "edbb599e-6201-414c-87a8-866cb10dcee9",
+      "Name": "\u884C\u4E3A\u7EC4 30",
+      "StartAnchorGuid": "a2f3a3e1-096c-48ba-9c34-67c4aa27abc8",
+      "Offset": 2,
+      "Enabled": true,
+      "Remark": null,
+      "EntryGroup": {
+        "Id": 1,
+        "Name": "\u884C\u4E3A\u7EC4",
+        "Type": "serial",
+        "Enabled": true,
+        "Remark": null,
+        "DelayMs": null,
+        "Mode": null,
+        "UseAndLogic": null,
+        "Condition": null,
+        "Conditions": null,
+        "Action": null,
+        "Actions": null,
+        "Children": [
+          {
+            "Id": 2,
+            "Name": "\u65B0\u884C\u4E3A\u8282\u70B9",
+            "Type": "action",
+            "Enabled": true,
+            "Remark": null,
+            "DelayMs": null,
+            "Mode": null,
+            "UseAndLogic": null,
+            "Condition": null,
+            "Conditions": null,
+            "Action": null,
+            "Actions": [
+              {
+                "Type": "luli_reaper_trigger_qt2",
+                "Qt": null,
+                "Enabled": true,
+                "Message": null,
+                "ActionId": null,
+                "SkillType": null,
+                "Target": null,
+                "HighPriority": false,
+                "TargetMode": null,
+                "Mode": null,
+                "Params": {
+                  "qtValues": "{\u0022\\u9690\\u533F\\u6325\\u5272\u0022:true,\u0022\\u6B7B\\u4EA1\\u4E4B\\u5F71\u0022:true}"
+                }
+              }
+            ],
+            "Children": null
+          }
+        ]
       }
     }]
 }
