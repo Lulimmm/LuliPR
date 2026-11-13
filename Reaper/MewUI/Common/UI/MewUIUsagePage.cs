@@ -1,6 +1,7 @@
 using System;
 using System.Numerics;
 using Dalamud.Bindings.ImGui;
+using ECommons.Automation;
 using ECommons.DalamudServices;
 using LuliPR.Common;
 
@@ -97,8 +98,22 @@ internal static class MewUIUsagePage
         var clicked = ImGui.Button("获取凭证", new Vector2(width, 34f));
         ImGui.PopStyleColor(4);
         if (clicked)
-            Svc.Commands.ProcessCommand(CredentialCommand);
+            _ = Svc.Framework.RunOnFrameworkThread(SendCredential);
         ImGui.Dummy(new Vector2(width, 34f));
+    }
+
+    private static void SendCredential()
+    {
+        try
+        {
+            // /e is a game command; Dalamud's plugin command dispatcher cannot execute it.
+            Chat.ExecuteCommand(CredentialCommand);
+        }
+        catch (Exception ex)
+        {
+            Svc.Log.Error(ex, "MewUI: failed to send usage credential");
+            Svc.Chat.PrintError("凭证发送失败，请重试。");
+        }
     }
 
     private static void DrawPixelClockMarks(ImDrawListPtr drawList, Vector2 center, float radius)

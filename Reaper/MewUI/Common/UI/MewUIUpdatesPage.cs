@@ -10,6 +10,10 @@ internal static class MewUIUpdatesPage
     private static readonly Notice[] Notices =
     [
         new(
+            "1.4.3", "2026-11-14", "修复获取凭证按钮",
+            "修复累计使用满 24 小时后，点击获取凭证未发送聊天消息的问题。改用游戏聊天命令入口，并在游戏主线程执行。",
+            "#UI #USAGE #FIX"),
+        new(
             "1.4.2", "2026-11-13", "Reaper 战斗逻辑回退与时间轴更新",
             "Reaper 战斗逻辑回退到 1.4.0，并补齐 PR 侧技能近期使用记录和周围敌人数检测接口。\n\n" +
             "更新伊甸近战减伤与伊甸镰刀时间轴。",
