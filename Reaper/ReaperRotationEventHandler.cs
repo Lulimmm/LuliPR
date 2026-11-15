@@ -5,6 +5,7 @@ using Dalamud.Bindings.ImGui;
 using ECommons.DalamudServices;
 using LuliPR.Common;
 using MewUI;
+using Mew.FeintPlan;
 using PromeRotation.Core;
 using PromeRotation.Data;
 using PromeRotation.Extensions;
@@ -29,6 +30,7 @@ internal sealed class ReaperEventHandler : IRotationEventHandler, IDisposable
     internal void Attach()
     {
         if (actionFlowAttached) return;
+        MewFeintPlanManager.Attach();
         var plugin = PromeRotation.Plugin.Instance;
         var managerField = typeof(PromeRotation.Plugin).GetField("_actionFlowManager", BindingFlags.Instance | BindingFlags.NonPublic);
         actionFlowManager = plugin == null ? null : managerField?.GetValue(plugin) as ActionFlowManager;
@@ -42,6 +44,7 @@ internal sealed class ReaperEventHandler : IRotationEventHandler, IDisposable
     public void Dispose()
     {
         if (!actionFlowAttached) return;
+        MewFeintPlanManager.Dispose();
         if (actionFlowManager != null)
             actionFlowManager.OnAction -= OnActionFlow;
         actionFlowManager = null;
@@ -66,6 +69,7 @@ internal sealed class ReaperEventHandler : IRotationEventHandler, IDisposable
     {
         BundledTimelineSync.UpdateLoginSession();
         UsageStatistics.Update();
+        MewFeintPlanManager.Update();
         InBattle = false;
         ReaperPositionDrawer.Clear();
         ReaperHooks.Update();
@@ -73,6 +77,7 @@ internal sealed class ReaperEventHandler : IRotationEventHandler, IDisposable
     }
     public void OnBattleStarted()
     {
+        MewFeintPlanManager.ResetRuntime();
         InBattle = false;
         ReaperPositionDrawer.Clear();
         soulsowAttemptAt = 0;
@@ -90,6 +95,7 @@ internal sealed class ReaperEventHandler : IRotationEventHandler, IDisposable
     {
         BundledTimelineSync.UpdateLoginSession();
         UsageStatistics.Update();
+        MewFeintPlanManager.Update();
         InBattle = true;
         OpenerPositionalRuntime.Update();
         ReaperHooks.Update();
@@ -97,6 +103,7 @@ internal sealed class ReaperEventHandler : IRotationEventHandler, IDisposable
     }
     public void OnBattleEnded()
     {
+        MewFeintPlanManager.ResetRuntime();
         InBattle = false;
         ReaperPositionDrawer.Clear();
         soulsowAttemptAt = 0;
@@ -106,6 +113,7 @@ internal sealed class ReaperEventHandler : IRotationEventHandler, IDisposable
     }
     public void OnTerritoryChanged(ushort territoryId)
     {
+        MewFeintPlanManager.ResetRuntime();
         InBattle = false;
         ReaperPositionDrawer.Clear();
         soulsowAttemptAt = 0;

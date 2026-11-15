@@ -18,7 +18,7 @@ public sealed class MewUISettingsWindow : SettingsWindowBase
     }
 
     // 页签固定, 末位「主题」页由基类追加
-    private static readonly string[] tabs = ["基础设置", "Hotkey", "QT面板", "更新通告", "使用时长", "时间轴"];
+    private static readonly string[] tabs = ["基础设置", "Hotkey", "QT面板", "更新通告", "使用时长", "时间轴", "牵制规划"];
 
     private static readonly string[] tabsWithDebug = [..tabs, "Debug"];
     private static readonly string[] tabsWithPerformance = [..tabs, MewUIPerformancePage.TabLabel];
@@ -39,6 +39,11 @@ public sealed class MewUISettingsWindow : SettingsWindowBase
         if (tabIndex >= 0 && tabIndex < currentTabs.Length && currentTabs[tabIndex] == "时间轴")
         {
             MewUITimelinePage.Draw();
+            return;
+        }
+        if (tabIndex >= 0 && tabIndex < currentTabs.Length && currentTabs[tabIndex] == "牵制规划")
+        {
+            MewUIFeintPlanPage.Draw();
             return;
         }
         if (tabIndex >= 0 && tabIndex < currentTabs.Length && currentTabs[tabIndex] == "Debug")

@@ -10,6 +10,10 @@ internal static class MewUIUpdatesPage
     private static readonly Notice[] Notices =
     [
         new(
+            "1.4.5", "2026-11-15", "FRU 牵制规划与职能联动",
+            "新增 FRU 分阶段牵制规划，进入对应副本后按时间轴 D1/D2 职能自动启用减伤轴；未选择职能时默认使用 D1。调整各阶段节点顺序。",
+            "#FRU #FEINT #TIMELINE"),
+        new(
             "1.4.4", "2026-11-15", "Reaper 战斗逻辑与联动修复",
             "修正 BloodStalk 对暴食的两 GCD 冷却联动，按 AE 的固定 2500ms GCD 窗口和可释放状态判断。同步调整 Reaper 技能就绪、目标状态与起手身位确认逻辑，并更新伊甸近战减伤时间轴。",
             "#RPR #LOGIC #TIMELINE"),

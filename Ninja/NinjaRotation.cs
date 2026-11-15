@@ -6,6 +6,7 @@ using System.Diagnostics;
 using Dalamud.Game.Command;
 using Dalamud.Bindings.ImGui;
 using MewUI;
+using Mew.FeintPlan;
 using PromeRotation.Core;
 using PromeRotation.Data;
 using PromeRotation.Extensions;
@@ -34,7 +35,7 @@ using Ninja.PR.UI;
 
 namespace Ninja.PR;
 
-[RotationMetadata(30u, "Luli Ninja PR", "Cino", "1.4.4", ContentScope = AcrContentScope.HighEnd)]
+[RotationMetadata(30u, "Luli Ninja PR", "Cino", "1.4.5", ContentScope = AcrContentScope.HighEnd)]
 public sealed class NinjaRotation : IRotation, IRotationLifecycle
 {
     private static readonly HashSet<string> DefaultHiddenQtKeys = new(StringComparer.Ordinal)
@@ -542,6 +543,7 @@ public sealed class NinjaRotation : IRotation, IRotationLifecycle
     public IRotationEventHandler GetEventHandler() => events;
     public void OnEnterAcr()
     {
+        MewFeintPlanManager.Attach();
         BundledTimelineSync.Enter();
         UsageStatistics.Start("Ninja");
         NinjaWeavePolicy.Enter();
@@ -554,6 +556,7 @@ public sealed class NinjaRotation : IRotation, IRotationLifecycle
 
     public void OnExitAcr()
     {
+        MewFeintPlanManager.Dispose();
         BundledTimelineSync.Exit();
         UsageStatistics.Stop("Ninja");
         NinjaPositionDrawer.ResetLifecycle();
@@ -828,11 +831,13 @@ internal sealed class NinjaEventHandler : IRotationEventHandler, IDisposable
     {
         BundledTimelineSync.UpdateLoginSession();
         UsageStatistics.Update();
+        MewFeintPlanManager.Update();
         NinjaHooks.Update();
         NinjaPositionDrawer.Update();
     }
     public void OnBattleStarted()
     {
+        MewFeintPlanManager.ResetRuntime();
         NinjaSequencePolicy.Reset();
         NinjaCombatState.Reset();
         ResetGcdAbilityCount();
@@ -849,6 +854,7 @@ internal sealed class NinjaEventHandler : IRotationEventHandler, IDisposable
     {
         BundledTimelineSync.UpdateLoginSession();
         UsageStatistics.Update();
+        MewFeintPlanManager.Update();
         NinjaHooks.Update();
         NinjaAttemptDebug.Update();
         NinjaSequencePolicy.Update();
@@ -1159,6 +1165,7 @@ internal sealed class NinjaEventHandler : IRotationEventHandler, IDisposable
     }
     public void OnBattleEnded()
     {
+        MewFeintPlanManager.ResetRuntime();
         NinjaPositionDrawer.ResetLifecycle();
         NinjaNoLossOpenerRuntime.Reset();
         NinjaTrickAttackDebug.Reset();
@@ -1171,6 +1178,7 @@ internal sealed class NinjaEventHandler : IRotationEventHandler, IDisposable
 
     public void OnTerritoryChanged(ushort territoryId)
     {
+        MewFeintPlanManager.ResetRuntime();
         NinjaPositionDrawer.ResetLifecycle();
         NinjaNoLossOpenerRuntime.Reset();
         NinjaTrickAttackDebug.Reset();

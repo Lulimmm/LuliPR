@@ -2,6 +2,7 @@ using System;
 using System.Collections.Concurrent;
 using System.IO;
 using System.Text.Json;
+using Mew.FeintPlan;
 
 namespace LuliPR.Common;
 
@@ -10,6 +11,7 @@ internal sealed class AcrSettingsDocument
     public NinjaSettingsData Ninja { get; set; } = new();
     public ReaperSettingsData Reaper { get; set; } = new();
     public UsageStatisticsData Usage { get; set; } = new();
+    public MewFeintPlanSettings MewFeintPlan { get; set; } = new();
     public ConcurrentDictionary<string, BundledTimelineSyncState> BundledTimelines { get; set; } = new(StringComparer.OrdinalIgnoreCase);
 }
 
@@ -99,6 +101,7 @@ internal static class AcrSettingsStore
         settings.Ninja ??= new NinjaSettingsData();
         settings.Reaper ??= new ReaperSettingsData();
         settings.Usage ??= new UsageStatisticsData();
+        settings.MewFeintPlan ??= new MewFeintPlanSettings();
         settings.BundledTimelines = new ConcurrentDictionary<string, BundledTimelineSyncState>(
             settings.BundledTimelines ?? [], StringComparer.OrdinalIgnoreCase);
         settings.Usage.Restore();
