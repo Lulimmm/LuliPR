@@ -53,6 +53,20 @@ internal static class R
                 return true;
         return false;
     }
+    // Match AE's HasMyAuraWithTimeleft: truncate the absolute remaining time to milliseconds.
+    public static bool TargetHasForMs(uint id, int milliseconds)
+    {
+        var target = Target;
+        var me = Core.Me;
+        if (target == null || me == null) return false;
+        foreach (var status in target.StatusList)
+            if (status.StatusId == id && status.SourceId == me.EntityId)
+                return (int)(Math.Abs(status.RemainingTime) * 1000f) >= milliseconds;
+        return 0 >= milliseconds;
+    }
+    public static int GetGcdDurationMs() => (int)Math.Max(0f, ActionHelper.GetGcdTotal() * 1000f);
+    public static int GetGcdRemainingMs()
+        => GetGcdDurationMs() - (int)Math.Max(0f, ActionHelper.GetGcdElapsed() * 1000f);
     public static bool TargetHasAny(uint id, float seconds = 0)
     {
         var target = Target;
@@ -71,8 +85,44 @@ internal static class R
 
         return reaperMeleeRange + Math.Clamp(ReaperRotation.ExtraRange, 0f, 3f);
     }
-    public static bool Near() => Distance <= Range();
+    public static bool Near() => Targetable && Distance <= Range();
     public static bool Ready(uint id) => ActionHelper.IsReady(id);
+    // AE's IsReadyWithCanCast for actions directed at a battle target. A usable
+    // charge is sufficient; the entire charge group does not have to be ready.
+    public static unsafe bool IsReadyWithCanCast(uint id, IBattleChara? target)
+    {
+        var me = Core.Me;
+        var manager = FfxivActionManager.Instance();
+        if (me == null || target == null || manager == null || id == 0) return false;
+        if (manager->GetActionStatus(FfxivActionType.Action, id) == 573
+            || !ActionHelper.IsUnlocked(id)
+            || Recently(id, 500)) return false;
+
+        var adjustedId = Adjust(id);
+        if (adjustedId == 0 || !ActionHelper.IsActionAvailableByLevelAndQuest(adjustedId)) return false;
+        var source = (FfxivGameObject*)me.Address;
+        var destination = (FfxivGameObject*)target.Address;
+        if (source == null || destination == null
+            || !FfxivActionManager.CanUseActionOnTarget(adjustedId, destination)
+            || manager->GetActionStatus(FfxivActionType.Action, adjustedId, target.EntityId,
+                checkRecastActive: false, checkCastingActive: false) != 0
+            || FfxivActionManager.GetActionInRangeOrLoS(id, source, destination) == 566) return false;
+
+        // Match AE's additional collision ray, two metres above both positions.
+        var origin = *source->GetPosition();
+        var end = *destination->GetPosition();
+        origin.Y += 2f;
+        end.Y += 2f;
+        var ray = end - origin;
+        var length = ray.Magnitude;
+        if (length > 0f && FFXIVClientStructs.FFXIV.Common.Component.BGCollision.BGCollisionModule
+            .RaycastMaterialFilter(origin, ray / length, out _, length)) return false;
+
+        if (ChargesWithElapsedFallback(id) >= 1f) return true;
+        var queueWindowMs = ActionHelper.ResolveActionType(id) == ActionType.OffGcd
+            ? 100f : PromeSettings.Instance.Hacks.GcdQueueWindowMs;
+        return Cd(id) * 1000f <= queueWindowMs;
+    }
     public static bool CanCast(uint id, IBattleChara? target = null)
     {
         if (!CanUseAction(id, target)) return false;
@@ -112,14 +162,48 @@ internal static class R
         var nativeTarget = (FfxivGameObject*)target.Address;
         return nativeTarget != null && FfxivActionManager.CanUseActionOnTarget(adjustedId, nativeTarget);
     }
+    // Match AE's CoolDownInGCDs: each GCD window is fixed at 2500 ms.
+    public static bool CooldownInGcds(uint id, int count)
+        => ActionHelper.GetActionCooldown(id) * 1000f <= 2500f * count;
     public static float Cd(uint id) => ActionHelper.GetActionCooldown(id);
     public static float Charges(uint id) => ActionHelper.GetActionCharges(id);
+    // PR assumes full charges when the recast detail is missing. AE instead
+    // derives fractional charges from elapsed recast time, without a full-charge cap.
+    public static unsafe float ChargesWithElapsedFallback(uint id)
+    {
+        var manager = FfxivActionManager.Instance();
+        if (id == 0 || manager == null) return 0f;
+        var row = Svc.Data.GetExcelSheet<Lumina.Excel.Sheets.Action>().GetRowOrDefault(id);
+        if (!row.HasValue) return 0f;
+        var action = row.Value;
+        if (action.CooldownGroup == 0) return 1f;
+
+        var recastTime = FfxivActionManager.GetAdjustedRecastTime(FfxivActionType.Action, action.RowId, true) / 1000f;
+        if (recastTime <= 0f) return 0f;
+        var detail = manager->GetRecastGroupDetail(action.CooldownGroup - 1);
+        if (detail == null)
+            return (float)(TimeSpan.FromSeconds(ActionHelper.GetActionRecastTimeElapsed(action.RowId)).TotalSeconds / recastTime);
+
+        var maxCharges = FfxivActionManager.GetMaxCharges(action.RowId, 0u);
+        if (!detail->IsActive) return maxCharges;
+        var charges = detail->Elapsed / recastTime;
+        return charges > maxCharges ? maxCharges : charges;
+    }
     public static bool Qt(string id) => PromeSettings.Instance.GetQt(id);
     public static bool Weave => ActionHelper.GetGcdRemain() >= .6f;
     public static float GcdElapsed => ActionHelper.GetGcdElapsed();
     public static bool InShroud => Has(2593u) || JobGaugeHelper.RPR.夜游魂衣剩余时间 > 0;
     public static bool InEnshroud => JobGaugeHelper.RPR.夜游魂 > 0;
-    public static bool Targetable => Target?.CanUseAttackActionOn() == true;
+    public static bool Targetable
+    {
+        get
+        {
+            var me = Core.Me;
+            var target = Target;
+            return me != null && target != null && target.EntityId != me.EntityId
+                && target.CurrentHp > 0 && target.CanUseAttackActionOn();
+        }
+    }
     public static PAction A(uint id, ActionType type = ActionType.Gcd, ActionTargetType target = ActionTargetType.Target) => new(id, type, target);
     public static uint Adjust(uint id) => ActionHelper.GetAdjustedActionId(id);
     public static unsafe bool Is1ChargesNextMs(uint id, long time = 30L)
@@ -157,7 +241,8 @@ internal static class R
         var recastGroupDetail = actionManager->GetRecastGroupDetail(action.CooldownGroup - 1);
         if (recastGroupDetail == null)
         {
-            return (ActionHelper.GetActionRecastTimeElapsed(action.RowId) + time / 1000f) / recastTime >= 1f;
+            return (float)((TimeSpan.FromSeconds(ActionHelper.GetActionRecastTimeElapsed(action.RowId)).TotalSeconds
+                + time / 1000) / recastTime) >= 1f;
         }
 
         var maxCharges = FfxivActionManager.GetMaxCharges(action.RowId, 0u);
@@ -280,20 +365,20 @@ internal static class OpenerPositionalRuntime
     private static PAction[] tail = Array.Empty<PAction>();
     private static uint firstPositionalAction;
     private static bool gluttonyWasReady;
-    private static bool initialEnhancedGibbet;
-    private static bool initialEnhancedGallows;
-    private static long firstPositionalQueuedAt;
-    private static float firstPositionalGcdElapsed;
+    private static bool gluttonyConfirmed;
+    private static bool firstPositionalConfirmed;
+    private static uint positionalStatus;
+    private static int initialPositionalStacks;
 
     internal static void Begin(PAction[] openerTail)
     {
         tail = openerTail ?? Array.Empty<PAction>();
         firstPositionalAction = 0;
-        gluttonyWasReady = false;
-        initialEnhancedGibbet = R.Has(2588u);
-        initialEnhancedGallows = R.Has(2589u);
-        firstPositionalQueuedAt = 0;
-        firstPositionalGcdElapsed = 0;
+        gluttonyWasReady = R.Ready(R.Gluttony);
+        gluttonyConfirmed = false;
+        firstPositionalConfirmed = false;
+        positionalStatus = 0;
+        initialPositionalStacks = 0;
         stage = Stage.WaitingForGluttony;
     }
 
@@ -302,28 +387,35 @@ internal static class OpenerPositionalRuntime
         tail = Array.Empty<PAction>();
         firstPositionalAction = 0;
         gluttonyWasReady = false;
-        initialEnhancedGibbet = false;
-        initialEnhancedGallows = false;
-        firstPositionalQueuedAt = 0;
-        firstPositionalGcdElapsed = 0;
+        gluttonyConfirmed = false;
+        firstPositionalConfirmed = false;
+        positionalStatus = 0;
+        initialPositionalStacks = 0;
         stage = Stage.Inactive;
+    }
+
+    internal static void RecordConfirmedAction(uint actionId)
+    {
+        if (stage == Stage.WaitingForGluttony && actionId == R.Gluttony)
+            gluttonyConfirmed = true;
+        else if (stage == Stage.WaitingForFirstPositional
+            && (actionId == firstPositionalAction || actionId == R.Adjust(firstPositionalAction)))
+            firstPositionalConfirmed = true;
     }
 
     internal static void Update()
     {
+        if (stage is Stage.Inactive or Stage.Complete || !R.Targetable) return;
+
         if (stage == Stage.WaitingForGluttony)
         {
-            // Normal opener queues do not call ActionHelper.RecordAction, so
-            // RecentlyUsed cannot identify the queued Gluttony cast. Observe
-            // its cooldown transition instead.
-            if (!gluttonyWasReady)
-            {
-                gluttonyWasReady = R.Ready(R.Gluttony);
-                return;
-            }
-
-            if (R.Ready(R.Gluttony) && R.Cd(R.Gluttony) <= .1f)
-                return;
+            gluttonyWasReady |= R.Ready(R.Gluttony);
+            // Prefer the confirmed action; the cooldown and granted stacks
+            // also cover hosts where action-flow confirmation is unavailable.
+            if (!gluttonyConfirmed && !(gluttonyWasReady && R.Cd(R.Gluttony) > .1f)) return;
+            positionalStatus = R.Has(3858u) ? 3858u : 2587u;
+            initialPositionalStacks = GetPositionalStacks();
+            if (initialPositionalStacks == 0) return;
 
             var enhancedAction = TargetHelper.GetTargetPositional() == Positional.Rear
                 ? R.EnhancedGallows
@@ -333,8 +425,6 @@ internal static class OpenerPositionalRuntime
             {
                 RequiresVerification = true
             });
-            firstPositionalQueuedAt = Environment.TickCount64;
-            firstPositionalGcdElapsed = ActionHelper.GetGcdElapsed();
             stage = Stage.WaitingForFirstPositional;
             return;
         }
@@ -342,19 +432,15 @@ internal static class OpenerPositionalRuntime
         if (stage != Stage.WaitingForFirstPositional || firstPositionalAction == 0)
             return;
 
-        var now = Environment.TickCount64;
-        var gainedEnhancedBuff = (!initialEnhancedGibbet && R.Has(2588u))
-            || (!initialEnhancedGallows && R.Has(2589u));
-        var gcdWasReset = firstPositionalGcdElapsed > .25f
-            && ActionHelper.GetGcdElapsed() < .25f;
-        if (!gainedEnhancedBuff
-            && !gcdWasReset
-            && now - firstPositionalQueuedAt < 1800)
-            return;
+        var remainingStacks = GetPositionalStacks();
+        var consumedFirstStack = remainingStacks > 0 && remainingStacks < initialPositionalStacks;
+        if (!firstPositionalConfirmed && !consumedFirstStack) return;
 
-        var enhancedSecondAction = R.Has(2589u)
-            ? R.EnhancedGallows
-            : R.EnhancedGibbet;
+        // Alternate from the hit that actually completed. Its enhancement buff
+        // may arrive a frame later than the action-effect event.
+        var enhancedSecondAction = firstPositionalAction is R.Gallows or R.EnhancedGallows
+            ? R.EnhancedGibbet
+            : R.EnhancedGallows;
         var secondPositionalAction = GetLevelAdjustedPositionalAction(enhancedSecondAction);
         var actions = new List<PAction>
         {
@@ -367,6 +453,9 @@ internal static class OpenerPositionalRuntime
         ActionQueueManager.Enqueue(actions);
         stage = Stage.Complete;
     }
+
+    private static int GetPositionalStacks()
+        => Core.Me?.GetStatusStackCount(positionalStatus) ?? 0;
 
     private static uint GetLevelAdjustedPositionalAction(uint actionId)
     {

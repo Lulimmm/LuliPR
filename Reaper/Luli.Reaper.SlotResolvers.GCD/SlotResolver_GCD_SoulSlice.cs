@@ -3,10 +3,11 @@ using PromeRotation.Data;
 using PromeRotation.Helpers;
 using PromeRotation.Managers;
 using PromeRotation.Resolvers;
-using PromeRotation.Rotation;
 
 namespace Reaper.PR;
 
+// Compatibility name: nonnegative AE check results all mean success and do not
+// change the registration order of the GCD resolvers.
 public interface IAePriorityResolver
 {
     int AePriority { get; }
@@ -18,15 +19,14 @@ public sealed class SoulSliceGcd : Gcd, IAePriorityResolver
 
     public override CheckResult Check()
     {
-        // Check() is called every decision frame. Never carry a successful
-        // priority over from an earlier frame whose conditions no longer hold.
+        // Never carry a successful check result over from an earlier frame.
         AePriority = int.MinValue;
 
         var me = Core.Me;
         var target = Core.Target;
 
-        var remainGcd = ActionHelper.GetGcdRemain();
-        var currentCharges = R.Charges(R.SoulSlice);
+        var remainGcd = R.GetGcdRemainingMs();
+        var currentCharges = R.ChargesWithElapsedFallback(R.SoulSlice);
 
         // -1：检查是否开启“灵魂切割”
         if (!R.Qt("灵魂切割"))
@@ -46,13 +46,11 @@ public sealed class SoulSliceGcd : Gcd, IAePriorityResolver
             return Reject(-2, "没有有效目标或目标超出攻击范围");
         }
 
-        // -3：技能是否已解锁。Soul Slice 是充能技能，PR 的
-        // ActionHelper.IsReady() 要求整组冷却为 0；当已有一层、第二层
-        // 仍在恢复时会错误返回 false。因此可用性由已解锁 + charges >= 1
-        // 共同判断，不能使用 R.Ready()。
-        if (!ActionHelper.IsUnlocked(R.SoulSlice))
+        // -3：复刻 AE 的 IsReadyWithCanCast，检查近期使用、原生施放条件
+        // 和视线。一层充能可用即可，不要求整个充能组冷却归零。
+        if (!R.IsReadyWithCanCast(R.SoulSlice, target))
         {
-            return Reject(-3, "灵魂切割尚未就绪");
+            return Reject(-3, "灵魂切割未就绪或不满足施放条件");
         }
 
         // -4：必须至少拥有一层充能
@@ -61,30 +59,10 @@ public sealed class SoulSliceGcd : Gcd, IAePriorityResolver
             return Reject(-4, "灵魂切割没有可用充能");
         }
 
-        // -5：魂衣阶段或已有妖异之镰 GCD 待消费时不使用。
-        //
-        // 2587 / 3858 是绞决、缢杀等妖异之镰技能的待消费状态；
-        // 2593 与职业量谱则共同表示夜游魂衣阶段。只检查 2587 / 3858
-        // 会漏掉正常的附体窗口，以及 Buff 刚切换但量谱已经更新的帧。
-        if (R.Has(2587u)
-            || R.Has(3858u)
-            || R.InShroud
-            || R.InEnshroud)
+        // -5：按参考只判断这两个状态，其余施放限制由原生条件处理。
+        if (R.Has(2587u) || R.Has(3858u))
         {
-            return Reject(-5, "当前处于附体/夜游魂衣阶段或有妖异之镰待消费");
-        }
-
-        // 完人可用时保留 3860 proc，不能先消耗灵魂切割充能。
-        if (PerfectioGcd.IsAvailableForRotation())
-        {
-            return Reject(-12, "完人已满足释放条件");
-        }
-
-        // 大丰收满足完整释放条件时，必须让位给 24385，不能消耗灵魂切割充能。
-        // 复用 PlentifulHarvestGcd 的条件，避免仅按技能冷却做过度拦截。
-        if (PlentifulHarvestGcd.IsReadyForRotation())
-        {
-            return Reject(-11, "大丰收已满足释放条件");
+            return Reject(-5, "有妖异之镰待消费");
         }
 
         // -6：灵魂值大于 50 时不使用，避免灵魂资源溢出
@@ -95,7 +73,7 @@ public sealed class SoulSliceGcd : Gcd, IAePriorityResolver
 
         // -7：开启死亡之影时，如果自己的死亡烙印不足两秒，
         // 优先留出 GCD 补死亡烙印
-        if (R.Qt("死亡之影") && !R.TargetHas(2586u, 2f))
+        if (R.Qt("死亡之影") && !R.TargetHasForMs(2586u, 2000))
         {
             return Reject(-7, "目标死亡烙印不足两秒");
         }
@@ -108,7 +86,7 @@ public sealed class SoulSliceGcd : Gcd, IAePriorityResolver
         {
             // AE 原逻辑在这里又检查了一次技能是否就绪。
             // 为保持条件完整，PR 版本也保留这次检查。
-            if (!ActionHelper.IsUnlocked(R.SoulSlice))
+            if (!R.IsReadyWithCanCast(R.SoulSlice, target))
             {
                 return Reject(-8, "60～77 级时灵魂切割尚未就绪");
             }
@@ -124,13 +102,13 @@ public sealed class SoulSliceGcd : Gcd, IAePriorityResolver
             // AE：
             // CurrBattleTimeInMs < 5000
             //
-            // PR：
-            // EngageManager.GetBattleTime() 的单位为秒。
+            // PR 的战斗时间单位为秒，但 HasMyAuraWithTimeleft 的参数为毫秒。
+            // 参考代码实际传入 15（不是 15000），按其实际行为保留。
             if (ReaperRotation.IsSelectedOpener("烙印3G团辅起手")
                 && EngageManager.GetBattleTime() < 5f
-                && !R.TargetHas(2586u, 15f))
+                && !R.TargetHasForMs(2586u, 15))
             {
-                return Reject(-9, "烙印3G团辅起手阶段尚未建立死亡烙印");
+                return Reject(-9, "烙印3G团辅起手阶段死亡烙印不足 15 毫秒");
             }
 
             // -10：连击即将断裂时不插入灵魂切割
@@ -144,30 +122,28 @@ public sealed class SoulSliceGcd : Gcd, IAePriorityResolver
                 return Reject(-10, "基础连击剩余时间不足两秒");
             }
 
-            // 以当前剩余 GCD 作为预判时长，
-            // 判断打完本次 GCD 后是否即将恢复下一层充能。
+            // 按参考判断预判时点是否至少有一层充能，不是第二层恢复时间。
             var isNextChargeSoon = R.Is1ChargesNextMs(
                 R.SoulSlice,
-                (long)(remainGcd * 1000f));
+                remainGcd);
 
             // AE 返回 1：
-            // 只有一层，但打完当前 GCD 后即将恢复下一层，
-            // 因此允许使用，避免充能恢复时间浪费。
-            if (currentCharges >= 1f && currentCharges < 2f && isNextChargeSoon)
+            // 严格保留 == 1f；1.5 等小数层数继续走后面的分支。
+            if (currentCharges == 1f && isNextChargeSoon)
             {
-                return Accept(1, "一层充能且下一层即将恢复");
+                return Accept(1, "一层充能且预判时点至少有一层可用");
             }
 
             // AE 返回 2：
-            // 两层充能已满，优先使用防止溢出。
-            if (currentCharges >= 2f)
+            // 两层充能已满。返回码不用于重新排序求解器。
+            if (currentCharges == 2f)
             {
                 return Accept(2, "灵魂切割充能已满");
             }
 
             // AE 返回 0：
-            // 有一层充能，下一层不会立即恢复，正常使用。
-            if (currentCharges >= 1f && currentCharges < 2f)
+            // 有一层充能，正常使用。
+            if (currentCharges == 1f)
             {
                 return Accept(0, "拥有一层可用充能");
             }
@@ -246,11 +222,11 @@ public sealed class SoulSliceGcd : Gcd, IAePriorityResolver
             $"AE检查结果 {aeCode}：{reason}");
     }
 
-    private CheckResult Accept(int aePriority, string reason)
+    private CheckResult Accept(int aeCode, string reason)
     {
-        AePriority = aePriority;
+        AePriority = aeCode;
         return new CheckResult(
             true,
-            $"AE优先级 {aePriority}：{reason}");
+            $"AE检查结果 {aeCode}：{reason}");
     }
 }

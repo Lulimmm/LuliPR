@@ -28,13 +28,9 @@ internal static class ReaperSpellHistory
         RemoveExpired(now);
         if (!spellCastTime.TryGetValue(actionId, out var lastUsedAt)) return false;
 
-        if (now - lastUsedAt >= spanMs)
-        {
-            spellCastTime.Remove(actionId);
-            return false;
-        }
-
-        return true;
+        // A shorter query window must not erase a cast needed by a later, longer query.
+        // RemoveExpired owns record expiry for all callers.
+        return now - lastUsedAt < spanMs;
     }
 
     private static void RemoveExpired(long now)

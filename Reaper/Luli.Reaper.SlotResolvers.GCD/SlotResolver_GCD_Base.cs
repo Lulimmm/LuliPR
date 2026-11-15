@@ -28,7 +28,8 @@ public sealed class BaseGcd : Gcd
         if (R.Has(3858u) || R.Has(2587u)) return No;
         if (R.Recently(R.BloodStalk, 1500) || R.Recently(R.Gluttony, 1500)) return No;
         if (R.Has(2593u)) return No;
-        return R.Ready(R.Slice) ? Ok : No;
+        // AE leaves the remaining GCD to the action executor, including its queue window.
+        return Ok;
     }
     public override PAction GetAction()
     {

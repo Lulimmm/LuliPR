@@ -10,6 +10,10 @@ internal static class MewUIUpdatesPage
     private static readonly Notice[] Notices =
     [
         new(
+            "1.4.4", "2026-11-15", "Reaper 战斗逻辑与联动修复",
+            "修正 BloodStalk 对暴食的两 GCD 冷却联动，按 AE 的固定 2500ms GCD 窗口和可释放状态判断。同步调整 Reaper 技能就绪、目标状态与起手身位确认逻辑，并更新伊甸近战减伤时间轴。",
+            "#RPR #LOGIC #TIMELINE"),
+        new(
             "1.4.3", "2026-11-14", "修复获取凭证按钮",
             "修复累计使用满 24 小时后，点击获取凭证未发送聊天消息的问题。改用游戏聊天命令入口，并在游戏主线程执行。",
             "#UI #USAGE #FIX"),

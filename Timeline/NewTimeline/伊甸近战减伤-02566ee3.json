@@ -4739,87 +4739,6 @@
           }]
       }
     },{
-      "Guid": "9878f4ea-8c36-4b57-ad26-97dadac955dc",
-      "Name": "\u884C\u4E3A\u7EC4 4",
-      "StartAnchorGuid": "f3c400f6-1982-4a88-814b-9f868a61a582",
-      "Offset": 1,
-      "Enabled": true,
-      "Remark": null,
-      "EntryGroup": {
-        "Id": 1,
-        "Name": "\u884C\u4E3A\u7EC4",
-        "Type": "serial",
-        "Enabled": true,
-        "Remark": null,
-        "DelayMs": null,
-        "Mode": null,
-        "UseAndLogic": null,
-        "Condition": null,
-        "Conditions": null,
-        "Action": null,
-        "Actions": null,
-        "Children": [
-          {
-            "Id": 2,
-            "Name": "\u65B0\u6761\u4EF6\u8282\u70B9",
-            "Type": "condition",
-            "Enabled": true,
-            "Remark": null,
-            "DelayMs": null,
-            "Mode": "wait",
-            "UseAndLogic": null,
-            "Condition": null,
-            "Conditions": [
-              {
-                "Type": "TimelineRole",
-                "ActionId": null,
-                "Immediate": false,
-                "Target": null,
-                "BuffId": null,
-                "Mode": null,
-                "Regex": null,
-                "Value": null,
-                "Negate": false,
-                "Params": {
-                  "role": "D1"
-                }
-              }
-            ],
-            "Action": null,
-            "Actions": null,
-            "Children": null
-          },
-          {
-            "Id": 3,
-            "Name": "\u65B0\u884C\u4E3A\u8282\u70B9",
-            "Type": "action",
-            "Enabled": true,
-            "Remark": null,
-            "DelayMs": null,
-            "Mode": null,
-            "UseAndLogic": null,
-            "Condition": null,
-            "Conditions": null,
-            "Action": null,
-            "Actions": [
-              {
-                "Type": "ForceUseSkill",
-                "Qt": null,
-                "Enabled": false,
-                "Message": null,
-                "ActionId": 7549,
-                "SkillType": "OffGcd",
-                "Target": "Target",
-                "HighPriority": false,
-                "TargetMode": null,
-                "Mode": null
-              }
-            ],
-            "Children": null
-          }
-        ]
-      }
-    },{
       "Guid": "16225b04-7899-478d-a06c-6cb58ff1487b",
       "Name": "\u884C\u4E3A\u7EC4 7",
       "StartAnchorGuid": "a5603e3d-87f3-47cd-8d42-2812d9ad7644",
@@ -6086,6 +6005,102 @@
                 "HighPriority": false,
                 "TargetMode": null,
                 "TargetDataId": 17835,
+                "Mode": null
+              }
+            ],
+            "Children": null
+          }
+        ]
+      }
+    },{
+      "Guid": "237343f5-c5c6-4d2f-b809-79d55cea64bd",
+      "Name": "\u884C\u4E3A\u7EC4 4",
+      "StartAnchorGuid": "bd601389-ec84-4a75-aada-c4ac9c431010",
+      "Offset": 2,
+      "Enabled": true,
+      "Remark": null,
+      "EntryGroup": {
+        "Id": 1,
+        "Name": "\u884C\u4E3A\u7EC4",
+        "Type": "serial",
+        "Enabled": true,
+        "Remark": null,
+        "DelayMs": null,
+        "Mode": null,
+        "UseAndLogic": null,
+        "Condition": null,
+        "Conditions": null,
+        "Action": null,
+        "Actions": null,
+        "Children": [
+          {
+            "Id": 2,
+            "Name": "\u65B0\u6761\u4EF6\u8282\u70B9",
+            "Type": "condition",
+            "Enabled": true,
+            "Remark": null,
+            "DelayMs": null,
+            "Mode": "wait",
+            "UseAndLogic": null,
+            "Condition": null,
+            "Conditions": [
+              {
+                "Type": "TimelineRole",
+                "ActionId": null,
+                "Immediate": false,
+                "Target": null,
+                "BuffId": null,
+                "Mode": null,
+                "Regex": null,
+                "Value": null,
+                "Negate": false,
+                "Params": {
+                  "role": "D1"
+                }
+              }
+            ],
+            "Action": null,
+            "Actions": null,
+            "Children": null
+          },
+          {
+            "Id": 3,
+            "Name": "\u5EF6\u8FDF",
+            "Type": "delay",
+            "Enabled": true,
+            "Remark": null,
+            "DelayMs": 1000,
+            "Mode": null,
+            "UseAndLogic": null,
+            "Condition": null,
+            "Conditions": null,
+            "Action": null,
+            "Actions": null,
+            "Children": null
+          },
+          {
+            "Id": 4,
+            "Name": "\u65B0\u884C\u4E3A\u8282\u70B9",
+            "Type": "action",
+            "Enabled": true,
+            "Remark": null,
+            "DelayMs": null,
+            "Mode": null,
+            "UseAndLogic": null,
+            "Condition": null,
+            "Conditions": null,
+            "Action": null,
+            "Actions": [
+              {
+                "Type": "ForceUseSkill",
+                "Qt": null,
+                "Enabled": false,
+                "Message": null,
+                "ActionId": 7549,
+                "SkillType": "OffGcd",
+                "Target": "Target",
+                "HighPriority": false,
+                "TargetMode": null,
                 "Mode": null
               }
             ],

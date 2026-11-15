@@ -20,7 +20,7 @@ using PromeRotation.UI.HotKey;
 
 namespace Reaper.PR;
 
-[RotationMetadata(39u, "Luli Reaper PR", "Cino", "1.4.3", ContentScope = AcrContentScope.HighEnd)]
+[RotationMetadata(39u, "Luli Reaper PR", "Cino", "1.4.4", ContentScope = AcrContentScope.HighEnd)]
 public sealed partial class ReaperRotation : IRotation, IRotationLifecycle
 {
     public string AuthorName => "Cino";
@@ -231,6 +231,8 @@ public sealed partial class ReaperRotation : IRotation, IRotationLifecycle
     public PAction? NextOffGcd() { EnforceHiddenPanels(); return Next(ogcd); }
     private static PAction? Next(IEnumerable<IDecisionResolver> resolvers)
     {
+        if (!R.Targetable) return null;
+
         // PR 的解析器列表本身就是强制优先级。必须在第一个成功项处停止，
         // 否则 Soul Slice 的 AE 返回值 1/2 会越过前面的完人、附体、
         // 大丰收和妖异之镰，表现为这些原有拦截条件全部失效。
@@ -253,14 +255,16 @@ public sealed partial class ReaperRotation : IRotation, IRotationLifecycle
     }
     private static void AddStatuses(IEnumerable<IDecisionResolver> resolvers, IList<SolverStatus> output)
     {
+        var hasTarget = R.Targetable;
         foreach (var resolver in resolvers)
         {
-            var result = resolver.Check();
+            var result = hasTarget ? resolver.Check() : new CheckResult(false, "当前目标不可攻击");
             output.Add(new SolverStatus { Name = resolver.GetType().Name, Success = result.Success, Message = result.Message });
         }
     }
     public IOpener? GetOpener()
     {
+        if (GameData.IsInCombat() && !R.Targetable) return null;
         if (selectedOpener == FollowTimelineOpener || selectedOpener == PreviousNoOpener) return null;
         var name = CanonicalOpenerName(selectedOpener);
         if (string.IsNullOrWhiteSpace(name) || !Openers.TryGetValue(name, out var type)) return null;

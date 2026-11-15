@@ -52,6 +52,8 @@ internal sealed class ReaperEventHandler : IRotationEventHandler, IDisposable
     {
         if (action.Accepted)
             ReaperSpellHistory.RecordAction(action.ActionId);
+        if (action.Confirmed && Core.Me is { } me && action.CasterId == me.EntityId)
+            OpenerPositionalRuntime.RecordConfirmedAction(action.ActionId);
     }
 
     public void OnUpdate()

@@ -29,8 +29,8 @@ public sealed class HarvestMoonGcd : Gcd
         if (R.Has(3858u)) return No;
         if (R.Has(2587u)) return No;
         if (R.Has(2593u)) return No;
-        if (!R.Near()) return R.Ready(R.HarvestMoon) ? Ok : No;
-        if (R.Has(49u)) return R.Ready(R.HarvestMoon) ? Ok : No;
+        if (!R.Near()) return Ok;
+        if (R.Has(49u)) return Ok;
         return No;
     }
     public override PAction GetAction() => R.A(R.HarvestMoon);
