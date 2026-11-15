@@ -10,6 +10,12 @@ internal static class MewUIUpdatesPage
     private static readonly Notice[] Notices =
     [
         new(
+            "1.4.7", "2026-11-16", "牵制规划修复与调试完善",
+            "修复 FRU 后续阶段牵制不触发的问题，完善序列防重、延迟和重开清零，保留 D1/D2 自动切换。\n\n" +
+            "新增读条与技能效果计数、节点等待原因和实际释放确认，过滤友方读条。\n\n" +
+            "调整 Reaper 神秘环、夜游魂衣的释放条件与双附体窗口判断。",
+            "#FRU #FEINT #DEBUG #RPR"),
+        new(
             "1.4.6", "2026-11-15", "牵制规划副本分组与排版优化",
             "牵制规划地图按零式副本与绝境战分组，地图选择按钮改为紧凑布局，并简化页面标题。",
             "#UI #FEINT #LAYOUT"),

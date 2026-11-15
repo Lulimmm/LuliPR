@@ -213,6 +213,14 @@ internal static class MewUIFeintPlanPage
         if (!ImGui.CollapsingHeader("调试信息"))
             return;
 
+        ImGui.TextColored(SimplePalette.TextSecondary,
+            $"PR LogSystem：{(MewFeintPlanManager.EventSourceConnected ? "已连接" : "未连接，正在重试")}");
+        ImGui.TextColored(SimplePalette.TextSecondary,
+            $"读条事件 {MewFeintPlanManager.ReceivedCastCount}（最近 {MewFeintPlanManager.LastCastActionId}）  " +
+            $"技能效果 {MewFeintPlanManager.ReceivedEffectCount}（最近 {MewFeintPlanManager.LastEffectActionId}）");
+        foreach (var status in MewFeintPlanManager.GetPendingDebugLines())
+            ImGui.TextWrapped(status);
+        ImGui.Separator();
         foreach (var message in MewFeintPlanDebug.RecentMessages.Reverse())
             ImGui.TextColored(SimplePalette.TextSecondary, message);
     }

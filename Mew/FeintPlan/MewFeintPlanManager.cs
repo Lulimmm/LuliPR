@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Dalamud.Game.ClientState.Conditions;
+using Dalamud.Game.ClientState.Objects.Enums;
 using Dalamud.Game.ClientState.Objects.Types;
 using ECommons.DalamudServices;
 using LuliPR.Common;
@@ -9,12 +11,11 @@ using Mew.FeintPlan.Events;
 using Mew.FeintPlan.Scripts.FRU;
 using PromeRotation.Core;
 using PromeRotation.Data;
+using PromeRotation.Extensions;
 using PromeRotation.Helpers;
+using PromeRotation.LogSystem;
 using PromeRotation.Managers;
-using PromeRotation.Managers.CombatEventManager;
-using PromeRotation.Managers.CombatEventManager.Events;
 using PromeRotation.Timeline.Core;
-using Reaper.PR;
 
 namespace Mew.FeintPlan;
 
@@ -33,40 +34,72 @@ public static class MewFeintPlanManager
     private static readonly HashSet<uint> CompletedZones = new();
     private static readonly Dictionary<uint, HashSet<string>> ActivePhasesByZone = new();
     private static readonly Dictionary<string, uint> OccurrenceCounts = new();
-    private static readonly Dictionary<string, long> LastTriggerTimeMs = new();
+    private static readonly Dictionary<string, (int TimeMs, string Signature)> LastTriggerEvents = new();
     private static readonly HashSet<uint> SeenDmuUnits = new();
+    private static readonly List<IDisposable> EventSubscriptions = new();
 
     private static bool attached;
     private static bool wasInCombat;
     private static uint runtimeZoneId;
     private static uint lastWeatherId = uint.MaxValue;
-    private static long lastFeintQueuedAt;
     private static uint lastAutoPresetZoneId = uint.MaxValue;
     private static string? lastAutoPresetName;
+    private static long runtimeStartedAt;
+    private static long lastSubscriptionAttemptAt;
+    private static (ulong SourceId, uint ActionId, uint Sequence, DateTime Timestamp)? lastActionEffect;
+
+    public static int ReceivedCastCount { get; private set; }
+    public static int ReceivedEffectCount { get; private set; }
+    public static uint LastCastActionId { get; private set; }
+    public static uint LastEffectActionId { get; private set; }
+    public static bool EventSourceConnected => EventSubscriptions.Count == 4;
 
     public static uint CurrentZoneId => Svc.ClientState.TerritoryType;
+    private static bool IsRuntimeActive => GameData.IsInCombat()
+        || Svc.Condition[ConditionFlag.DutyRecorderPlayback];
 
     public static void Attach()
     {
         if (attached) return;
 
-        LoadAllNodes();
         ResetRuntime();
         lastWeatherId = uint.MaxValue;
-        CombatEventManager.OnStartCast += OnStartCast;
-        CombatEventManager.OnActionEffect += OnActionEffect;
         attached = true;
+        AttachEventSource();
     }
 
     public static void Dispose()
     {
-        if (attached)
-        {
-            CombatEventManager.OnStartCast -= OnStartCast;
-            CombatEventManager.OnActionEffect -= OnActionEffect;
-        }
+        foreach (var subscription in EventSubscriptions)
+            subscription.Dispose();
+        EventSubscriptions.Clear();
         attached = false;
         ResetRuntime();
+    }
+
+    private static void AttachEventSource()
+    {
+        lastSubscriptionAttemptAt = Environment.TickCount64;
+        var events = PromeRotation.Plugin.Instance?.LogSystem?.Events;
+        if (events == null) return;
+
+        var subscriptions = new List<IDisposable>();
+        try
+        {
+            // This is the same public source used by PR's timeline conditions.
+            subscriptions.Add(events.Subscribe<LogSystemCastStartEvent>(OnStartCast));
+            subscriptions.Add(events.Subscribe<LogSystemActionEffectEvent>(OnActionEffect));
+            subscriptions.Add(events.Subscribe<LogSystemObjectCreateEvent>(OnCreateObject));
+            subscriptions.Add(events.Subscribe<LogSystemWeatherChangedEvent>(OnWeatherChanged));
+            EventSubscriptions.AddRange(subscriptions);
+            MewFeintPlanDebug.Print("已连接 PR LogSystem：读条、技能效果、对象创建和天气事件");
+        }
+        catch (Exception ex)
+        {
+            foreach (var subscription in subscriptions)
+                subscription.Dispose();
+            MewFeintPlanDebug.Error($"连接 PR 事件源失败：{ex.Message}");
+        }
     }
 
     public static void ResetRuntime()
@@ -77,19 +110,28 @@ public static class MewFeintPlanManager
         CompletedZones.Clear();
         ActivePhasesByZone.Clear();
         OccurrenceCounts.Clear();
-        LastTriggerTimeMs.Clear();
+        LastTriggerEvents.Clear();
         SeenDmuUnits.Clear();
         FRUData.ResetRuntime();
         FeintHelper.Clear();
-        lastFeintQueuedAt = 0;
         lastWeatherId = uint.MaxValue;
         wasInCombat = false;
         runtimeZoneId = CurrentZoneId;
+        runtimeStartedAt = Environment.TickCount64;
+        ReceivedCastCount = 0;
+        ReceivedEffectCount = 0;
+        LastCastActionId = 0;
+        LastEffectActionId = 0;
+        lastActionEffect = null;
+        // Recreate stateful nodes so counters from the previous pull are cleared.
+        LoadAllNodes();
     }
 
     public static void Update()
     {
         if (!attached) return;
+        if (!EventSourceConnected && Environment.TickCount64 - lastSubscriptionAttemptAt >= 1000)
+            AttachEventSource();
 
         var zoneId = CurrentZoneId;
         if (zoneId != runtimeZoneId)
@@ -101,7 +143,7 @@ public static class MewFeintPlanManager
 
         SyncAutomaticZonePreset(zoneId);
 
-        if (!GameData.IsInCombat())
+        if (!IsRuntimeActive)
         {
             if (wasInCombat) ResetRuntime();
             wasInCombat = false;
@@ -216,21 +258,72 @@ public static class MewFeintPlanManager
             MewFeintPlanDebug.Print($"已清理 {removed} 个无效节点");
     }
 
-    private static void OnStartCast(StartCastEvent action)
+    private static void OnStartCast(LogSystemCastStartEvent action)
     {
-        if (Core.Me == null || action.SourceId == Core.Me.EntityId) return;
+        if (!IsRuntimeActive || Core.Me == null || action.SourceId == Core.Me.EntityId) return;
+        var source = Svc.Objects.OfType<IBattleNpc>().FirstOrDefault(npc => npc.EntityId == action.SourceId);
+        if (source == null
+            || source.BattleNpcKind is not (BattleNpcSubKind.Combatant or BattleNpcSubKind.BNpcPart)
+            || source.IsTargetable && !source.IsEnemy())
+            return;
+
+        // Encounter actors can cast while untargetable; pets, players and
+        // friendly NPCs must not enter the enemy-cast counters or conditions.
+        ReceivedCastCount++;
+        LastCastActionId = action.ActionId;
+        if (CurrentZoneId == FeintZoneConfig.ZoneIds["FRU"] && FRUData.IsPlanCast(action.ActionId))
+            MewFeintPlanDebug.Print(GetRuntimeTimeMs() / 1000d, $"PR 收到读条 {action.ActionId}，读条时长 {action.CastTime:F1}s");
         CheckTriggers(new EnemyCastSpellCondParams(action.ActionId, action.CastTime));
     }
 
-    private static void OnActionEffect(ActionEffectEvent action)
+    private static void OnActionEffect(LogSystemActionEffectEvent action)
     {
-        if (Core.Me == null) return;
+        if (!IsRuntimeActive || Core.Me == null) return;
+        // PR emits one record per affected target. Process each packet once.
+        var packet = (action.SourceId, action.ActionId, action.GlobalSequence, action.Timestamp);
+        if (lastActionEffect == packet) return;
+        lastActionEffect = packet;
+        ReceivedEffectCount++;
+        LastEffectActionId = action.ActionId;
         if (action.SourceId == Core.Me.EntityId)
         {
+            if (action.ActionId == FeintActionId)
+                MewFeintPlanDebug.Print(GetRuntimeTimeMs() / 1000d, "PR 已确认牵制（7549）释放");
             CheckTriggers(new SelfActionEffectCondParams(action.ActionId));
             return;
         }
+        if (CurrentZoneId == FeintZoneConfig.ZoneIds["FRU"]
+            && action.ActionId is FRUData.伤害判定.Sinblaze or FRUData.伤害判定.Sinsmite)
+            MewFeintPlanDebug.Print(GetRuntimeTimeMs() / 1000d, $"PR 收到伤害判定 {action.ActionId}");
         CheckTriggers(new ReceviceAbilityEffectCondParams(action.ActionId));
+    }
+
+    private static void OnCreateObject(LogSystemObjectCreateEvent action)
+    {
+        if (CurrentZoneId != DmuTerritoryId || !IsRuntimeActive) return;
+        var obj = Svc.Objects.FirstOrDefault(candidate => candidate?.EntityId == action.SourceId);
+        if (obj?.BaseId == DmuP4UnitBaseId && SeenDmuUnits.Add(obj.EntityId))
+            CheckTriggers(new UnitCreateCondParams(obj));
+        // Update also scans the object table when the spawn packet arrives
+        // before Dalamud has published the new object.
+    }
+
+    private static void OnWeatherChanged(LogSystemWeatherChangedEvent action)
+    {
+        if (!IsRuntimeActive || lastWeatherId == action.WeatherId) return;
+        lastWeatherId = action.WeatherId;
+        CheckTriggers(new WeatherChangedCondParams(action.WeatherId));
+    }
+
+    private static int GetRuntimeTimeMs()
+    {
+        var seconds = EngageManager.GetBattleTime();
+        if (seconds > 0d && double.IsFinite(seconds))
+            return (int)Math.Min(int.MaxValue, seconds * 1000d);
+
+        // The host clock can remain zero in duty playback or after loading an
+        // ACR mid-fight. Keep diagnostic timestamps advancing in those cases.
+        return (int)Math.Clamp(Environment.TickCount64 - runtimeStartedAt, 0L, int.MaxValue);
     }
 
     private static void LoadAllNodes()
@@ -294,7 +387,8 @@ public static class MewFeintPlanManager
                         TimeInSec = attribute.TimeInSec,
                         Phase = phaseName,
                         Node = node,
-                        SerialId = attribute.SerialId,
+                        SerialId = zoneId == FeintZoneConfig.ZoneIds["FRU"] && attribute.SerialId == 0
+                            ? 1u : attribute.SerialId,
                         SequenceName = attribute.SequenceName,
                         DisplayOrder = attribute.DisplayOrder,
                         BaseId = attribute.BaseId
@@ -346,7 +440,7 @@ public static class MewFeintPlanManager
 
     private static void CheckTriggers(IMewFeintEvent? context)
     {
-        if (!GameData.IsInCombat()) return;
+        if (!IsRuntimeActive) return;
         var settings = AcrSettingsStore.Current.MewFeintPlan;
         if (!settings.GlobalEnabled) return;
 
@@ -357,7 +451,7 @@ public static class MewFeintPlanManager
             || !NodesByZone.TryGetValue(zoneId, out var phases))
             return;
 
-        var currentTimeMs = Math.Max(0, (int)(EngageManager.GetBattleTime() * 1000f));
+        var currentTimeMs = GetRuntimeTimeMs();
         var phased = FeintZoneConfig.HasPhaseEntryDetector(zoneId);
         var activePhases = phased ? GetActivePhases(zoneId) : null;
         if (phased && context != null)
@@ -369,7 +463,6 @@ public static class MewFeintPlanManager
             catch (Exception ex)
             {
                 MewFeintPlanDebug.Print($"{GetZoneName(zoneId)} 分P检测异常: {ex.Message}");
-                return;
             }
         }
 
@@ -399,8 +492,14 @@ public static class MewFeintPlanManager
             var occurrenceKey = string.IsNullOrEmpty(group.Key.Phase)
                 ? group.Key.BaseName
                 : $"{group.Key.Phase}:{group.Key.BaseName}";
-            if (LastTriggerTimeMs.TryGetValue(occurrenceKey, out var lastTime)
-                && currentTimeMs - lastTime < 1000)
+            // Common plans use a one-second guard for the whole sequence,
+            // including frame polls and events with different action IDs. FRU's
+            // added delayed sequences retain their event-specific deduplication.
+            var useEventDeduplication = zoneId == FeintZoneConfig.ZoneIds["FRU"];
+            var eventSignature = useEventDeduplication && context != null ? GetEventSignature(context) : null;
+            if (LastTriggerEvents.TryGetValue(occurrenceKey, out var lastEvent)
+                && currentTimeMs - lastEvent.TimeMs < 1000
+                && (!useEventDeduplication || eventSignature != null && lastEvent.Signature == eventSignature))
                 continue;
 
             var nextCount = OccurrenceCounts.GetValueOrDefault(occurrenceKey) + 1;
@@ -410,7 +509,8 @@ public static class MewFeintPlanManager
             {
                 if (!TryShouldTrigger(node)) continue;
                 OccurrenceCounts[occurrenceKey] = nextCount;
-                LastTriggerTimeMs[occurrenceKey] = currentTimeMs;
+                if (!useEventDeduplication || eventSignature != null)
+                    LastTriggerEvents[occurrenceKey] = (currentTimeMs, eventSignature ?? string.Empty);
                 ExecuteNode(zoneId, plan, phases, node, timeInSec, currentTimeMs);
                 return;
             }
@@ -420,7 +520,8 @@ public static class MewFeintPlanManager
             {
                 if (!TryShouldTrigger(node)) continue;
                 OccurrenceCounts[occurrenceKey] = nextCount;
-                LastTriggerTimeMs[occurrenceKey] = currentTimeMs;
+                if (!useEventDeduplication || eventSignature != null)
+                    LastTriggerEvents[occurrenceKey] = (currentTimeMs, eventSignature ?? string.Empty);
                 FeintHelper.ClearNodeId(node.NodeId);
                 MewFeintPlanDebug.Print(timeInSec,
                     $"({GetZoneName(zoneId)} - {node.Phase} - {node.Info.Name}) 序列拦截：第{nextCount}次读条，需要#{node.Info.SerialId}，已跳过");
@@ -454,19 +555,17 @@ public static class MewFeintPlanManager
     {
         var key = (zoneId, node.Phase, node.NodeId);
         TriggeredNodes.Add(key);
-        var target = node.Info.BaseId == 0 ? Core.Target : FindFeintTarget(node.Info.BaseId);
-        var now = Environment.TickCount64;
-        if (target != null
-            && (lastFeintQueuedAt == 0 || now - lastFeintQueuedAt >= 500)
-            && R.CanCast(FeintActionId, target))
+        // Check the default target before resolving the optional designated
+        // target. If it is absent, the default target is retained.
+        if (CanUseFeint(Core.Target))
         {
+            var target = node.Info.BaseId == 0 ? null : FindFeintTarget(node.Info.BaseId);
             var action = new PAction(FeintActionId, ActionType.OffGcd, ActionTargetType.Target)
             {
-                NetworkTid = node.Info.BaseId == 0 ? 0u : target?.EntityId ?? 0u
+                NetworkTid = target?.EntityId ?? 0u
             };
             if (ActionQueueManager.TryEnqueue(action, isHighPriority: true))
             {
-                lastFeintQueuedAt = now;
                 if (zoneId == FeintZoneConfig.ZoneIds["FRU"])
                     FRUData.MarkFeintQueued(node.Info.Name);
                 MewFeintPlanDebug.Print(timeInSec,
@@ -481,18 +580,55 @@ public static class MewFeintPlanManager
         else
         {
             FailedNodes.Add(key);
-            var reason = target == null && node.Info.BaseId != 0
-                ? $"指定目标 BaseId={node.Info.BaseId} 不可用"
-                : "牵制不可用，已跳过";
-            MewFeintPlanDebug.Print(timeInSec, $"({GetZoneName(zoneId)} - {node.Info.Name}) {reason}");
+            MewFeintPlanDebug.Print(timeInSec, $"({GetZoneName(zoneId)} - {node.Info.Name}) 牵制不可用，已跳过");
         }
         CheckCompletion(zoneId, plan, phases, currentTimeMs);
     }
 
     public static bool IsFeintAvailable(uint baseId = 0)
     {
-        var target = baseId == 0 ? Core.Target : FindFeintTarget(baseId);
-        return target != null && R.CanCast(FeintActionId, target);
+        var target = baseId == 0 ? Core.Target : FindFeintTarget(baseId) ?? Core.Target;
+        return CanUseFeint(target);
+    }
+
+    private static bool CanUseFeint(IBattleChara? target)
+        => target != null
+            && target.CanUseAttackActionOn()
+            && ActionHelper.CanCast(FeintActionId, target);
+
+    public static IEnumerable<string> GetPendingDebugLines()
+    {
+        var zoneId = CurrentZoneId;
+        var settings = AcrSettingsStore.Current.MewFeintPlan;
+        if (!settings.GlobalEnabled) { yield return "规划已关闭"; yield break; }
+        if (!settings.ZonePlans.TryGetValue(zoneId, out var plan) || !plan.Enabled)
+        { yield return "当前副本规划未启用"; yield break; }
+        if (!NodesByZone.TryGetValue(zoneId, out var phases)) yield break;
+
+        var active = FeintZoneConfig.HasPhaseEntryDetector(zoneId) ? GetActivePhases(zoneId) : null;
+        foreach (var key in plan.GetEnabledNodeKeys())
+        {
+            if (active != null && !active.Contains(key.Phase)) continue;
+            if (!phases.TryGetValue(key.Phase, out var nodes) || !nodes.TryGetValue(key.NodeId, out var info)) continue;
+            var nodeKey = (zoneId, key.Phase, key.NodeId);
+            if (TriggeredNodes.Contains(nodeKey) || ErroredNodes.Contains(nodeKey)) continue;
+
+            if (!FeintHelper.TryGetPendingDelay(key.NodeId, out var remainingMs))
+                yield return $"{info.Name}：等待触发条件（{info.Description}）";
+            else if (remainingMs > 0)
+                yield return $"{info.Name}：延迟剩余 {remainingMs / 1000d:F1}s";
+            else
+            {
+                var target = Core.Target;
+                var reason = target == null ? "无当前目标"
+                    : !target.CanUseAttackActionOn() ? "当前目标不可攻击"
+                    : ActionHelper.GetActionCooldown(FeintActionId) > 0f
+                        ? $"牵制 CD 剩余 {ActionHelper.GetActionCooldown(FeintActionId):F1}s"
+                    : !ActionHelper.CanCast(FeintActionId, target) ? "PR 判定当前不可释放"
+                    : "技能已就绪，等待调度";
+                yield return $"{info.Name}：延迟已到，{reason}";
+            }
+        }
     }
 
     private static IBattleChara? FindFeintTarget(uint baseId)
@@ -515,12 +651,8 @@ public static class MewFeintPlanManager
         if (ActivePhasesByZone.TryGetValue(zoneId, out var phases)) return phases;
 
         phases = new HashSet<string>(StringComparer.Ordinal);
-        if (PhasesByZone.TryGetValue(zoneId, out var known)
-            && known.FirstOrDefault(phase => phase == "P1") is { } first
-            && !string.IsNullOrWhiteSpace(first))
-            phases.Add(first);
-        else if (known is { Count: > 0 })
-            phases.Add(known[0]);
+        if (PhasesByZone.TryGetValue(zoneId, out var known) && known.Count > 0)
+            phases.Add(known.Contains("P1") ? "P1" : known.FirstOrDefault(phase => !string.IsNullOrWhiteSpace(phase)) ?? known[0]);
         ActivePhasesByZone[zoneId] = phases;
         return phases;
     }
@@ -552,8 +684,8 @@ public static class MewFeintPlanManager
 
         foreach (var key in OccurrenceCounts.Keys.Where(key => old.Any(phase => key.StartsWith(phase + ":", StringComparison.Ordinal))).ToArray())
             OccurrenceCounts.Remove(key);
-        foreach (var key in LastTriggerTimeMs.Keys.Where(key => old.Any(phase => key.StartsWith(phase + ":", StringComparison.Ordinal))).ToArray())
-            LastTriggerTimeMs.Remove(key);
+        foreach (var key in LastTriggerEvents.Keys.Where(key => old.Any(phase => key.StartsWith(phase + ":", StringComparison.Ordinal))).ToArray())
+            LastTriggerEvents.Remove(key);
     }
 
     private static string GetNodeBaseName(string name)
@@ -561,6 +693,16 @@ public static class MewFeintPlanManager
         var hash = name.IndexOf('#');
         return hash <= 0 ? name : name[..hash];
     }
+
+    private static string? GetEventSignature(IMewFeintEvent context) => context switch
+    {
+        EnemyCastSpellCondParams cast => $"cast:{cast.SpellId}",
+        ReceviceAbilityEffectCondParams effect => $"effect:{effect.ActionId}",
+        SelfActionEffectCondParams self => $"self:{self.ActionId}",
+        WeatherChangedCondParams weather => $"weather:{weather.NewWeatherId}",
+        UnitCreateCondParams unit when unit.BattleChara != null => $"unit:{unit.BattleChara.EntityId}",
+        _ => null
+    };
 
     private static void CheckCompletion(
         uint zoneId,

@@ -34,6 +34,13 @@ public static class FRUData
         public const uint Sinsmite = 40142u;
     }
 
+    public static bool IsPlanCast(uint actionId) => actionId is
+        读条.BurnishedGlory or 读条.DiamondDust or 读条.HallowedRay or 读条.LightRampant or 读条.AbsoluteZero
+        or 读条.UltimateRelativity or 读条.ShockwavePulsar or 读条.ShellCrusher
+        or 读条.CrystallizeTime or 读条.CrystallizeTimeAlternate
+        or 读条.DarklitDragonsong or 读条.DarklitDragonsongAlternate
+        or 读条.AkhMorn or 读条.AkhMornAlternate or 读条.FulgentBlade or 读条.AkhMornLoop;
+
     public static string? DetectPhaseEntry(IMewFeintEvent? context)
     {
         if (context is WeatherChangedCondParams weather)
@@ -72,14 +79,14 @@ public static class FRUData
 
     public static bool AfterCombatDelay(uint nodeId, int delayMs)
     {
-        FeintHelper.SetDelay(nodeId, delayMs);
+        FeintHelper.SetDelayOnce(nodeId, delayMs);
         return FeintHelper.IsReady(nodeId, () => MewFeintPlanManager.IsFeintAvailable());
     }
 
     public static bool AfterCast(uint nodeId, IMewFeintEvent? context, int delayMs, params uint[] spellIds)
     {
         if (context is EnemyCastSpellCondParams cast && IsSpell(cast.SpellId, spellIds))
-            FeintHelper.SetDelay(nodeId, delayMs);
+            FeintHelper.SetDelayOnce(nodeId, delayMs);
 
         return FeintHelper.IsReady(nodeId, () => MewFeintPlanManager.IsFeintAvailable());
     }
@@ -87,7 +94,7 @@ public static class FRUData
     public static bool AfterDamageEffect(uint nodeId, IMewFeintEvent? context, int delayMs, params uint[] actionIds)
     {
         if (context is ReceviceAbilityEffectCondParams effect && IsSpell(effect.ActionId, actionIds))
-            FeintHelper.SetDelay(nodeId, delayMs);
+            FeintHelper.SetDelayOnce(nodeId, delayMs);
 
         return FeintHelper.IsReady(nodeId, () => MewFeintPlanManager.IsFeintAvailable());
     }
@@ -103,7 +110,7 @@ public static class FRUData
             && Environment.TickCount64 >= readyAt
             && context is EnemyCastSpellCondParams cast
             && IsSpell(cast.SpellId, spellIds))
-            FeintHelper.SetDelay(nodeId, delayAfterCastMs);
+            FeintHelper.SetDelayOnce(nodeId, delayAfterCastMs);
 
         return FeintHelper.IsReady(nodeId, () => MewFeintPlanManager.IsFeintAvailable());
     }
@@ -118,7 +125,7 @@ public static class FRUData
         var waitElapsed = serialId == 1
             || (ReadyAt.TryGetValue(timerKey, out var readyAt) && Environment.TickCount64 >= readyAt);
         if (waitElapsed && context is EnemyCastSpellCondParams cast && cast.SpellId == spellId)
-            FeintHelper.SetDelay(nodeId, 0);
+            FeintHelper.SetDelayOnce(nodeId, 0);
 
         return FeintHelper.IsReady(nodeId, () => MewFeintPlanManager.IsFeintAvailable());
     }

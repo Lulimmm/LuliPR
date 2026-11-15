@@ -23,7 +23,7 @@ public sealed class ArcaneCircleOgcd : Ogcd
 {
     public override CheckResult Check()
     {
-        if (!R.Qt("神秘环") || !R.Ready(R.ArcaneCircle) || ActionHelper.GetGcdRemain() < .2f) return No;
+        if (!R.Qt("神秘环") || !R.IsReadyWithCanCast(R.ArcaneCircle, Core.Me) || ActionHelper.GetGcdRemain() < .2f) return No;
 
         var cooldown = R.Cd(R.ArcaneCircle);
         var gcdRemain = ActionHelper.GetGcdRemain();
@@ -34,7 +34,7 @@ public sealed class ArcaneCircleOgcd : Ogcd
         if (R.Qt("双附体") && !R.Qt("单附体") && !R.Qt("三附体") && !R.Qt("只打大丰收附体")
             && cooldown - gcdRemain < 0
             && cooldown > 0 && cooldown < 5
-            && R.TargetHas(2586u, 22)
+            && R.TargetHasForMs(2586u, 22000)
             && (JobGaugeHelper.RPR.魂衣值 >= 50 || R.Has(2593u)))
         {
             if (JobGaugeHelper.RPR.夜游魂 <= 4) return Ok;
@@ -42,7 +42,7 @@ public sealed class ArcaneCircleOgcd : Ogcd
         }
 
         if (ReaperRotation.IsSelectedOpener("烙印3G团辅起手") && EngageManager.GetBattleTime() < 6) return No;
-        if (ReaperRotation.IsSelectedOpener("切割2G团辅起手") && EngageManager.GetBattleTime() < 5 && !R.TargetHas(2586u, 2.5f)) return No;
+        if (ReaperRotation.IsSelectedOpener("切割2G团辅起手") && EngageManager.GetBattleTime() < 5 && !R.TargetHasForMs(2586u, 2500)) return No;
 
         return Ok;
     }

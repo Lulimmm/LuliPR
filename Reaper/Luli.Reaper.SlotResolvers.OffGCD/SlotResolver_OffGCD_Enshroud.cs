@@ -25,17 +25,17 @@ public sealed class EnshroudOgcd : Ogcd
     {
         if (!R.Qt("附体")) return No;
         if (R.Has(2587u) || R.Has(3858u)) return No;
-        if (R.Qt("只打大丰收附体")) return R.Has(3905u) && R.Ready(R.Enshroud) ? Ok : No;
-        if (R.Has(2972u) && JobGaugeHelper.RPR.魂衣值 >= 50 && R.Ready(R.Enshroud) && !R.Has(2593u) && R.Qt("双附体")) return Ok;
-        if (R.Has(3905u) && !R.Qt("暴食前置") && R.Ready(R.Enshroud) && !R.Has(2593u)) return Ok;
+        if (R.Qt("只打大丰收附体")) return R.Has(3905u) ? Ok : No;
+        if (R.Has(2972u) && JobGaugeHelper.RPR.魂衣值 >= 50 && R.IsReadyWithCanCast(R.Enshroud, Core.Me) && !R.Has(2593u) && R.Qt("双附体")) return Ok;
+        if (R.Has(3905u) && !R.Qt("暴食前置") && R.IsReadyWithCanCast(R.Enshroud, Core.Me) && !R.Has(2593u)) return Ok;
         if (JobGaugeHelper.RPR.魂衣值 < 50 && !R.Has(3905u)) return No;
         if (R.Has(3860u)) return No;
-        if (!R.Ready(R.Enshroud)) return No;
+        if (!R.IsReadyWithCanCast(R.Enshroud, Core.Me)) return No;
         if (R.Has(2593u)) return No;
         if (R.Qt("死亡之影") && R.Qt("双附体") && !R.Qt("单附体") && !R.Qt("三附体") && R.Cd(R.ArcaneCircle) < 42.5f)
         {
-            if (!R.Ready(R.ArcaneCircle) && R.Cd(R.ArcaneCircle) <= ActionHelper.GetGcdTotal() && JobGaugeHelper.RPR.魂衣值 >= 50 && !R.TargetHas(2586u, 22)) return Ok;
-            if (!R.Ready(R.ArcaneCircle) && R.Cd(R.ArcaneCircle) - ActionHelper.GetGcdRemain() <= 1.25f && JobGaugeHelper.RPR.魂衣值 >= 50 && R.TargetHas(2586u, 22)) return Ok;
+            if (!R.IsReadyWithCanCast(R.ArcaneCircle, Core.Me) && R.CooldownBeforeNextWindowEnd(R.ArcaneCircle, 1) && JobGaugeHelper.RPR.魂衣值 >= 50 && !R.TargetHasForMs(2586u, 22000)) return Ok;
+            if (!R.IsReadyWithCanCast(R.ArcaneCircle, Core.Me) && R.Cd(R.ArcaneCircle) - ActionHelper.GetGcdRemain() <= 1.25f && JobGaugeHelper.RPR.魂衣值 >= 50 && R.TargetHasForMs(2586u, 22000)) return Ok;
             return No;
         }
         if (R.Qt("死亡之影") && R.Qt("三附体") && !R.Qt("单附体") && R.Cd(R.ArcaneCircle) > 9f) return No;

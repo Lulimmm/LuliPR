@@ -6,7 +6,7 @@ namespace Mew.FeintPlan;
 
 internal static class MewFeintPlanDebug
 {
-    private const int Capacity = 24;
+    private const int Capacity = 96;
     private static readonly Queue<string> Messages = new();
 
     public static IReadOnlyCollection<string> RecentMessages => Messages;
