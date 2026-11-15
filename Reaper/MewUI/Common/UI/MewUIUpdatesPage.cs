@@ -10,6 +10,10 @@ internal static class MewUIUpdatesPage
     private static readonly Notice[] Notices =
     [
         new(
+            "1.4.6", "2026-11-15", "牵制规划副本分组与排版优化",
+            "牵制规划地图按零式副本与绝境战分组，地图选择按钮改为紧凑布局，并简化页面标题。",
+            "#UI #FEINT #LAYOUT"),
+        new(
             "1.4.5", "2026-11-15", "FRU 牵制规划与职能联动",
             "新增 FRU 分阶段牵制规划，进入对应副本后按时间轴 D1/D2 职能自动启用减伤轴；未选择职能时默认使用 D1。调整各阶段节点顺序。",
             "#FRU #FEINT #TIMELINE"),
