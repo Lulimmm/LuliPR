@@ -10,6 +10,10 @@ internal static class MewUIUpdatesPage
     private static readonly Notice[] Notices =
     [
         new(
+            "1.4.10", "2026-11-17", "移除 M12S 近战减伤时间轴",
+            "从时间轴管理与云端同步清单中移除 M12S 近战减伤时间轴。",
+            "#TIMELINE #M12S"),
+        new(
             "1.4.9", "2026-11-17", "Reaper 爆发窗口与时间轴调整",
             "调整 Enshroud GCD 的团辅窗口死亡烙印阈值至 22 秒。BloodStalk 的暴食两 GCD 冷却判断改用 PR SDK 原生冷却查询，并保持 AE 的固定 5 秒条件。更新伊甸镰刀时间轴，并移除伊甸近战减伤时间轴登记。",
             "#RPR #BLOODSTALK #ENSHROUD #TIMELINE"),
