@@ -48,6 +48,37 @@ namespace Mew.FeintPlan
 						}
 					}
 				};
+			case 1122u:
+				return new List<FeintPreset>
+				{
+					new FeintPreset
+					{
+						Name = "D1",
+						Nodes = new List<string>
+						{
+							"P1 全能之主·D1#1",
+							"P3 你好，世界#1",
+							"P3 严重错误#1",
+							"P5 一运·德尔塔#1",
+							"P5 三运·欧米茄#1",
+							"P6 宇宙龙炎·第一轮#1",
+							"P6 宇宙龙炎·第二轮#1"
+						}
+					},
+					new FeintPreset
+					{
+						Name = "D2",
+						Nodes = new List<string>
+						{
+							"P1 全能之主·D2#1",
+							"P4 速射炮#1",
+							"P5 二运·西格玛#1",
+							"P6 一挡陨石#1",
+							"P6 宇宙彗星#2",
+							"P6 二挡陨石#1"
+						}
+					}
+				};
 			case 1363u:
 			{
 				int num = 2;

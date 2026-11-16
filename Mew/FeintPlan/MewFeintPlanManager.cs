@@ -9,6 +9,7 @@ using ECommons.DalamudServices;
 using LuliPR.Common;
 using Mew.FeintPlan.Events;
 using Mew.FeintPlan.Scripts.FRU;
+using Mew.FeintPlan.Scripts.TOP;
 using PromeRotation.Core;
 using PromeRotation.Data;
 using PromeRotation.Extensions;
@@ -113,6 +114,7 @@ public static class MewFeintPlanManager
         LastTriggerEvents.Clear();
         SeenDmuUnits.Clear();
         FRUData.ResetRuntime();
+        TOPData.ResetRuntime();
         FeintHelper.Clear();
         lastWeatherId = uint.MaxValue;
         wasInCombat = false;
@@ -391,6 +393,7 @@ public static class MewFeintPlanManager
                             ? 1u : attribute.SerialId,
                         SequenceName = attribute.SequenceName,
                         DisplayOrder = attribute.DisplayOrder,
+                        EnabledByDefault = attribute.EnabledByDefault,
                         BaseId = attribute.BaseId
                     };
                 }

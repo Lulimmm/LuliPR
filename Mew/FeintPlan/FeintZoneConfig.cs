@@ -16,6 +16,7 @@ namespace Mew.FeintPlan
 			{ "M11S", 1325u },
 			{ "M12S", 1327u },
 			{ "FRU", 1238u },
+			{ "TOP", 1122u },
 			{ "DMU", 1363u }
 		};
 

@@ -66,6 +66,7 @@ internal static class MewUIFeintPlanPage
         var ultimateZones = new[]
         {
             FeintZoneConfig.ZoneIds["FRU"],
+            FeintZoneConfig.ZoneIds["TOP"],
             FeintZoneConfig.ZoneIds["DMU"]
         }.Where(zones.Contains).ToArray();
 
@@ -172,11 +173,14 @@ internal static class MewUIFeintPlanPage
             {
                 var checkedState = plan.IsNodeEnabled(phase, node.Id);
                 ImGui.PushID($"{zoneId}_{phase}_{node.Id}");
-                if (ImGui.Checkbox(node.Name, ref checkedState))
+                var label = node.EnabledByDefault ? node.Name : $"{node.Name}（用户自选）";
+                if (ImGui.Checkbox(label, ref checkedState))
                 {
                     plan.SetNodeEnabled(phase, node.Id, checkedState);
                     AcrSettingsStore.Save();
                 }
+                if (ImGui.IsItemHovered() && !string.IsNullOrWhiteSpace(node.Description))
+                    ImGui.SetTooltip(node.Description);
                 ImGui.PopID();
             }
         }

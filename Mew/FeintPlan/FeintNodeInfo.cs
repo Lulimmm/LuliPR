@@ -24,6 +24,8 @@ namespace Mew.FeintPlan
 
 		public int DisplayOrder { get; set/*init*/; }
 
+		public bool EnabledByDefault { get; set/*init*/; } = true;
+
 		public uint BaseId { get; set/*init*/; }
 	}
 }

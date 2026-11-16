@@ -25,6 +25,8 @@ namespace Mew.FeintPlan
 
 		public string SequenceName { get; set; } = "";
 
+		public bool EnabledByDefault { get; set; } = true;
+
 		public FeintNodeAttribute(string name, string description = "", string phase = "", uint baseId = 0u)
 		{
 			Name = name;
