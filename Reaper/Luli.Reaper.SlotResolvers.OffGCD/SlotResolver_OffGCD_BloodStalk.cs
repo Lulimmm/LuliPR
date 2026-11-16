@@ -54,7 +54,7 @@ public sealed class BloodStalkOgcd : Ogcd
         if (R.Qt("死亡之影") && !R.TargetHas(2586u, 2)) return No;
         if (R.Qt("隐匿挥割"))
         {
-            if (R.CooldownInGcds(R.Gluttony, 2) && R.IsReadyWithCanCast(R.BloodStalk, R.Target)
+            if (ActionHelper.GetActionCooldown(R.Gluttony) <= 5f && R.IsReadyWithCanCast(R.BloodStalk, R.Target)
                 && R.Qt("暴食") && JobGaugeHelper.RPR.灵魂值 < 100)
             {
                 return No;

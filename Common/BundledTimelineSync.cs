@@ -25,7 +25,6 @@ internal static class BundledTimelineSync
     // Only identities are compiled into the ACR. Timeline contents always come from GitHub.
     private static readonly TimelineDefinition[] Definitions =
     [
-        new("伊甸近战减伤-02566ee3.json", "02566ee3-2ba5-49cb-8d05-6853db3a6937", "伊甸近战减伤"),
         new("伊甸镰刀-614f92f2.json", "614f92f2-8e9b-4a66-94f8-9f7bdf8111ca", "伊甸镰刀"),
         new("M12S近战减伤-e53d2162.json", "e53d2162-cc9a-43fb-bfc9-d3f5abb5ebac", "M12S近战减伤"),
         new("M12S镰刀-bc0a5751.json", "bc0a5751-8c84-469a-88bd-98c2289dd601", "M12S镰刀"),

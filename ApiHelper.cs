@@ -162,9 +162,6 @@ internal static class R
         var nativeTarget = (FfxivGameObject*)target.Address;
         return nativeTarget != null && FfxivActionManager.CanUseActionOnTarget(adjustedId, nativeTarget);
     }
-    // Match AE's CoolDownInGCDs: each GCD window is fixed at 2500 ms.
-    public static bool CooldownInGcds(uint id, int count)
-        => ActionHelper.GetActionCooldown(id) * 1000f <= 2500f * count;
     public static float Cd(uint id) => ActionHelper.GetActionCooldown(id);
     public static float Charges(uint id) => ActionHelper.GetActionCharges(id);
     // PR assumes full charges when the recast detail is missing. AE instead
