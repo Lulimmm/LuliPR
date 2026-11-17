@@ -1,5 +1,5 @@
 {
-  "Version": "1.0.4",
+  "Version": "1.0.5",
   "Meta": {"CustomOpener":null,"Format":"PTL","TimelineGuid":"614f92f2-8e9b-4a66-94f8-9f7bdf8111ca","Category":"normal","Roles":["D1","D2"],
     "Name": "\u4F0A\u7538\u9570\u5200",
     "TerritoryId": 1238,
@@ -7009,10 +7009,10 @@
         ]
       }
     },{
-      "Guid": "b3bb8fd8-cafe-4d1d-9962-383f2bf501af",
-      "Name": "\u884C\u4E3A\u7EC4 31",
-      "StartAnchorGuid": "6035e454-94bd-4b1d-aeae-e8b2cbeda3f9",
-      "Offset": 3,
+      "Guid": "5aa41097-ee3f-4aed-9895-eb02c8cb616c",
+      "Name": "\u884C\u4E3A\u7EC4 32",
+      "StartAnchorGuid": "a4465ad9-1b15-421b-a143-b372996288a4",
+      "Offset": 0,
       "Enabled": true,
       "Remark": null,
       "EntryGroup": {
@@ -7031,37 +7031,6 @@
         "Children": [
           {
             "Id": 2,
-            "Name": "\u65B0\u6761\u4EF6\u8282\u70B9",
-            "Type": "condition",
-            "Enabled": true,
-            "Remark": null,
-            "DelayMs": null,
-            "Mode": "wait",
-            "UseAndLogic": null,
-            "Condition": null,
-            "Conditions": [
-              {
-                "Type": "ActionEffect",
-                "ActionId": null,
-                "Immediate": false,
-                "Target": null,
-                "BuffId": null,
-                "Mode": null,
-                "Regex": "24398",
-                "Value": null,
-                "Negate": false,
-                "Params": {
-                  "sourceMode": "Any",
-                  "targetMode": "Any"
-                }
-              }
-            ],
-            "Action": null,
-            "Actions": null,
-            "Children": null
-          },
-          {
-            "Id": 3,
             "Name": "\u65B0\u884C\u4E3A\u8282\u70B9",
             "Type": "action",
             "Enabled": true,
@@ -7074,7 +7043,7 @@
             "Action": null,
             "Actions": [
               {
-                "Type": "luli_reaper_trigger_qt2",
+                "Type": "luli_reaper_trigger_hotkey",
                 "Qt": null,
                 "Enabled": true,
                 "Message": null,
@@ -7085,45 +7054,37 @@
                 "TargetMode": null,
                 "Mode": null,
                 "Params": {
-                  "qtValues": "{\u0022\\u66B4\\u98DF\u0022:false,\u0022\\u6B7B\\u4EA1\\u4E4B\\u5F71\u0022:false}"
+                  "hotkey": "\u64AD\u9B42\u79CD"
                 }
               }
             ],
             "Children": null
-          },
+          }
+        ]
+      }
+    },{
+      "Guid": "70d7d0fa-f457-4d71-b688-c784ab27c323",
+      "Name": "\u884C\u4E3A\u7EC4 32",
+      "StartAnchorGuid": "0cfa35cd-258f-426b-8e67-9bd1b74cd6f8",
+      "Offset": 0,
+      "Enabled": true,
+      "Remark": null,
+      "EntryGroup": {
+        "Id": 1,
+        "Name": "\u884C\u4E3A\u7EC4",
+        "Type": "serial",
+        "Enabled": true,
+        "Remark": null,
+        "DelayMs": null,
+        "Mode": null,
+        "UseAndLogic": null,
+        "Condition": null,
+        "Conditions": null,
+        "Action": null,
+        "Actions": null,
+        "Children": [
           {
-            "Id": 4,
-            "Name": "\u65B0\u6761\u4EF6\u8282\u70B9",
-            "Type": "condition",
-            "Enabled": true,
-            "Remark": null,
-            "DelayMs": null,
-            "Mode": "wait",
-            "UseAndLogic": null,
-            "Condition": null,
-            "Conditions": [
-              {
-                "Type": "ActionEffect",
-                "ActionId": null,
-                "Immediate": false,
-                "Target": null,
-                "BuffId": null,
-                "Mode": null,
-                "Regex": "36973",
-                "Value": null,
-                "Negate": false,
-                "Params": {
-                  "sourceMode": "Any",
-                  "targetMode": "Any"
-                }
-              }
-            ],
-            "Action": null,
-            "Actions": null,
-            "Children": null
-          },
-          {
-            "Id": 5,
+            "Id": 2,
             "Name": "\u65B0\u884C\u4E3A\u8282\u70B9",
             "Type": "action",
             "Enabled": true,
@@ -7136,7 +7097,7 @@
             "Action": null,
             "Actions": [
               {
-                "Type": "luli_reaper_trigger_qt2",
+                "Type": "luli_reaper_trigger_hotkey",
                 "Qt": null,
                 "Enabled": true,
                 "Message": null,
@@ -7147,45 +7108,37 @@
                 "TargetMode": null,
                 "Mode": null,
                 "Params": {
-                  "qtValues": "{\u0022\\u9644\\u4F53\u0022:false}"
+                  "hotkey": "\u64AD\u9B42\u79CD"
                 }
               }
             ],
             "Children": null
-          },
+          }
+        ]
+      }
+    },{
+      "Guid": "29606104-0686-4611-853c-6ce3962ddb8d",
+      "Name": "\u884C\u4E3A\u7EC4 32",
+      "StartAnchorGuid": "d5efe25b-fc46-458f-a121-e1def832503f",
+      "Offset": 0,
+      "Enabled": true,
+      "Remark": null,
+      "EntryGroup": {
+        "Id": 1,
+        "Name": "\u884C\u4E3A\u7EC4",
+        "Type": "serial",
+        "Enabled": true,
+        "Remark": null,
+        "DelayMs": null,
+        "Mode": null,
+        "UseAndLogic": null,
+        "Condition": null,
+        "Conditions": null,
+        "Action": null,
+        "Actions": null,
+        "Children": [
           {
-            "Id": 6,
-            "Name": "\u65B0\u6761\u4EF6\u8282\u70B9",
-            "Type": "condition",
-            "Enabled": true,
-            "Remark": null,
-            "DelayMs": null,
-            "Mode": "wait",
-            "UseAndLogic": null,
-            "Condition": null,
-            "Conditions": [
-              {
-                "Type": "ActionEffect",
-                "ActionId": null,
-                "Immediate": false,
-                "Target": null,
-                "BuffId": null,
-                "Mode": null,
-                "Regex": "24380",
-                "Value": null,
-                "Negate": false,
-                "Params": {
-                  "sourceMode": "Any",
-                  "targetMode": "Any"
-                }
-              }
-            ],
-            "Action": null,
-            "Actions": null,
-            "Children": null
-          },
-          {
-            "Id": 7,
+            "Id": 2,
             "Name": "\u65B0\u884C\u4E3A\u8282\u70B9",
             "Type": "action",
             "Enabled": true,
@@ -7198,7 +7151,7 @@
             "Action": null,
             "Actions": [
               {
-                "Type": "luli_reaper_trigger_qt2",
+                "Type": "luli_reaper_trigger_hotkey",
                 "Qt": null,
                 "Enabled": true,
                 "Message": null,
@@ -7209,7 +7162,61 @@
                 "TargetMode": null,
                 "Mode": null,
                 "Params": {
-                  "qtValues": "{\u0022\\u66B4\\u98DF\u0022:true}"
+                  "hotkey": "\u64AD\u9B42\u79CD"
+                }
+              }
+            ],
+            "Children": null
+          }
+        ]
+      }
+    },{
+      "Guid": "237ad644-4aa9-4627-8a6e-e6af73b5d14e",
+      "Name": "\u884C\u4E3A\u7EC4 32",
+      "StartAnchorGuid": "2d6aa760-7b5d-4552-bac9-91ae31b6ff58",
+      "Offset": 0,
+      "Enabled": true,
+      "Remark": null,
+      "EntryGroup": {
+        "Id": 1,
+        "Name": "\u884C\u4E3A\u7EC4",
+        "Type": "serial",
+        "Enabled": true,
+        "Remark": null,
+        "DelayMs": null,
+        "Mode": null,
+        "UseAndLogic": null,
+        "Condition": null,
+        "Conditions": null,
+        "Action": null,
+        "Actions": null,
+        "Children": [
+          {
+            "Id": 2,
+            "Name": "\u65B0\u884C\u4E3A\u8282\u70B9",
+            "Type": "action",
+            "Enabled": true,
+            "Remark": null,
+            "DelayMs": null,
+            "Mode": null,
+            "UseAndLogic": null,
+            "Condition": null,
+            "Conditions": null,
+            "Action": null,
+            "Actions": [
+              {
+                "Type": "luli_reaper_trigger_hotkey",
+                "Qt": null,
+                "Enabled": true,
+                "Message": null,
+                "ActionId": null,
+                "SkillType": null,
+                "Target": null,
+                "HighPriority": false,
+                "TargetMode": null,
+                "Mode": null,
+                "Params": {
+                  "hotkey": "\u64AD\u9B42\u79CD"
                 }
               }
             ],

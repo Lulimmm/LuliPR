@@ -10,6 +10,10 @@ internal static class MewUIUpdatesPage
     private static readonly Notice[] Notices =
     [
         new(
+            "1.5.0", "2026-11-17", "\u64AD\u9B42\u79CD\uFF08\u6536\u83B7\u6708\uFF09Hotkey \u4FEE\u590D",
+            "\u4FEE\u590D\u70B9\u51FB\u64AD\u9B42\u79CD Hotkey \u540E\u6536\u83B7\u6708\u4E0D\u4F1A\u91CA\u653E\u7684\u95EE\u9898\u3002\u4EC5\u5728\u81EA\u8EAB\u62E5\u6709 2594 \u72B6\u6001\u65F6\uFF0C\u5F3A\u5236\u63D0\u4EA4 24388u \u5E76\u81EA\u52A8\u9009\u62E9\u8303\u56F4\u5185\u6700\u8FD1\u7684\u6709\u6548\u654C\u4EBA\u3002\u540C\u6B65\u66F4\u65B0\u4F0A\u7538\u9561\u5200\u65F6\u95F4\u8F74\u89E6\u53D1\u3002",
+            "#RPR #HOTKEY #TIMELINE"),
+        new(
             "1.4.10", "2026-11-17", "移除 M12S 近战减伤时间轴",
             "从时间轴管理与云端同步清单中移除 M12S 近战减伤时间轴。",
             "#TIMELINE #M12S"),

@@ -20,7 +20,7 @@ using PromeRotation.UI.HotKey;
 
 namespace Reaper.PR;
 
-[RotationMetadata(39u, "Luli Reaper PR", "Cino", "1.4.10", ContentScope = AcrContentScope.HighEnd)]
+[RotationMetadata(39u, "Luli Reaper PR", "Cino", "1.5.0", ContentScope = AcrContentScope.HighEnd)]
 public sealed partial class ReaperRotation : IRotation, IRotationLifecycle
 {
     public string AuthorName => "Cino";
@@ -168,9 +168,9 @@ public sealed partial class ReaperRotation : IRotation, IRotationLifecycle
                 b.Fixed("\u75be\u8dd1", 3u, ActionType.OffGcd, ActionTargetType.Self);
                 b.Execute("\u6781\u9650\u6280",
                     new DynamicActionLogic(LimitBreakHelper.GetLimitBreakActionId, ActionType.LimitBreak, ActionTargetType.Target),
-                    dynamicIconActionId: LimitBreakHelper.GetLimitBreakActionId);
+                    dynamicIconActionId: static () => 31399u);
                 b.Fixed("\u7275\u5236", 7549u, ActionType.OffGcd, ActionTargetType.Target);
-                b.Fixed("\u64ad\u9b42\u79cd", R.Soulsow, ActionType.Gcd, ActionTargetType.Target);
+                b.Execute("\u64ad\u9b42\u79cd", new HarvestMoonHotkey(), iconActionID: R.HarvestMoon);
                 b.Fixed("\u6d74\u8840", 7542u, ActionType.OffGcd, ActionTargetType.Self);
                 b.Fixed("\u5185\u4e39", 7541u, ActionType.OffGcd, ActionTargetType.Self);
                 b.Fixed("\u795e\u79d8\u7eb9", 24404u, ActionType.OffGcd, ActionTargetType.Self);
