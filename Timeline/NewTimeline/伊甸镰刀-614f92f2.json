@@ -1,5 +1,5 @@
 {
-  "Version": "1.0.5",
+  "Version": "1.0.6",
   "Meta": {"CustomOpener":null,"Format":"PTL","TimelineGuid":"614f92f2-8e9b-4a66-94f8-9f7bdf8111ca","Category":"normal","Roles":["D1","D2"],
     "Name": "\u4F0A\u7538\u9570\u5200",
     "TerritoryId": 1238,
@@ -7136,8 +7136,7 @@
         "Conditions": null,
         "Action": null,
         "Actions": null,
-        "Children": [
-          {
+        "Children": [{
             "Id": 2,
             "Name": "\u65B0\u884C\u4E3A\u8282\u70B9",
             "Type": "action",
@@ -7164,11 +7163,25 @@
                 "Params": {
                   "hotkey": "\u64AD\u9B42\u79CD"
                 }
+              },
+              {
+                "Type": "luli_reaper_trigger_qt2",
+                "Qt": null,
+                "Enabled": true,
+                "Message": null,
+                "ActionId": null,
+                "SkillType": null,
+                "Target": null,
+                "HighPriority": false,
+                "TargetMode": null,
+                "Mode": null,
+                "Params": {
+                  "qtValues": "{\u0022\\u66B4\\u98DF\u0022:true}"
+                }
               }
             ],
             "Children": null
-          }
-        ]
+          }]
       }
     },{
       "Guid": "237ad644-4aa9-4627-8a6e-e6af73b5d14e",
