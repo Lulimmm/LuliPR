@@ -46,10 +46,11 @@ public sealed class EnshroudGcd : Gcd
             return R.A(R.Communio);
         }
         if (!R.TargetHas(2586u, 1.5f)) return R.A(R.ShadowOfDeath);
+        // Refresh Death's Design before spending a reaping proc in the Arcane Circle window.
+        if (R.Cd(R.ArcaneCircle) <= 4f && R.Qt("双附体") && !R.TargetHas(2586u, 22))
+            return R.A(R.ShadowOfDeath);
         if (R.Has(2590u)) return R.A(R.VoidReaping);
         if (R.Has(2591u)) return R.A(R.CrossReaping);
-        if (R.Cd(R.ArcaneCircle) is <= 4f and >= 1.3f && R.Qt("双附体") && !R.TargetHas(2586u, 22)) return R.A(R.ShadowOfDeath);
-        if (R.Cd(R.ArcaneCircle) < 1.3f && R.Qt("双附体") && R.TargetHas(2586u, 22)) return R.A(R.VoidReaping);
         return R.A(R.VoidReaping);
     }
 }
