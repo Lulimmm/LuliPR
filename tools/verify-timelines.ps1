@@ -9,7 +9,7 @@ if ($files.Count -eq 0) { throw "No PTL files found in $sourceDirectory" }
 
 $guids = [Collections.Generic.HashSet[string]]::new([StringComparer]::OrdinalIgnoreCase)
 $catalog = Get-Content -LiteralPath (Join-Path $PSScriptRoot '..\Common\BundledTimelineSync.cs') -Encoding UTF8 -Raw
-$catalogEntries = @([regex]::Matches($catalog, 'new\("(?<file>[^"]+\.json)",\s*"(?<guid>[0-9a-fA-F-]{36})",\s*"(?<name>[^"]+)"\)'))
+$catalogEntries = @([regex]::Matches($catalog, 'new\("(?<file>[^"]+\.json)",\s*"(?<guid>[0-9a-fA-F-]{36})",\s*"(?<name>[^"]+)"\s*,\s*TimelineAvailability\.(?<availability>Available|Unavailable|Untested)\)'))
 if ($catalogEntries.Count -ne $files.Count) { throw 'Cloud catalog and source timeline counts differ' }
 $metadata = foreach ($file in $files) {
     $document = Get-Content -LiteralPath $file.FullName -Encoding UTF8 -Raw | ConvertFrom-Json
@@ -28,6 +28,9 @@ $metadata = foreach ($file in $files) {
     if ($registered.Count -ne 1 -or $registered[0].Groups['guid'].Value -ine $guid.ToString('D') -or
         $registered[0].Groups['name'].Value -cne $document.Meta.Name) {
         throw "Timeline identity does not match the cloud catalog: $($file.Name)"
+    }
+    if ($registered[0].Groups['availability'].Value -notin @('Available', 'Unavailable', 'Untested')) {
+        throw "Invalid availability classification in the cloud catalog: $($file.Name)"
     }
     if ($document.Meta.Format -ne 'PTL' -or [string]::IsNullOrWhiteSpace($document.Meta.Name)) {
         throw "Invalid PTL metadata in $($file.Name)"

@@ -23,13 +23,35 @@ internal static class MewUITimelinePage
         ImGui.TextDisabled("更新后重新加载时间轴生效。删除的时间轴可在本页恢复。");
         ImGui.Spacing();
 
+        var openDeletePopup = false;
+        DrawCategory(rows, BundledTimelineSync.TimelineAvailability.Available, "可用", checking, ref openDeletePopup);
+        DrawCategory(rows, BundledTimelineSync.TimelineAvailability.Unavailable, "不可用", checking, ref openDeletePopup);
+        DrawCategory(rows, BundledTimelineSync.TimelineAvailability.Untested, "未测试", checking, ref openDeletePopup);
+
+        // Open and draw the popup in the same ID scope, outside the card/table IDs.
+        if (openDeletePopup) ImGui.OpenPopup("删除时间轴##mew_timeline");
+        DrawDeleteConfirmation(rows);
+    }
+
+    private static void DrawCategory(BundledTimelineSync.TimelineRow[] rows,
+        BundledTimelineSync.TimelineAvailability availability, string label, bool checking, ref bool openDeletePopup)
+    {
+        var categoryRows = rows.Where(row => row.Availability == availability).ToArray();
+        ImGui.Spacing();
+        SettingRow.SectionTitle($"{label} ({categoryRows.Length})");
+        if (categoryRows.Length == 0)
+        {
+            ImGui.TextDisabled("暂无时间轴");
+            return;
+        }
+
         var width = ImGui.GetContentRegionAvail().X;
         var columns = width >= 620f ? 2 : 1;
-        var openDeletePopup = false;
         ImGui.PushStyleVar(ImGuiStyleVar.CellPadding, new Vector2(8f, 8f));
+        ImGui.PushID((int)availability);
         if (ImGui.BeginTable("##mew_timeline_cards", columns, ImGuiTableFlags.SizingStretchSame))
         {
-            foreach (var row in rows)
+            foreach (var row in categoryRows)
             {
                 ImGui.TableNextColumn();
                 ImGui.PushID(row.Guid);
@@ -42,11 +64,8 @@ internal static class MewUITimelinePage
             }
             ImGui.EndTable();
         }
+        ImGui.PopID();
         ImGui.PopStyleVar();
-
-        // Open and draw the popup in the same ID scope, outside the card/table IDs.
-        if (openDeletePopup) ImGui.OpenPopup("删除时间轴##mew_timeline");
-        DrawDeleteConfirmation(rows);
     }
 
     private static bool DrawCard(BundledTimelineSync.TimelineRow row, float width, bool checking)
@@ -71,6 +90,7 @@ internal static class MewUITimelinePage
         ImGui.SetCursorScreenPos(pos + new Vector2(padding + 14f, 10f));
         ImGui.TextColored(SimplePalette.TextPrimary, row.Name);
         if (ImGui.IsItemHovered()) ImGui.SetTooltip(row.Guid);
+        DrawAvailabilityBadge(draw, pos, width, row.Availability);
 
         var contentWidth = width - padding * 2f;
         DrawVersion(pos + new Vector2(padding, 50f), "本地版本", row.LocalVersion, row.IsDeleted);
@@ -103,6 +123,23 @@ internal static class MewUITimelinePage
         ImGui.SetCursorScreenPos(pos);
         ImGui.Dummy(new Vector2(width, height));
         return requestDelete;
+    }
+
+    private static void DrawAvailabilityBadge(ImDrawListPtr draw, Vector2 cardPos, float width,
+        BundledTimelineSync.TimelineAvailability availability)
+    {
+        var (label, color) = availability switch
+        {
+            BundledTimelineSync.TimelineAvailability.Available => ("可用", new Vector4(0.28f, 0.82f, 0.52f, 1f)),
+            BundledTimelineSync.TimelineAvailability.Unavailable => ("不可用", new Vector4(0.96f, 0.39f, 0.48f, 1f)),
+            _ => ("未测试", new Vector4(0.96f, 0.75f, 0.35f, 1f)),
+        };
+        var size = ImGui.CalcTextSize(label) + new Vector2(16f, 8f);
+        var min = new Vector2(cardPos.X + width - size.X - 12f, cardPos.Y + 6f);
+        var max = min + size;
+        draw.AddRectFilled(min, max, SimplePalette.ToU32(SimplePalette.WithAlpha(color, 0.2f)), 5f);
+        draw.AddRect(min, max, SimplePalette.ToU32(SimplePalette.WithAlpha(color, 0.8f)), 5f);
+        draw.AddText(min + new Vector2(8f, 4f), SimplePalette.ToU32(color), label);
     }
 
     private static void DrawDeleteConfirmation(BundledTimelineSync.TimelineRow[] rows)

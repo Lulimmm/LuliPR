@@ -25,10 +25,10 @@ internal static class BundledTimelineSync
     // Only identities are compiled into the ACR. Timeline contents always come from GitHub.
     private static readonly TimelineDefinition[] Definitions =
     [
-        new("伊甸镰刀-614f92f2.json", "614f92f2-8e9b-4a66-94f8-9f7bdf8111ca", "伊甸镰刀"),
-        new("M12S镰刀-bc0a5751.json", "bc0a5751-8c84-469a-88bd-98c2289dd601", "M12S镰刀"),
-        new("妖星镰刀.json", "396a5f80-f1c4-4e75-90ad-7d60e611bf3a", "妖星镰刀"),
-        new("绝欧镰刀.json", "2011beac-efee-44a1-8243-eae2f08ed351", "绝欧镰刀")
+        new("伊甸镰刀-614f92f2.json", "614f92f2-8e9b-4a66-94f8-9f7bdf8111ca", "伊甸镰刀", TimelineAvailability.Available),
+        new("M12S镰刀-bc0a5751.json", "bc0a5751-8c84-469a-88bd-98c2289dd601", "M12S镰刀", TimelineAvailability.Untested),
+        new("妖星镰刀.json", "396a5f80-f1c4-4e75-90ad-7d60e611bf3a", "妖星镰刀", TimelineAvailability.Unavailable),
+        new("绝欧镰刀.json", "2011beac-efee-44a1-8243-eae2f08ed351", "绝欧镰刀", TimelineAvailability.Untested)
     ];
     private static TimelineRow[] rows = [];
     private static int syncStarted;
@@ -460,7 +460,7 @@ internal static class BundledTimelineSync
             local ??= installed.FirstOrDefault(file => string.Equals(file.TimelineGuid, guid, StringComparison.OrdinalIgnoreCase));
             var hasStatus = TimelineStatus.TryGetValue(guid, out var status);
             var isWorking = status != null && status.StartsWith("正在", StringComparison.Ordinal);
-            return new TimelineRow(guid, definition.Name,
+            return new TimelineRow(guid, definition.Name, definition.Availability,
                 state?.Disabled == true ? "已删除" : local?.Version ?? "未安装",
                 CloudVersions.TryGetValue(guid, out var cloudVersion) ? cloudVersion : "未检查",
                 hasStatus ? status! : "等待检查",
@@ -558,10 +558,17 @@ internal static class BundledTimelineSync
         return output.ToArray();
     }
 
-    internal readonly record struct TimelineRow(string Guid, string Name, string LocalVersion,
+    internal enum TimelineAvailability
+    {
+        Available,
+        Unavailable,
+        Untested
+    }
+
+    internal readonly record struct TimelineRow(string Guid, string Name, TimelineAvailability Availability, string LocalVersion,
         string CloudVersion, string Status, bool IsDeleted, bool IsWorking);
 
-    private sealed record TimelineDefinition(string FileName, string TimelineGuid, string Name);
+    private sealed record TimelineDefinition(string FileName, string TimelineGuid, string Name, TimelineAvailability Availability);
     private sealed record CloudCheck(TimelineDefinition Definition, byte[]? Bytes, TimelineMetadata Metadata, string Error);
 
     private static InstalledTimeline[] ReadInstalledTimelines(string directory)
