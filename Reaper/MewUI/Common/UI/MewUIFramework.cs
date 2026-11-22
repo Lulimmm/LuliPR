@@ -16,6 +16,10 @@ public static class MewUIFramework
     private static MewUISplashWindow? splash;
     private static bool installRetryPending;
 
+    internal static bool ControlWindowExists => control != null;
+    internal static bool ControlWindowOpen => control?.IsOpen == true;
+    internal static bool InstallRetryPending => installRetryPending;
+
     /// <summary>注入本职业的全部环境。在 Rotation 构造函数最前面调用。</summary>
     public static void Configure(
         string jobTag,

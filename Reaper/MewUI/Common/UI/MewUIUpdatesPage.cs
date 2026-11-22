@@ -10,6 +10,12 @@ internal static class MewUIUpdatesPage
     private static readonly Notice[] Notices =
     [
         new(
+            "1.5.3", "2026-11-22", "目标禁用与像素小人诊断",
+            "设置页新增 UI Debug 总开关；仅检测到提示框命中且该帧未提交贴图绘制命令时，保留并列出当前帧、回退贴图和资源加载原因。\n\n" +
+            "Reaper 时间轴新增按目标 DataID 禁用或恢复死亡之影的动作节点，并将规则应用于轮转与起手。\n\n" +
+            "修正大丰收的状态剩余时间判断，允许状态在当前 GCD 结束前到期时继续释放。",
+            "#RPR #UI #DEBUG #TIMELINE"),
+        new(
             "1.5.2", "2026-11-21", "\u65F6\u95F4\u8F74\u53EF\u7528\u6027\u6807\u8BB0",
             "\u65F6\u95F4\u8F74\u9875\u9762\u65B0\u589E\u53EF\u7528\u3001\u4E0D\u53EF\u7528\u548C\u672A\u6D4B\u8BD5\u6807\u8BB0\uFF0C\u5E76\u4E3A\u4F0A\u7538\u9545\u5200\u548C\u5996\u661F\u9545\u5200\u8BBE\u7F6E\u5BF9\u5E94\u72B6\u6001\u3002",
             "#TIMELINE #UI"),

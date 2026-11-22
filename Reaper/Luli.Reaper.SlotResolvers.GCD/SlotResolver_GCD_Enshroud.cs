@@ -41,13 +41,16 @@ public sealed class EnshroudGcd : Gcd
             if (MoveManager.IsLocalPlayerMoving && !R.Qt("移动读条"))
             {
                 if (R.Has(2594u) && R.Qt("收获月")) return R.A(R.HarvestMoon);
-                return R.A(R.ShadowOfDeath);
+                return ShadowOfDeathBlocklist.IsBlocked(R.Target)
+                    ? R.A(R.VoidReaping)
+                    : R.A(R.ShadowOfDeath);
             }
             return R.A(R.Communio);
         }
-        if (!R.TargetHas(2586u, 1.5f)) return R.A(R.ShadowOfDeath);
+        var shadowOfDeathBlocked = ShadowOfDeathBlocklist.IsBlocked(R.Target);
+        if (!shadowOfDeathBlocked && !R.TargetHas(2586u, 1.5f)) return R.A(R.ShadowOfDeath);
         // Refresh Death's Design before spending a reaping proc in the Arcane Circle window.
-        if (R.Cd(R.ArcaneCircle) <= 4f && R.Qt("双附体") && !R.TargetHas(2586u, 22))
+        if (!shadowOfDeathBlocked && R.Cd(R.ArcaneCircle) <= 4f && R.Qt("双附体") && !R.TargetHas(2586u, 22))
             return R.A(R.ShadowOfDeath);
         if (R.Has(2590u)) return R.A(R.VoidReaping);
         if (R.Has(2591u)) return R.A(R.CrossReaping);

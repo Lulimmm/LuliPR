@@ -20,17 +20,23 @@ public sealed class MewUISettingsWindow : SettingsWindowBase
     // 页签固定, 末位「主题」页由基类追加
     private static readonly string[] tabs = ["基础设置", "Hotkey", "QT面板", "更新通告", "使用时长", "时间轴", "牵制规划"];
 
-    private static readonly string[] tabsWithDebug = [..tabs, "Debug"];
-    private static readonly string[] tabsWithPerformance = [..tabs, MewUIPerformancePage.TabLabel];
+    private static readonly string[] tabsWithUIDebug = [..tabs, MewUIDebugPage.TabLabel];
+    private static readonly string[] tabsWithDebug = [..tabs, "Debug", MewUIDebugPage.TabLabel];
+    private static readonly string[] tabsWithPerformance = [..tabs, MewUIPerformancePage.TabLabel, MewUIDebugPage.TabLabel];
     private static readonly string[] tabsWithDebugAndPerformance = [..tabsWithDebug, MewUIPerformancePage.TabLabel];
 
     protected override string[] Tabs => MewUIJobEnv.DrawDebugSettings == null
-        ? MewUIPerformance.CanView ? tabsWithPerformance : tabs
+        ? MewUIPerformance.CanView ? tabsWithPerformance : tabsWithUIDebug
         : MewUIPerformance.CanView ? tabsWithDebugAndPerformance : tabsWithDebug;
 
     protected override void DrawTabContent(int tabIndex)
     {
         var currentTabs = Tabs;
+        if (tabIndex >= 0 && tabIndex < currentTabs.Length && currentTabs[tabIndex] == MewUIDebugPage.TabLabel)
+        {
+            MewUIDebugPage.Draw();
+            return;
+        }
         if (tabIndex >= 0 && tabIndex < currentTabs.Length && currentTabs[tabIndex] == MewUIPerformancePage.TabLabel)
         {
             MewUIPerformancePage.Draw();

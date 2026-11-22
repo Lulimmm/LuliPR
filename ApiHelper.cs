@@ -323,6 +323,7 @@ public abstract class ReaperOpener : IOpener
     public abstract List<PAction> InCombatSequence { get; }
     public virtual void InitializeCountdown(CountDownHandler countdownHandler) { }
     protected static PAction G(uint id) => new(id, ActionType.Gcd, ActionTargetType.Target) { RequiresVerification = true };
+    protected static PAction D() => G(ShadowOfDeathBlocklist.GetShadowOfDeathOrComboActionId());
     protected static PAction O(uint id, ActionTargetType target = ActionTargetType.Self) => new(id, ActionType.OffGcd, target) { RequiresVerification = true };
     protected static void AddPotion(List<PAction> actions)
     {

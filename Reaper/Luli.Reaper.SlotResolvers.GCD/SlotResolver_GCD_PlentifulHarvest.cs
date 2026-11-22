@@ -28,7 +28,8 @@ public sealed class PlentifulHarvestGcd : Gcd
         if (R.Has(2593u)) return false;
         if (R.Distance > 15f) return false;
         if (R.Has(2593u)) return false;
-        if (R.Has(2972u)) return false;
+        if (R.Has(2972u) && Core.Me.GetStatusLeftTime(2972u) - ActionHelper.GetGcdRemain() > 0.1f)
+            return false;
         if (!R.Has(2592u)) return false;
         // AE returns success after the same state checks and lets the host
         // action executor validate the skill itself. Keeping an additional

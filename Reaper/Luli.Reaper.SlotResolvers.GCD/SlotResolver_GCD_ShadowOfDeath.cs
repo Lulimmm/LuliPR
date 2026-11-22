@@ -26,6 +26,7 @@ public sealed class ShadowOfDeathGcd : Gcd
         if (!R.Qt("死亡之影")) return No;
         if (R.Has(2587u) || R.Has(3858u)) return No;
         if (!R.Near()) return No;
+        if (ShadowOfDeathBlocklist.IsBlocked(R.Target)) return No;
         if (R.TargetHasForMs(2586u, 40000)) return No;
         var cd = R.Cd(R.ArcaneCircle);
         if (R.Qt("三附体") && cd is >= 10f and <= 15f) return Ok;

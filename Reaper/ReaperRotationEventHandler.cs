@@ -78,6 +78,7 @@ internal sealed class ReaperEventHandler : IRotationEventHandler, IDisposable
     public void OnBattleStarted()
     {
         MewFeintPlanManager.ResetRuntime();
+        ShadowOfDeathBlocklist.Reset();
         InBattle = false;
         ReaperPositionDrawer.Clear();
         soulsowAttemptAt = 0;
@@ -104,6 +105,7 @@ internal sealed class ReaperEventHandler : IRotationEventHandler, IDisposable
     public void OnBattleEnded()
     {
         MewFeintPlanManager.ResetRuntime();
+        ShadowOfDeathBlocklist.Reset();
         InBattle = false;
         ReaperPositionDrawer.Clear();
         soulsowAttemptAt = 0;
@@ -114,6 +116,7 @@ internal sealed class ReaperEventHandler : IRotationEventHandler, IDisposable
     public void OnTerritoryChanged(ushort territoryId)
     {
         MewFeintPlanManager.ResetRuntime();
+        ShadowOfDeathBlocklist.Reset();
         InBattle = false;
         ReaperPositionDrawer.Clear();
         soulsowAttemptAt = 0;

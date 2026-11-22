@@ -28,7 +28,7 @@ public sealed class MinusOneGOpener : ReaperOpener
         {
             var actions = new List<PAction> { G(R.SoulSlice) };
             AddPotion(actions);
-            actions.AddRange(new[] { G(R.ShadowOfDeath), G(R.PlentifulHarvest), O(R.Enshroud) });
+            actions.AddRange(new[] { D(), G(R.PlentifulHarvest), O(R.Enshroud) });
             return actions;
         }
     }

@@ -316,6 +316,77 @@ public sealed class ReaperPotionSettingAction : IAction, ISerializableAction, IJ
         });
 }
 
+public sealed class ReaperShadowOfDeathTargetAction : IAction, ISerializableAction, IJobNodeDescriptor
+{
+    private const string TypeKey = "luli_reaper_trigger_shadow_of_death_target";
+    private int dataId;
+    private bool enabled = true;
+
+    public string NodeDisplayName => "Reaper/按DataID禁用死亡之影";
+    public NodeParamInfo[] Params => new[]
+    {
+        new NodeParamInfo("dataId", "目标DataID", "指定需要禁用或恢复死亡之影的目标DataID", "int"),
+        new NodeParamInfo("enabled", "禁用死亡之影", "启用后禁止对该DataID使用死亡之影", "bool"),
+    };
+
+    public bool Draw()
+    {
+        var changed = ImGui.InputInt("目标DataID", ref dataId);
+        if (dataId < 0) dataId = 0;
+        var value = enabled;
+        if (ImGui.Checkbox("禁用死亡之影", ref value))
+        {
+            enabled = value;
+            changed = true;
+        }
+        return changed;
+    }
+
+    public string GetParam(string fieldName) => fieldName switch
+    {
+        "dataId" => dataId.ToString(),
+        "enabled" => enabled.ToString(),
+        _ => string.Empty,
+    };
+
+    public void SetParam(string fieldName, string value)
+    {
+        if (fieldName == "dataId" && int.TryParse(value, out var parsed))
+            dataId = Math.Max(0, parsed);
+        else if (fieldName == "enabled" && bool.TryParse(value, out var parsedEnabled))
+            enabled = parsedEnabled;
+    }
+
+    public void Execute()
+    {
+        if (dataId > 0)
+            ShadowOfDeathBlocklist.Set((uint)dataId, enabled);
+    }
+
+    public ActionDto ToDto() => new()
+    {
+        Type = TypeKey,
+        Enabled = true,
+        Params = new Dictionary<string, string>
+        {
+            ["dataId"] = dataId.ToString(),
+            ["enabled"] = enabled.ToString(),
+        },
+    };
+
+    public static void Register(RotationNodeContext context)
+        => ActionFactory.Register(context, TypeKey, dto =>
+        {
+            var action = new ReaperShadowOfDeathTargetAction();
+            if (dto.Params != null)
+            {
+                if (dto.Params.TryGetValue("dataId", out var id)) action.SetParam("dataId", id);
+                if (dto.Params.TryGetValue("enabled", out var state)) action.SetParam("enabled", state);
+            }
+            return action;
+        });
+}
+
 public abstract class ReaperTriggerThresholdCondition : ICondition, ISerializableCondition, IJobNodeDescriptor
 {
     protected int Threshold;

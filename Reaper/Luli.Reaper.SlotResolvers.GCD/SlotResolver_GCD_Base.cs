@@ -33,7 +33,12 @@ public sealed class BaseGcd : Gcd
     }
     public override PAction GetAction()
     {
-        var id = ActionHelper.GetComboLeftTime() <= 0 ? R.Slice : ActionHelper.GetLastComboID() == R.Slice ? R.WaxingSlice : ActionHelper.GetLastComboID() == R.WaxingSlice ? R.InfernalSlice : R.Slice;
-        return R.A(id);
+        return R.A(GetComboActionId());
     }
+
+    internal static uint GetComboActionId()
+        => ActionHelper.GetComboLeftTime() <= 0 ? R.Slice
+            : ActionHelper.GetLastComboID() == R.Slice ? R.WaxingSlice
+            : ActionHelper.GetLastComboID() == R.WaxingSlice ? R.InfernalSlice
+            : R.Slice;
 }

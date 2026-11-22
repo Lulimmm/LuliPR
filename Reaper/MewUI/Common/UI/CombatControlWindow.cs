@@ -19,6 +19,8 @@ public sealed partial class CombatControlWindow : Window, IDisposable
         Cool,
     }
 
+    private readonly record struct TextureInspection(bool Ready, int Width, int Height, string Status);
+
     private static readonly Vector2 DefaultPosition = new(32f, 320f);
     private static readonly Vector2 PetSize = new(120f, 120f);
     private static readonly Random PetRandom = new();
@@ -283,16 +285,44 @@ public sealed partial class CombatControlWindow : Window, IDisposable
         var acrOff = PromeSettings.Instance.EnableAcr == AcrState.Off;
         var frame = acrOff ? GetSealFrame(now) : GetPetFrame(now);
         var fallback = acrOff ? sealFallback : petFallback;
-        var texture = MewUILayer.GetResourceTextureWrap(frame);
-        var isCurrentFrame = IsReadyTexture(texture);
-        if (!isCurrentFrame)
+        var diagnosticsEnabled = MewUIDebugPage.Enabled;
+        if (diagnosticsEnabled)
         {
-            if (texture != null) MewUILayer.InvalidateResourceTexture(frame);
-            texture = fallback.Texture;
-            if (!IsReadyTexture(texture)) fallback.Dispose();
+            MewUIDebugPage.BeginDraw(ImGui.GetFrameCount(), now, !acrOff, positionLocked, hovered,
+                petState.ToString(), frame, ImGui.GetWindowPos(), ImGui.GetIO().MousePos);
         }
 
-        if (IsReadyTexture(texture))
+        var texture = MewUILayer.GetResourceTextureWrap(frame);
+        var currentInspection = InspectTexture(texture);
+        var fallbackInspection = diagnosticsEnabled
+            ? InspectTexture(fallback.Texture)
+            : new TextureInspection(false, 0, 0, "未检查");
+        var isCurrentFrame = currentInspection.Ready;
+        var renderTexture = texture;
+        var renderInspection = currentInspection;
+        var usedFallback = false;
+        if (!currentInspection.Ready)
+        {
+            if (texture != null)
+            {
+                if (diagnosticsEnabled)
+                    MewUILayer.InvalidateResourceTexture(frame, $"当前贴图不可用：{currentInspection.Status}");
+                else
+                    MewUILayer.InvalidateResourceTexture(frame);
+            }
+            renderTexture = fallback.Texture;
+            if (!diagnosticsEnabled)
+                fallbackInspection = InspectTexture(renderTexture);
+            renderInspection = fallbackInspection;
+            usedFallback = renderInspection.Ready;
+            if (!renderInspection.Ready) fallback.Dispose();
+        }
+
+        var drawSubmitted = false;
+        var drawResult = diagnosticsEnabled
+            ? $"未提交绘制命令：当前贴图 {currentInspection.Status}；回退贴图 {renderInspection.Status}"
+            : string.Empty;
+        if (renderInspection.Ready)
         {
             try
             {
@@ -307,20 +337,40 @@ public sealed partial class CombatControlWindow : Window, IDisposable
                 drawList.PushClipRect(imagePos, imagePos + PetSize, false);
                 try
                 {
-                    drawList.AddImage(texture!.Handle, imagePos, imagePos + PetSize, uv0, uv1,
+                    drawList.AddImage(renderTexture!.Handle, imagePos, imagePos + PetSize, uv0, uv1,
                         SimplePalette.ToU32(new Vector4(1f, 1f, 1f, hovered ? 1f : 0.96f)));
+                    drawSubmitted = true;
                     if (isCurrentFrame)
-                        fallback.Remember(frame, texture);
+                        fallback.Remember(frame, renderTexture);
                 }
                 finally
                 {
                     drawList.PopClipRect();
                 }
+                if (diagnosticsEnabled)
+                    drawResult = usedFallback
+                        ? "已提交绘制命令：使用上一有效帧作为回退贴图。"
+                        : "已提交绘制命令：使用当前动画贴图。";
             }
-            catch (ObjectDisposedException)
+            catch (ObjectDisposedException ex)
             {
                 fallback.Dispose();
-                MewUILayer.InvalidateResourceTexture(frame);
+                if (diagnosticsEnabled)
+                {
+                    MewUILayer.InvalidateResourceTexture(frame, $"提交绘制时贴图已释放：{ex.Message}");
+                    drawResult = $"贴图绘制失败：ObjectDisposedException: {ex.Message}";
+                }
+                else
+                {
+                    MewUILayer.InvalidateResourceTexture(frame);
+                }
+            }
+            catch (Exception ex) when (diagnosticsEnabled)
+            {
+                MewUILayer.InvalidateResourceTexture(frame, $"提交绘制时异常：{ex.GetType().Name}: {ex.Message}");
+                drawResult = drawSubmitted
+                    ? $"绘制命令已提交，但后续处理异常：{ex.GetType().Name}: {ex.Message}"
+                    : $"贴图绘制失败：{ex.GetType().Name}: {ex.Message}";
             }
         }
 
@@ -328,6 +378,15 @@ public sealed partial class CombatControlWindow : Window, IDisposable
             DrawPetTooltip((PromeSettings.Instance.EnableAcr == AcrState.Off
                 ? OffTooltips
                 : ActiveTooltips)[positionLocked ? 1 : 0]);
+
+        if (diagnosticsEnabled)
+        {
+            MewUIDebugPage.CompleteDraw(
+                MewUILayer.GetResourceDiagnostic(frame),
+                currentInspection.Status, currentInspection.Width, currentInspection.Height,
+                fallbackInspection.Status, fallbackInspection.Width, fallbackInspection.Height,
+                usedFallback, drawSubmitted, drawResult);
+        }
 
     }
 
@@ -367,18 +426,26 @@ public sealed partial class CombatControlWindow : Window, IDisposable
         petStateStartedAt = ImGui.GetTime();
     }
 
-    private static bool IsReadyTexture(IDalamudTextureWrap? texture)
+    private static TextureInspection InspectTexture(IDalamudTextureWrap? texture)
     {
-        if (texture == null) return false;
+        if (texture == null) return new TextureInspection(false, 0, 0, "未获取 TextureWrap");
         try
         {
             // GetWrapOrEmpty returns a valid empty wrap while an embedded frame
             // is still loading. Do not replace a visible frame with that wrap.
-            return texture.Width > 1 && texture.Height > 1;
+            var width = texture.Width;
+            var height = texture.Height;
+            return width > 1 && height > 1
+                ? new TextureInspection(true, width, height, "正常")
+                : new TextureInspection(false, width, height, "宽或高不大于 1 的空贴图");
         }
-        catch (ObjectDisposedException)
+        catch (ObjectDisposedException ex)
         {
-            return false;
+            return new TextureInspection(false, 0, 0, $"贴图已释放：{ex.Message}");
+        }
+        catch (Exception ex)
+        {
+            return new TextureInspection(false, 0, 0, $"读取贴图尺寸异常：{ex.GetType().Name}: {ex.Message}");
         }
     }
 

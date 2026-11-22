@@ -28,7 +28,7 @@ public sealed class TwoGOpener : ReaperOpener
         {
             var actions = new List<PAction> { G(R.SoulSlice) };
             AddPotion(actions);
-            actions.AddRange(new[] { G(R.ShadowOfDeath), O(R.ArcaneCircle), O(R.Gluttony, ActionTargetType.Target) });
+            actions.AddRange(new[] { D(), O(R.ArcaneCircle), O(R.Gluttony, ActionTargetType.Target) });
             AddPositionalPair(actions, G(R.PlentifulHarvest));
             return actions;
         }

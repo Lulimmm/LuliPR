@@ -16,6 +16,7 @@ internal static class MewUILayer
     private static readonly Dictionary<string, ISharedImmediateTexture> ResourceTextures = new(StringComparer.Ordinal);
     private static readonly Dictionary<string, long> ResourceRetryAfter = new(StringComparer.Ordinal);
     private static readonly Dictionary<string, long> ResourceUnavailableSince = new(StringComparer.Ordinal);
+    private static readonly Dictionary<string, string> ResourceDiagnostics = new(StringComparer.Ordinal);
     // Stop querying failed shared textures long enough for Dalamud's idle
     // reference to expire, otherwise its faulted load task stays alive.
     private const long ResourceRetryDelayMs = 5_000;
@@ -223,7 +224,12 @@ internal static class MewUILayer
     {
         if (ResourceRetryAfter.TryGetValue(name, out var retryAfter))
         {
-            if (Environment.TickCount64 < retryAfter) return null;
+            if (Environment.TickCount64 < retryAfter)
+            {
+                if (MewUIDebugPage.Enabled)
+                    TrackResourceDiagnostic(name, $"等待重试（约 {(retryAfter - Environment.TickCount64) / 1000d:F1}s）");
+                return null;
+            }
             ResourceRetryAfter.Remove(name);
         }
         var texture = GetResourceTexture(name);
@@ -235,12 +241,17 @@ internal static class MewUILayer
             if (texture.TryGetWrap(out var wrap, out error) && wrap != null)
             {
                 ResourceUnavailableSince.Remove(name);
+                if (MewUIDebugPage.Enabled)
+                    TrackResourceDiagnostic(name, "TryGetWrap 成功");
                 return wrap;
             }
             if (error != null)
             {
                 Svc.Log.Debug($"[MewUI] texture load will retry ({name}): {error.Message}");
-                InvalidateResourceTexture(name);
+                if (MewUIDebugPage.Enabled)
+                    InvalidateResourceTexture(name, $"TryGetWrap 异常：{error.GetType().Name}: {error.Message}");
+                else
+                    InvalidateResourceTexture(name);
             }
             else
             {
@@ -248,27 +259,61 @@ internal static class MewUILayer
                 // normal asynchronous loading, but do not poll it forever.
                 var now = Environment.TickCount64;
                 if (!ResourceUnavailableSince.TryGetValue(name, out var since))
+                {
                     ResourceUnavailableSince[name] = now;
+                    if (MewUIDebugPage.Enabled)
+                        TrackResourceDiagnostic(name, "纹理异步加载中，尚无 wrap");
+                }
                 else if (now - since >= ResourceLoadTimeoutMs)
-                    InvalidateResourceTexture(name);
+                {
+                    if (MewUIDebugPage.Enabled)
+                        InvalidateResourceTexture(name, $"纹理加载超过 {ResourceLoadTimeoutMs / 1000}s");
+                    else
+                        InvalidateResourceTexture(name);
+                }
+                else
+                {
+                    if (MewUIDebugPage.Enabled)
+                        TrackResourceDiagnostic(name, $"纹理异步加载中（{(now - since) / 1000d:F1}s）");
+                }
             }
             return null;
         }
-        catch
+        catch (Exception ex)
         {
             // Texture providers can be torn down during a device reset. The
             // caller can draw its owned fallback while the failed entry cools down.
-            InvalidateResourceTexture(name);
+            if (MewUIDebugPage.Enabled)
+                InvalidateResourceTexture(name, $"读取纹理时异常：{ex.GetType().Name}: {ex.Message}");
+            else
+                InvalidateResourceTexture(name);
             return null;
         }
     }
 
     /// <summary>Forget one cached resource after a disposed graphics handle.</summary>
-    public static void InvalidateResourceTexture(string name)
+    public static void InvalidateResourceTexture(string name, string? reason = null)
     {
         ResourceTextures.Remove(name);
         ResourceUnavailableSince.Remove(name);
         ResourceRetryAfter[name] = Environment.TickCount64 + ResourceRetryDelayMs;
+        if (MewUIDebugPage.Enabled)
+            TrackResourceDiagnostic(name, $"{reason ?? "纹理缓存失效"}；{ResourceRetryDelayMs / 1000}s 后重试");
+    }
+
+    internal static string GetResourceDiagnostic(string name)
+    {
+        if (ResourceRetryAfter.TryGetValue(name, out var retryAfter) && Environment.TickCount64 < retryAfter)
+            return $"等待重试（约 {(retryAfter - Environment.TickCount64) / 1000d:F1}s）";
+        return ResourceDiagnostics.TryGetValue(name, out var status) ? status : "尚无资源加载记录";
+    }
+
+    internal static void ClearResourceDiagnostics() => ResourceDiagnostics.Clear();
+
+    private static void TrackResourceDiagnostic(string name, string status)
+    {
+        if (MewUIDebugPage.Enabled)
+            ResourceDiagnostics[name] = status;
     }
 
     private static ISharedImmediateTexture? GetResourceTexture(string name)
@@ -285,7 +330,10 @@ internal static class MewUILayer
         catch (Exception ex)
         {
             Svc.Log.Debug($"[MewUI] embedded texture unavailable ({name}): {ex.Message}");
-            InvalidateResourceTexture(name);
+            if (MewUIDebugPage.Enabled)
+                InvalidateResourceTexture(name, $"读取嵌入资源异常：{ex.GetType().Name}: {ex.Message}");
+            else
+                InvalidateResourceTexture(name);
             return null;
         }
     }
