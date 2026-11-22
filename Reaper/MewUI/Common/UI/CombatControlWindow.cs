@@ -23,6 +23,8 @@ public sealed partial class CombatControlWindow : Window, IDisposable
 
     private static readonly Vector2 DefaultPosition = new(32f, 320f);
     private static readonly Vector2 PetSize = new(120f, 120f);
+    private const string EmergencyPetFallbackFrame = "pet.nothing_nothing_01.webp";
+    private const string EmergencySealFallbackFrame = "pet.seal_01.webp";
     private static readonly Random PetRandom = new();
     private static readonly string[][] IdlePetAnimations =
     {
@@ -318,10 +320,33 @@ public sealed partial class CombatControlWindow : Window, IDisposable
             if (!renderInspection.Ready) fallback.Dispose();
         }
 
+        var usedEmergencyFallback = false;
+        var emergencyFallbackStatus = string.Empty;
+        if (!renderInspection.Ready)
+        {
+            var emergencyFrame = acrOff ? EmergencySealFallbackFrame : EmergencyPetFallbackFrame;
+            var emergencyTexture = MewUILayer.GetResourceTextureWrap(emergencyFrame);
+            var emergencyInspection = InspectTexture(emergencyTexture);
+            if (emergencyInspection.Ready)
+            {
+                renderTexture = emergencyTexture;
+                renderInspection = emergencyInspection;
+                fallbackInspection = emergencyInspection;
+                usedFallback = true;
+                usedEmergencyFallback = true;
+            }
+            else if (diagnosticsEnabled)
+            {
+                emergencyFallbackStatus = $"{emergencyFrame}：{emergencyInspection.Status}；{MewUILayer.GetResourceDiagnostic(emergencyFrame)}";
+            }
+        }
+
         var drawSubmitted = false;
         var drawResult = diagnosticsEnabled
             ? $"未提交绘制命令：当前贴图 {currentInspection.Status}；回退贴图 {renderInspection.Status}"
             : string.Empty;
+        if (diagnosticsEnabled && emergencyFallbackStatus.Length > 0)
+            drawResult += $"；内置兜底贴图不可用：{emergencyFallbackStatus}";
         if (renderInspection.Ready)
         {
             try
@@ -342,15 +367,19 @@ public sealed partial class CombatControlWindow : Window, IDisposable
                     drawSubmitted = true;
                     if (isCurrentFrame)
                         fallback.Remember(frame, renderTexture);
+                    else if (usedEmergencyFallback)
+                        fallback.Remember(acrOff ? EmergencySealFallbackFrame : EmergencyPetFallbackFrame, renderTexture);
                 }
                 finally
                 {
                     drawList.PopClipRect();
                 }
                 if (diagnosticsEnabled)
-                    drawResult = usedFallback
-                        ? "已提交绘制命令：使用上一有效帧作为回退贴图。"
-                        : "已提交绘制命令：使用当前动画贴图。";
+                    drawResult = usedEmergencyFallback
+                        ? $"已提交绘制命令：使用内置兜底贴图 { (acrOff ? EmergencySealFallbackFrame : EmergencyPetFallbackFrame) }。"
+                        : usedFallback
+                            ? "已提交绘制命令：使用上一有效帧作为回退贴图。"
+                            : "已提交绘制命令：使用当前动画贴图。";
             }
             catch (ObjectDisposedException ex)
             {

@@ -17,6 +17,7 @@ internal static class MewUILayer
     private static readonly Dictionary<string, long> ResourceRetryAfter = new(StringComparer.Ordinal);
     private static readonly Dictionary<string, long> ResourceUnavailableSince = new(StringComparer.Ordinal);
     private static readonly Dictionary<string, string> ResourceDiagnostics = new(StringComparer.Ordinal);
+    private static readonly Dictionary<string, string> ResourceFailureReasons = new(StringComparer.Ordinal);
     // Stop querying failed shared textures long enough for Dalamud's idle
     // reference to expire, otherwise its faulted load task stays alive.
     private const long ResourceRetryDelayMs = 5_000;
@@ -242,7 +243,10 @@ internal static class MewUILayer
             {
                 ResourceUnavailableSince.Remove(name);
                 if (MewUIDebugPage.Enabled)
+                {
+                    ResourceFailureReasons.Remove(name);
                     TrackResourceDiagnostic(name, "TryGetWrap 成功");
+                }
                 return wrap;
             }
             if (error != null)
@@ -298,17 +302,34 @@ internal static class MewUILayer
         ResourceUnavailableSince.Remove(name);
         ResourceRetryAfter[name] = Environment.TickCount64 + ResourceRetryDelayMs;
         if (MewUIDebugPage.Enabled)
-            TrackResourceDiagnostic(name, $"{reason ?? "纹理缓存失效"}；{ResourceRetryDelayMs / 1000}s 后重试");
+        {
+            var failureReason = reason ?? "纹理缓存失效";
+            ResourceFailureReasons[name] = failureReason;
+            TrackResourceDiagnostic(name, $"{failureReason}；{ResourceRetryDelayMs / 1000}s 后重试");
+        }
     }
 
     internal static string GetResourceDiagnostic(string name)
     {
         if (ResourceRetryAfter.TryGetValue(name, out var retryAfter) && Environment.TickCount64 < retryAfter)
-            return $"等待重试（约 {(retryAfter - Environment.TickCount64) / 1000d:F1}s）";
-        return ResourceDiagnostics.TryGetValue(name, out var status) ? status : "尚无资源加载记录";
+        {
+            var retryStatus = $"等待重试（约 {(retryAfter - Environment.TickCount64) / 1000d:F1}s）";
+            return ResourceFailureReasons.TryGetValue(name, out var failure)
+                ? $"{retryStatus}；最近失败：{failure}"
+                : retryStatus;
+        }
+
+        var status = ResourceDiagnostics.TryGetValue(name, out var currentStatus) ? currentStatus : "尚无资源加载记录";
+        return status != "TryGetWrap 成功" && ResourceFailureReasons.TryGetValue(name, out var lastFailure)
+            ? $"{status}；最近失败：{lastFailure}"
+            : status;
     }
 
-    internal static void ClearResourceDiagnostics() => ResourceDiagnostics.Clear();
+    internal static void ClearResourceDiagnostics()
+    {
+        ResourceDiagnostics.Clear();
+        ResourceFailureReasons.Clear();
+    }
 
     private static void TrackResourceDiagnostic(string name, string status)
     {
