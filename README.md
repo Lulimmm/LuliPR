@@ -10,6 +10,12 @@ dotnet build Luli.csproj --configuration Release
 
 The project uses the installed Dalamud and PromeRotation references by default. CI overrides those paths with the checked-in `lib` directory.
 
+UI images stay embedded in the DLL: transparent pet/loader frames use PNG, and opaque backgrounds use high-quality JPEG at their original resolution. Both use built-in Windows WIC codecs without a WebP extension. Verify the actual DLL's image names and decoding after changing assets:
+
+```powershell
+./tools/verify-ui-textures.ps1 -AssemblyPath <path-to-LuliReaperPR.dll>
+```
+
 ## Remote ACR manifest
 
 After publishing a GitHub Release, add this URL to PromeRotation's remote ACR list:

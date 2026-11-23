@@ -53,7 +53,7 @@ internal static class MewUILayer
         // 透出游戏画面的比例，但网页纹理不会被紫色遮罩压到几乎不可见。
         drawList.AddRectFilled(min, max, SimplePalette.ToU32(tint), rounding, ImDrawFlags.RoundCornersAll);
 
-        var wrap = GetResourceTextureWrap("bg2.webp");
+        var wrap = GetResourceTextureWrap("bg2_compact.jpg");
         if (wrap != null)
         {
             try
@@ -65,7 +65,7 @@ internal static class MewUILayer
             }
             catch (ObjectDisposedException)
             {
-                InvalidateResourceTexture("bg2.webp");
+                InvalidateResourceTexture("bg2_compact.jpg");
             }
         }
 

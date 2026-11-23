@@ -19,8 +19,8 @@ internal sealed class MewUISplashWindow : Window
     private static readonly Vector2[] LoaderDirections = BuildLoaderDirections();
     private static readonly string[] CuteFrames =
     {
-        "loader.cute_01.webp", "loader.cute_02.webp",
-        "loader.cute_03.webp", "loader.cute_04.webp",
+        "loader.cute_01.png", "loader.cute_02.png",
+        "loader.cute_03.png", "loader.cute_04.png",
     };
     private double startedAt = -1d;
     private double waitingForImagesAt = -1d;
@@ -100,9 +100,9 @@ internal sealed class MewUISplashWindow : Window
 
         // The classic site's steps(1) animations swap the two backgrounds at 1s.
         if (elapsed < StartDuration)
-            DrawImageCover(drawList, "start.webp", min, max, fade);
+            DrawImageCover(drawList, "start_compact.jpg", min, max, fade);
         else
-            DrawImageCover(drawList, "loading.webp", min, max, fade);
+            DrawImageCover(drawList, "loading_compact.jpg", min, max, fade);
 
         if (elapsed >= StartDuration)
         {
@@ -136,20 +136,20 @@ internal sealed class MewUISplashWindow : Window
 
     private static void PreloadImages()
     {
-        MewUILayer.GetResourceTextureWrap("start.webp");
-        MewUILayer.GetResourceTextureWrap("loading.webp");
-        MewUILayer.GetResourceTextureWrap("loader.percent_atlas.webp");
-        MewUILayer.GetResourceTextureWrap("loader.ring_glow.webp");
+        MewUILayer.GetResourceTextureWrap("start_compact.jpg");
+        MewUILayer.GetResourceTextureWrap("loading_compact.jpg");
+        MewUILayer.GetResourceTextureWrap("loader.percent_atlas.png");
+        MewUILayer.GetResourceTextureWrap("loader.ring_glow.png");
         foreach (var frame in CuteFrames)
             MewUILayer.GetResourceTextureWrap(frame);
     }
 
     private static bool ImagesReady()
     {
-        if (MewUILayer.GetResourceTextureWrap("start.webp") == null
-            || MewUILayer.GetResourceTextureWrap("loading.webp") == null
-            || MewUILayer.GetResourceTextureWrap("loader.percent_atlas.webp") == null
-            || MewUILayer.GetResourceTextureWrap("loader.ring_glow.webp") == null)
+        if (MewUILayer.GetResourceTextureWrap("start_compact.jpg") == null
+            || MewUILayer.GetResourceTextureWrap("loading_compact.jpg") == null
+            || MewUILayer.GetResourceTextureWrap("loader.percent_atlas.png") == null
+            || MewUILayer.GetResourceTextureWrap("loader.ring_glow.png") == null)
             return false;
         foreach (var frame in CuteFrames)
             if (MewUILayer.GetResourceTextureWrap(frame) == null)
@@ -204,7 +204,7 @@ internal sealed class MewUISplashWindow : Window
         var innerRadius = 46.8f * scale;
         var progress = elapsed % 3f / 3f;
         var glow = 4f + 12f * pulse;
-        var glowAtlas = MewUILayer.GetResourceTextureWrap("loader.ring_glow.webp");
+        var glowAtlas = MewUILayer.GetResourceTextureWrap("loader.ring_glow.png");
         if (glowAtlas != null)
         {
             var first = Math.Clamp((int)MathF.Floor(glow) - 4, 0, 12);
@@ -258,7 +258,7 @@ internal sealed class MewUISplashWindow : Window
         // Pre-rendered Pixelcraft/monospace labels match the site's CSS without
         // registering a runtime font with Dalamud's font atlas.
         var percentValue = Math.Clamp((int)MathF.Floor(Math.Clamp(elapsed / 3f, 0f, 1f) * 100f), 0, 100);
-        var percentAtlas = MewUILayer.GetResourceTextureWrap("loader.percent_atlas.webp");
+        var percentAtlas = MewUILayer.GetResourceTextureWrap("loader.percent_atlas.png");
         if (percentAtlas != null)
         {
             var column = percentValue % 10;
