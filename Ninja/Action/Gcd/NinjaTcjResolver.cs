@@ -17,13 +17,12 @@ internal sealed class NinjaTcjResolver : NinjaResolver
 {
     public override CheckResult Check()
     {
-        if (Core.Target?.CanUseAttackActionOn() != true
-            || !NinjaCombatState.IsTcjSequenceActive)
-            return No;
+        if (Core.Target?.CanUseAttackActionOn() != true) return Blocked("天地人后续忍术需要可攻击目标，当前目标不可用");
+        if (!NinjaCombatState.IsTcjSequenceActive) return Blocked("天地人状态（1186）不存在，不评估天地人后续忍术");
 
         // 1186 owns the sequence window. Once the client removes it, TCJ is
         // complete and the normal resolvers, including 36961, may run.
-        return GetNextTcjAction() == 0 ? No : Ok;
+        return GetNextTcjAction() == 0 ? Blocked("天地人水遁已被选择/确认，等待天地人状态消失后交回普通循环") : Ok;
     }
     public override PAction GetAction()
     {

@@ -17,6 +17,7 @@ internal sealed class NinjaTrickAttackResolver : NinjaResolver
 {
     public static string? GetBlockReason()
     {
+        if (NinjaBurstDelayPolicy.Enabled) return NinjaBurstDelayPolicy.BlockReason;
         var me = Core.Me;
         var target = Core.Target;
         if (!PromeSettings.Instance.GetQt(NinjaQts.SmallTrick)) return "小背刺 QT 未开启";

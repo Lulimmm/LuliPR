@@ -19,10 +19,10 @@ internal sealed class NinjaKassatsuJutsuResolver : NinjaResolver
     {
         var me = Core.Me;
         var target = Core.Target;
-        if (me?.HasStatus(NinjaActions.KassatsuStatus) != true
-            || NinjaCombatState.IsTcjSequenceActive
-            || NinjaSequencePolicy.IsNormalMudraActive
-            || target?.CanUseAttackActionOn() != true) return No;
+        if (me?.HasStatus(NinjaActions.KassatsuStatus) != true) return Blocked("缺少生杀状态（497）");
+        if (NinjaCombatState.IsTcjSequenceActive) return Blocked("天地人独占期间不开始冰晶");
+        if (NinjaSequencePolicy.IsNormalMudraActive) return Blocked("已有普通结印序列，等待当前忍术结束");
+        if (target?.CanUseAttackActionOn() != true) return Blocked("没有可攻击目标，暂不开始冰晶");
         if (PromeSettings.Instance.GetQt("倾斜资源")) return Ok;
         if (PromeSettings.Instance.GetQt("斩杀") && target.MaxHp > 0
             && target.CurrentHp * 100f / target.MaxHp < NinjaSettings.Instance.TTK) return Ok;
@@ -32,7 +32,7 @@ internal sealed class NinjaKassatsuJutsuResolver : NinjaResolver
             || (mugWindowEnabled && target.HasStatus(NinjaActions.KunaisBaneStatus))
             || (trickWindowEnabled && NinjaCombatState.Recently(NinjaActions.TrickAttackCurrent, 2120))
             || me.GetStatusLeftTime(NinjaActions.KassatsuStatus) < 3f) return Ok;
-        return No;
+        return Blocked("等待夺取/小背刺爆发窗口，或生杀剩余不足 3 秒时提前使用");
     }
 
     public override PAction GetAction()

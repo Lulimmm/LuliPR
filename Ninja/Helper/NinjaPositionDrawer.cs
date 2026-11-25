@@ -155,7 +155,6 @@ internal static class NinjaPositionDrawer
         if (me.HasStatus(NinjaActions.MudraStatus)
             || NinjaCombatState.IsTcjSequenceActive
             || NinjaSequencePolicy.IsNormalMudraActive
-            || new NinjaAlwaysResolver().Check().Success
             || new NinjaTcjResolver().Check().Success
             || new NinjaKassatsuJutsuResolver().Check().Success
             || new NinjaRaijuResolver().Check().Success

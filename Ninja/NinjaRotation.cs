@@ -35,17 +35,18 @@ using Ninja.PR.UI;
 
 namespace Ninja.PR;
 
-[RotationMetadata(30u, "Luli Ninja PR", "Cino", "1.5.5", ContentScope = AcrContentScope.HighEnd)]
+[RotationMetadata(30u, "Luli Ninja PR", "Cino", "1.5.6", ContentScope = AcrContentScope.HighEnd)]
 public sealed class NinjaRotation : IRotation, IRotationLifecycle
 {
     private static readonly HashSet<string> DefaultHiddenQtKeys = new(StringComparer.Ordinal)
     {
-        "倾斜资源", "斩杀", NinjaQts.PrepareSuiton,
+        "倾斜资源", "斩杀",
         NinjaQts.Raiju, NinjaQts.Bunshin, NinjaQts.Phantom,
         NinjaQts.Bhavacakra, NinjaQts.AutoTrueNorth, NinjaQts.TenriJindo,
         NinjaQts.Assassinate, NinjaQts.LongArm, NinjaQts.RaitonWhenOutOfRange
     };
     private const string LegacyPositionalQt = "身位提示";
+    private const string LegacyPrepareSuitonQt = "预备水遁";
     internal static readonly MethodInfo? PeekLockedActionMethod = typeof(ActionUpdater)
         .GetMethod("PeekCurrentLockedAction", BindingFlags.Static | BindingFlags.NonPublic);
     internal static readonly FieldInfo? ActiveCommandField = typeof(ActionUpdater)
@@ -71,6 +72,7 @@ public sealed class NinjaRotation : IRotation, IRotationLifecycle
     public static IReadOnlyDictionary<string, bool> QtList { get; } = new Dictionary<string, bool>
     {
         [NinjaQts.BigTrick] = true,
+        [NinjaQts.DelayBurst] = false,
         [NinjaQts.SmallTrick] = true,
         [NinjaQts.TenChiJin] = true,
         ["生杀予夺"] = true,
@@ -87,8 +89,7 @@ public sealed class NinjaRotation : IRotation, IRotationLifecycle
         [NinjaQts.AutoTrueNorth] = true,
         [NinjaQts.LongArm] = false,
         ["倾斜资源"] = false,
-        ["斩杀"] = false,
-        [NinjaQts.PrepareSuiton] = false
+        ["斩杀"] = false
     };
 
     public static IReadOnlyDictionary<string, Type> Openers { get; } = new Dictionary<string, Type>
@@ -99,7 +100,8 @@ public sealed class NinjaRotation : IRotation, IRotationLifecycle
     };
 
     public static IJobNodeProvider? NodeProvider { get; } = new NinjaJobNodeProvider();
-    // GCD priority. The pre-pull Suiton resolver runs before TCJ follow-ups.
+    // Countdown Suiton belongs to the opener; manual Suiton uses a one-shot hotkey.
+    private readonly NinjaTcjResolver tcj = new();
     private readonly NinjaPhantomResolver phantom = new();
     private readonly List<IDecisionResolver> gcd;
     // Always resolvers run independently from the oGCD queue. Preserve order.
@@ -119,7 +121,7 @@ public sealed class NinjaRotation : IRotation, IRotationLifecycle
         // expiry safeguard in NextGcd before this normal list is evaluated.
         gcd = new()
         {
-            new NinjaAlwaysResolver(), new NinjaTcjResolver(),
+            tcj,
             new NinjaKassatsuJutsuResolver(), new NinjaJutsuResolver(),
             new NinjaEarlier4Or3Resolver(), new NinjaKBaseResolver(), phantom,
             new NinjaRaijuResolver(), new NinjaRaitonResolver(), new NinjaComboResolver()
@@ -130,6 +132,7 @@ public sealed class NinjaRotation : IRotation, IRotationLifecycle
         // remain in the Always list above.
         ogcd = new() { priorityBhavacakra, new NinjaMugResolver(), new NinjaBunshinResolver(), new NinjaTenChiJinResolver(), new NinjaMeisuiResolver(), tenriJindo, new NinjaAssassinateResolver(), new NinjaOgcdResolver(IsComboResolverFirst, IsRaijuResolverFirst), new NinjaTrueNorthResolver(IsComboResolverFirst) };
         MigrateLegacyPositionalQt();
+        PromeSettings.Instance.QuickToggles.Remove(LegacyPrepareSuitonQt);
         MewUIFramework.Configure(
             jobTag: "NIN",
             jobName: "Ninja",
@@ -138,12 +141,13 @@ public sealed class NinjaRotation : IRotation, IRotationLifecycle
             qtIsVisibleInMode: (_, _) => true,
             qtDefault: GetQtDefault,
             qtCascadeRules: new Dictionary<string, (string key, bool invert)[]>(),
-            hotkeyNames: new[] { "\u7f29\u5730", "\u80cc\u5bf9\u6444\u50cf\u673a\u7f29\u5730", "\u5f3a\u5236\u96f7\u9041" },
+            hotkeyNames: new[] { "\u7f29\u5730", "\u80cc\u5bf9\u6444\u50cf\u673a\u7f29\u5730", "\u5f3a\u5236\u96f7\u9041", NinjaSuitonHotkey.Name },
             buildHotkeys: b =>
             {
                 b.Execute("\u7f29\u5730", new NinjaMovementHotkey(), iconActionID: NinjaActions.Shukuchi);
                 b.Execute("\u80cc\u5bf9\u6444\u50cf\u673a\u7f29\u5730", new NinjaMovementHotkey(true), iconActionID: NinjaActions.Shukuchi);
                 b.Execute("\u5f3a\u5236\u96f7\u9041", new NinjaRaitonHotkey(), iconActionID: NinjaActions.Raiton);
+                b.Execute(NinjaSuitonHotkey.Name, new NinjaSuitonHotkey(), iconActionID: NinjaActions.Suiton);
             },
             author: "Cino",
             drawGeneralSettings: DrawGeneralSettings,
@@ -177,11 +181,6 @@ public sealed class NinjaRotation : IRotation, IRotationLifecycle
             return null;
         if (Core.Target?.CanUseAttackActionOn() != true)
             return null;
-
-        // AE checks the preparation Suiton resolver before TCJ in GCD priority.
-        // Match that ordering at the scheduler edge.
-        if (gcd[0].Check().Success)
-            return gcd[0].GetAction();
 
         // While TCJ owns the GCD, no other ordinary resolver may consume the slot.
         if (NinjaCombatState.IsTcjSequenceActive)
@@ -256,8 +255,7 @@ public sealed class NinjaRotation : IRotation, IRotationLifecycle
 
     private PAction? NextTcjOnly()
     {
-        var resolver = gcd[1];
-        return resolver.Check().Success ? resolver.GetAction() : null;
+        return tcj.Check().Success ? tcj.GetAction() : null;
     }
 
     private bool IsComboResolverFirst()
@@ -282,7 +280,6 @@ public sealed class NinjaRotation : IRotation, IRotationLifecycle
     {
         foreach (var resolver in gcd)
         {
-            if (resolver is NinjaAlwaysResolver) continue;
             yield return resolver;
         }
     }
@@ -430,46 +427,102 @@ public sealed class NinjaRotation : IRotation, IRotationLifecycle
     private void DrawDebugPanel()
     {
         UpdateDebugStatus();
-        ImGui.Text($"天地人状态：{NinjaCombatState.IsTcjSequenceActive}");
-        ImGui.Text($"最近天地人忍术：{FormatDebugAction(NinjaCombatState.GetLastTcjStep())}");
-        var pendingTcj = NinjaCombatState.GetPendingTcjForDebug();
-        ImGui.Text($"待提交天地人忍术：{FormatDebugAction(pendingTcj)}{(pendingTcj == 0 ? string.Empty : $"（{NinjaCombatState.PendingTcjAgeMs} 毫秒）")}");
-        ImGui.Text($"最近观测技能：{NinjaAttemptDebug.FormatAction(NinjaCombatState.LastObservedActionId)}（{NinjaCombatState.LastObservedActionId}）");
-        ImGui.Text($"最近 GCD：{FormatDebugAction(NinjaCombatState.LastGcd)}");
-        ImGui.Text($"当前反复尝试：{NinjaAttemptDebug.FormatCurrent()}");
-        ImGui.Text($"尝试类型/重试次数：{NinjaAttemptDebug.FormatType()} / {NinjaAttemptDebug.RetryCount}");
-        ImGui.Text($"尝试持续时间：{(NinjaAttemptDebug.CurrentAgeMs < 0 ? "无" : $"{NinjaAttemptDebug.CurrentAgeMs} 毫秒")}");
-        ImGui.Text($"连续观察次数：{NinjaAttemptDebug.ConsecutiveObservations}");
-        ImGui.Text($"尝试技能历史：{NinjaAttemptDebug.History}");
-        ImGui.Text($"36958 拦截当前：{NinjaTrickAttackDebug.Current}");
-        ImGui.Text($"36958 拦截历史：{NinjaTrickAttackDebug.History}");
-        ImGui.Text($"无损起手尾段：{NinjaNoLossOpenerRuntime.DebugStage}");
-        ImGui.Text($"忍术后能力技：{NinjaCombatState.PostNinjutsuOffGcdUsed}/{NinjaCombatState.PostNinjutsuOffGcdLimit}");
-        ImGui.Text($"每 GCD 能力技：{NinjaCombatState.GcdOffGcdUsed}/{NinjaCombatState.MaxGcdOffGcd}");
-        ImGui.Text($"天地人水遁最近 15 秒：{NinjaCombatState.Recently(NinjaActions.TcjSuiton, 15000)}");
+        var snapshot = NinjaBattleDebug.Capture(FirstActive(RotationManager.GcdSolverStatus),
+            phantom.IsExpiringSoon(), tenriJindo.Check().Success,
+            Core.Target?.HasStatus(NinjaActions.KunaisBaneStatus) == true && phantom.Check().Success);
+        var summary = new[]
+        {
+            $"宿主调度：{snapshot.DescribeHost()}",
+            $"Ninja GCD 选择：{snapshot.DescribeGcd()}",
+            $"能力技与 Always 入口：{snapshot.DescribeOffGcd()}",
+            $"活动命令：{snapshot.DescribeCommand()}",
+            $"目标最近变化：{NinjaBattleDebug.TargetTransition}（{NinjaBattleDebug.TargetAge}）",
+            $"战斗状态：{(GameData.IsInCombat() ? "战斗中" : "脱战")}；当前起手设置：{NinjaSettings.Instance.Opener}；宿主固定起手：{(snapshot.HostOpenerActive.HasValue ? snapshot.HostOpenerActive.Value ? "进行中" : "未进行" : "无法读取")}",
+            $"目标距离：{(snapshot.TargetPresent ? $"{snapshot.Distance:F1} 米 / 近战范围 {snapshot.MeleeRange:F1} 米" : "无目标")}；GCD 剩余 {snapshot.GcdRemain:F2} 秒",
+            $"预备水遁 Hotkey：{NinjaSuitonHotkey.GetBlockReason() ?? "可点击，每次只提交一组水遁"}；结印次数 {snapshot.MudraCharges:F2}；水遁赋予状态（3848）：{(snapshot.ShadowWalker ? "存在" : "无")}",
+            $"延后爆发：{(NinjaBurstDelayPolicy.Enabled ? $"开启；暂停水遁、百雷铳、背刺、天地人、梦幻三段、分身、生杀；结印 ≥ {NinjaBurstDelayPolicy.MudraOverflowThreshold:F1} 层时雷遁止溢出，并使用雷兽；固定起手和 Hotkey 不受此 QT 限制" : "关闭，按原有循环执行")}",
+            $"结印状态（496）：{(Core.Me?.HasStatus(NinjaActions.MudraStatus) == true ? "存在" : "无")}；天地人状态（1186）：{(snapshot.TcjActive ? "存在" : "无")}；生杀状态（497）：{(Core.Me?.HasStatus(NinjaActions.KassatsuStatus) == true ? "存在" : "无")}",
+            $"冷却：背刺 {ActionHelper.GetActionCooldown(NinjaActions.TrickAttackCurrent):F2} 秒；夺取 {ActionHelper.GetActionCooldown(NinjaActions.MugCurrent):F2} 秒；结印 {ActionHelper.GetActionCooldown(NinjaActions.Ten):F2} 秒",
+            $"忍气 {JobGaugeHelper.NIN.Ninki}；风缠 {JobGaugeHelper.NIN.Kazematoi}；雷兽状态（2690）：{(Core.Me?.HasStatus(NinjaActions.RaijuReady) == true ? "存在" : "无")}",
+            $"技能确认方式：GCD {(PromeSettings.Instance.Hacks.GcdWaitForNetworkPacket ? "效果回包" : "施放事件")}；能力技 {(PromeSettings.Instance.Hacks.OgcdWaitForNetworkPacket ? "效果回包" : "施放事件")}",
+            $"无损起手尾段：{NinjaNoLossOpenerRuntime.DebugStage}",
+            $"忍术后能力技额度：{snapshot.PostNinjutsuUsed}/{snapshot.PostNinjutsuLimit}（上限为 0 表示没有该额外限制）；本 GCD 能力技额度：{snapshot.GcdOffGcdUsed}/{snapshot.GcdOffGcdLimit}",
+            $"最近诊断采集异常：{NinjaBattleDebug.LastCollectionError}"
+        };
+        var observations = new List<string>(snapshot.Observations());
+        ImGui.TextWrapped("条件满足只表示技能可参与优先级判断，不代表已经选中、提交或施放成功。下面分别显示入口等待条件与技能自身条件。");
+        if (ImGui.Button("复制 Ninja 战斗诊断"))
+        {
+            var report = new List<string>(summary);
+            report.AddRange(observations);
+            report.Add($"当前等待确认：{NinjaAttemptDebug.FormatCurrent()}；观察时长 {NinjaAttemptDebug.CurrentAgeMs} 毫秒；重试 {NinjaAttemptDebug.RetryCount} 次");
+            report.Add($"尝试技能历史：{NinjaAttemptDebug.History}");
+            report.Add($"天地人最后确认步骤：{FormatDebugAction(NinjaCombatState.GetLastTcjStep())}；待确认步骤：{FormatDebugAction(NinjaCombatState.GetPendingTcjForDebug())}");
+            report.Add($"结印策略终结技能：{FormatDebugAction(NinjaSequencePolicy.TerminalAction)}；调度器最近恢复：{LastUpdaterRecovery}");
+            report.Add($"搓兔子记录：{NinjaMudraDebug.RabbitCount} 次；{NinjaMudraDebug.LastRabbitReason}；最近印输入：{NinjaMudraDebug.RecentInputs}");
+            report.AddRange(NinjaBattleDebug.History);
+            foreach (var statuses in new[] { RotationManager.AlwaysSolverStatus, RotationManager.GcdSolverStatus, RotationManager.OffGcdSolverStatus })
+                foreach (var status in statuses)
+                    report.Add($"{FormatResolverName(status.Name)}：{(status.Success ? "条件满足" : "条件不满足")}；{status.Message}");
+            foreach (var entry in ActionUpdater.DebugInfo)
+                report.Add($"调度器 {entry.Key}：{entry.Value}");
+            foreach (var queue in ActionQueueManager.GetQueueStatus())
+                report.Add($"队列 {queue.Key}：{string.Join(", ", queue.Value)}");
+            ImGui.SetClipboardText(string.Join(Environment.NewLine, report));
+        }
+        foreach (var line in summary) ImGui.TextWrapped(line);
         ImGui.Separator();
-        ImGui.Text($"搓兔子次数：{NinjaMudraDebug.RabbitCount}");
-        ImGui.Text($"最近搓兔子时间：{(NinjaMudraDebug.LastRabbitAgeMs < 0 ? "无" : $"{NinjaMudraDebug.LastRabbitAgeMs} 毫秒前")}");
-        ImGui.Text($"搓兔子原因：{NinjaMudraDebug.LastRabbitReason}");
-        ImGui.Text($"最近忍术印输入：{NinjaMudraDebug.RecentInputs}");
-        ImGui.Text($"忍术印策略：{(NinjaSequencePolicy.IsActive ? $"终结技能 {NinjaSequencePolicy.TerminalAction}" : "未激活")}");
+        ImGui.TextWrapped("需要核对的状态（由当前观测推断，不能单独认定为卡死原因）：");
+        if (observations.Count == 0) ImGui.TextWrapped("当前未观察到下列已知状态组合；仍可查看技能条件与原始调度器。");
+        foreach (var line in observations) ImGui.TextWrapped($"- {line}");
+        if (ImGui.CollapsingHeader("目标变化与水遁效果记录（最多 16 条）"))
+        {
+            ImGui.TextWrapped("每 200 毫秒采样目标变化；根据技能 ID 与当时天地人状态区分水遁来源。效果包记录用于辅助诊断，不等于完整战斗日志。");
+            foreach (var line in NinjaBattleDebug.History) ImGui.TextWrapped(line);
+        }
+        if (ImGui.CollapsingHeader("结印、天地人与重试详情"))
+        {
+            ImGui.Text($"天地人状态：{(NinjaCombatState.IsTcjSequenceActive ? "进行中" : "未进行")}");
+            ImGui.Text($"最近天地人忍术：{FormatDebugAction(NinjaCombatState.GetLastTcjStep())}");
+            var pendingTcj = NinjaCombatState.GetPendingTcjForDebug();
+            ImGui.Text($"已选择、待确认的天地人忍术：{FormatDebugAction(pendingTcj)}{(pendingTcj == 0 ? string.Empty : $"（{NinjaCombatState.PendingTcjAgeMs} 毫秒）")}");
+            ImGui.Text($"最近观测技能：{NinjaAttemptDebug.FormatAction(NinjaCombatState.LastObservedActionId)}（{NinjaCombatState.LastObservedActionId}）");
+            ImGui.Text($"最近 GCD：{FormatDebugAction(NinjaCombatState.LastGcd)}");
+            ImGui.Text($"当前等待技能确认：{NinjaAttemptDebug.FormatCurrent()}");
+            ImGui.Text($"尝试类型/重试次数：{NinjaAttemptDebug.FormatType()} / {NinjaAttemptDebug.RetryCount}");
+            ImGui.Text($"尝试持续时间：{(NinjaAttemptDebug.CurrentAgeMs < 0 ? "无" : $"{NinjaAttemptDebug.CurrentAgeMs} 毫秒")}");
+            ImGui.Text($"连续采样次数（不是施放次数）：{NinjaAttemptDebug.ConsecutiveObservations}");
+            ImGui.Text($"尝试技能历史：{NinjaAttemptDebug.History}");
+            ImGui.Text($"36958 拦截当前：{NinjaTrickAttackDebug.Current}");
+            ImGui.Text($"36958 拦截历史：{NinjaTrickAttackDebug.History}");
+            ImGui.Text($"无损起手尾段：{NinjaNoLossOpenerRuntime.DebugStage}");
+            ImGui.Text($"忍术后能力技：{NinjaCombatState.PostNinjutsuOffGcdUsed}/{NinjaCombatState.PostNinjutsuOffGcdLimit}");
+            ImGui.Text($"每 GCD 能力技：{NinjaCombatState.GcdOffGcdUsed}/{NinjaCombatState.MaxGcdOffGcd}");
+            ImGui.Text($"天地人水遁最近 15 秒：{NinjaCombatState.Recently(NinjaActions.TcjSuiton, 15000)}");
+            ImGui.Separator();
+            ImGui.Text($"搓兔子次数：{NinjaMudraDebug.RabbitCount}");
+            ImGui.Text($"最近搓兔子时间：{(NinjaMudraDebug.LastRabbitAgeMs < 0 ? "无" : $"{NinjaMudraDebug.LastRabbitAgeMs} 毫秒前")}");
+            ImGui.Text($"搓兔子原因：{NinjaMudraDebug.LastRabbitReason}");
+            ImGui.Text($"最近忍术印输入：{NinjaMudraDebug.RecentInputs}");
+            ImGui.Text($"忍术印策略：{(NinjaSequencePolicy.IsActive ? $"终结技能 {FormatDebugAction(NinjaSequencePolicy.TerminalAction)}" : "未激活")}");
+            ImGui.Separator();
+            ImGui.Text($"当前活动命令：{ActionUpdater.HasActiveCommand()}");
+            ImGui.Text($"GCD 锁定：{ActionUpdater.HasLockedGcdAction()}");
+            ImGui.Text($"调度器恢复：{LastUpdaterRecovery}");
+            ImGui.Text($"过期 GCD 锁定时长：{NinjaEventHandler.GetStaleGcdLockAgeMs()} 毫秒");
+            ImGui.Text($"队列中有技能：{ActionQueueManager.HasActionsInQueue()}");
+            ImGui.Separator();
+        }
+        ImGui.Text($"首个条件满足的 Always 技能：{FirstActive(RotationManager.AlwaysSolverStatus)}");
+        ImGui.Text($"首个条件满足的 GCD 分支：{FirstActive(RotationManager.GcdSolverStatus)}");
+        ImGui.Text($"首个条件满足的能力技：{FirstActive(RotationManager.OffGcdSolverStatus)}");
         ImGui.Separator();
-        ImGui.Text($"GCD 拦截：{(NinjaCombatState.IsTcjSequenceActive ? "天地人独占" : "常规解析器")}");
-        ImGui.Text($"能力技拦截：{(NinjaCombatState.IsTcjSequenceActive ? "天地人拦截" : "开放")}");
-        ImGui.Text($"Always 拦截：{(NinjaCombatState.IsTcjSequenceActive ? "天地人拦截" : "开放")}");
-        ImGui.Text($"当前活动命令：{ActionUpdater.HasActiveCommand()}");
-        ImGui.Text($"GCD 锁定：{ActionUpdater.HasLockedGcdAction()}");
-        ImGui.Text($"调度器恢复：{LastUpdaterRecovery}");
-        ImGui.Text($"过期 GCD 锁定时长：{NinjaEventHandler.GetStaleGcdLockAgeMs()} 毫秒");
-        ImGui.Text($"队列中有技能：{ActionQueueManager.HasActionsInQueue()}");
-        ImGui.Separator();
-        ImGui.Text($"当前 Always 解析器：{FirstActive(RotationManager.AlwaysSolverStatus)}");
-        ImGui.Text($"当前 GCD 解析器：{FirstActive(RotationManager.GcdSolverStatus)}");
-        ImGui.Text($"当前能力技解析器：{FirstActive(RotationManager.OffGcdSolverStatus)}");
-        ImGui.Separator();
-        DrawDebugGroup("常规能力技", RotationManager.AlwaysSolverStatus);
-        DrawDebugGroup("GCD", RotationManager.GcdSolverStatus);
-        DrawDebugGroup("能力技", RotationManager.OffGcdSolverStatus);
+        if (ImGui.CollapsingHeader("各技能条件与保留资源原因"))
+        {
+            DrawDebugGroup("优先能力技（Always）", RotationManager.AlwaysSolverStatus);
+            DrawDebugGroup("GCD", RotationManager.GcdSolverStatus);
+            DrawDebugGroup("能力技", RotationManager.OffGcdSolverStatus);
+        }
         if (ImGui.CollapsingHeader("调度器/队列拦截器"))
             DrawSchedulerDebug();
     }
@@ -480,25 +533,24 @@ public sealed class NinjaRotation : IRotation, IRotationLifecycle
         NinjaActions.TcjRaiton => "天地人雷遁（18877）",
         NinjaActions.TcjSuiton => "天地人水遁（18881）",
         0 => "无",
-        _ => id.ToString()
+        _ => $"{NinjaAttemptDebug.FormatAction(id)}（{id}）"
     };
 
     private static void DrawDebugGroup(string name, IList<SolverStatus> statuses)
     {
         ImGui.Text(name);
         foreach (var status in statuses)
-            ImGui.Text($"  {(status.Success ? "生效" : "拦截")}  {FormatResolverName(status.Name)}：{status.Message}");
+            ImGui.TextWrapped($"  {(status.Success ? "条件满足" : "条件不满足")}  {FormatResolverName(status.Name)}：{(string.IsNullOrWhiteSpace(status.Message) ? "可参与优先级判断，仍需通过上方入口与队列检查" : status.Message)}");
     }
 
     private static string FormatResolverName(string name) => name switch
     {
         "NinjaKassatsuResolver" => "生杀夺予",
         "NinjaTrickAttackResolver" => "背刺",
-        "NinjaAlwaysResolver" => "预备水遁",
         "NinjaTcjResolver" => "天地人忍术",
         "NinjaKassatsuJutsuResolver" => "生杀冰晶",
         "NinjaJutsuResolver" => "常规忍术",
-        "NinjaEarlier4Or3Resolver" => "早期忍术",
+        "NinjaEarlier4Or3Resolver" => "天地人后提前连击三段",
         "NinjaKBaseResolver" => "基础连击优先",
         "NinjaPhantomResolver" => "镰鼬",
         "NinjaRaijuResolver" => "月影雷兽牙",
@@ -543,6 +595,8 @@ public sealed class NinjaRotation : IRotation, IRotationLifecycle
     public IRotationEventHandler GetEventHandler() => events;
     public void OnEnterAcr()
     {
+        NinjaBattleDebug.Reset();
+        NinjaSuitonHotkey.Reset();
         MewFeintPlanManager.Attach();
         BundledTimelineSync.Enter();
         UsageStatistics.Start("Ninja");
@@ -685,6 +739,7 @@ internal sealed class NinjaEventHandler : IRotationEventHandler, IDisposable
     private static void OnActionEffect(ActionEffectEvent action)
     {
         if (action.SourceId != Core.Me?.EntityId) return;
+        NinjaBattleDebug.RecordSuiton(action.ActionId, "完整效果包");
         // ActionEffect is the completion-side signal. Manual interruption is
         // handled from StartCast only; an effect can arrive later for an old
         // action while the updater is already attempting the next one.
@@ -699,7 +754,6 @@ internal sealed class NinjaEventHandler : IRotationEventHandler, IDisposable
         NinjaCombatState.Record(action.ActionId);
         var newConfirmation = NinjaCombatState.RecordConfirmed(action.ActionId);
         UpdateGcdAbilityCount(action.ActionId, newConfirmation);
-        ClearPrepareSuitonAfterCast(action.ActionId);
         // Record both pre- and post-upgrade action aliases so an effect packet
         // reported with either id observes the same recency window.
         switch (action.ActionId)
@@ -731,6 +785,7 @@ internal sealed class NinjaEventHandler : IRotationEventHandler, IDisposable
     private static void OnActionEffectEntry(ActionEffectEntryEvent action)
     {
         if (action.SourceId != Core.Me?.EntityId) return;
+        NinjaBattleDebug.RecordSuiton(action.ActionId, "效果条目");
         // Entry events are effect fragments, not a second action submission.
         // Feeding UAL here can create a false verification and advance a
         // sequence twice when both event forms are emitted by the client.
@@ -766,12 +821,6 @@ internal sealed class NinjaEventHandler : IRotationEventHandler, IDisposable
         if (actionId == NinjaActions.TenChiJin) return true;
         var adjusted = ActionHelper.GetAdjustedActionId(NinjaActions.TenChiJin);
         return adjusted != 0 && actionId == adjusted;
-    }
-
-    private static void ClearPrepareSuitonAfterCast(uint actionId)
-    {
-        if (actionId == NinjaActions.Suiton && PromeSettings.Instance.GetQt(NinjaQts.PrepareSuiton))
-            PromeSettings.Instance.SetQt(NinjaQts.PrepareSuiton, false);
     }
 
     private static void RecoverManualIntervention(uint actionId)
@@ -819,6 +868,7 @@ internal sealed class NinjaEventHandler : IRotationEventHandler, IDisposable
 
     public void OnUpdate()
     {
+        NinjaBattleDebug.Update();
         BundledTimelineSync.UpdateLoginSession();
         UsageStatistics.Update();
         NinjaHooks.Update();
@@ -829,6 +879,7 @@ internal sealed class NinjaEventHandler : IRotationEventHandler, IDisposable
     }
     public void OnOutOfBattleUpdate()
     {
+        NinjaBattleDebug.Update();
         BundledTimelineSync.UpdateLoginSession();
         UsageStatistics.Update();
         MewFeintPlanManager.Update();
@@ -852,6 +903,7 @@ internal sealed class NinjaEventHandler : IRotationEventHandler, IDisposable
     }
     public void OnBattleUpdate()
     {
+        NinjaBattleDebug.Update();
         BundledTimelineSync.UpdateLoginSession();
         UsageStatistics.Update();
         MewFeintPlanManager.Update();
@@ -1192,18 +1244,5 @@ internal sealed class NinjaEventHandler : IRotationEventHandler, IDisposable
     public void OnNoTarget()
     {
         MewUIFramework.RestoreQtIfHostCleared();
-        TryPrepareSuiton();
-    }
-
-    private static void TryPrepareSuiton()
-    {
-        if (PtlManager.State == PtlState.Running || TimelineEngine.Instance.IsRunning) return;
-        var me = Core.Me;
-        if (me != null
-            && !me.HasStatus(2839u)
-            && !me.HasStatus(NinjaActions.ShadowWalkerStatus)
-            && !PromeSettings.Instance.GetQt(NinjaQts.PrepareSuiton)
-            && ActionHelper.GetActionCooldown(NinjaActions.TrickAttackCurrent) < 3f)
-            PromeSettings.Instance.SetQt(NinjaQts.PrepareSuiton, true);
     }
 }

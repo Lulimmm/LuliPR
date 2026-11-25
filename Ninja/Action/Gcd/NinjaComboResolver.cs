@@ -18,8 +18,10 @@ internal sealed class NinjaComboResolver : NinjaResolver
     public override CheckResult Check()
     {
         var me = Core.Me;
-        return HasMeleeTarget && me != null && !NinjaCombatState.HasRaijuReadyForRotation
-            && !NinjaCombatState.IsTcjSequenceActive ? Ok : No;
+        if (!HasMeleeTarget) return Blocked("基础连击需要可攻击的近战目标；目标状态与距离见上方诊断");
+        if (me == null) return Blocked("自身角色不可用");
+        if (NinjaCombatState.HasRaijuReadyForRotation) return Blocked("雷兽开关开启且有雷兽状态，暂不使用会消耗该状态的基础连击");
+        return !NinjaCombatState.IsTcjSequenceActive ? Ok : Blocked("天地人独占期间不使用基础连击");
     }
 
     public override PAction GetAction()

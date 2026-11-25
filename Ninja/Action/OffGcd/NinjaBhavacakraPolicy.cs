@@ -15,22 +15,24 @@ namespace Ninja.PR.Action.OffGcd;
 
 internal static class NinjaBhavacakraPolicy
 {
-    public static bool IsEligible()
+    public static bool IsEligible() => GetBlockReason() == null;
+
+    public static string? GetBlockReason()
     {
         var me = Core.Me;
         var target = Core.Target;
-        if (!PromeSettings.Instance.GetQt(NinjaQts.Bhavacakra) || me == null
-            || target?.CanUseAttackActionOn() != true
-            || NinjaTarget.Distance > NinjaTarget.AttackRange
-            || NinjaCombatState.IsTcjSequenceActive || JobGaugeHelper.NIN.Ninki < 50
-            || NinjaCombatState.Recently(NinjaActions.Bhavacakra, 1060)
-            || NinjaCombatState.Recently(36960, 1060)
-            || NinjaCombatState.Recently(NinjaActions.MugCurrent, 1060)
-            || (ActionHelper.GetActionCooldown(NinjaActions.TrickAttackCurrent) < 1.26f
-                && PromeSettings.Instance.GetQt(NinjaQts.SmallTrick) && me.HasStatus(NinjaActions.ShadowWalkerStatus)))
-            return false;
-
-        return true;
+        if (!PromeSettings.Instance.GetQt(NinjaQts.Bhavacakra)) return "六道轮回开关关闭";
+        if (me == null || target?.CanUseAttackActionOn() != true) return "自身或可攻击目标不可用";
+        if (NinjaTarget.Distance > NinjaTarget.AttackRange) return "目标超出近战范围";
+        if (NinjaCombatState.IsTcjSequenceActive) return "天地人独占期间不使用六道轮回";
+        if (JobGaugeHelper.NIN.Ninki < 50) return "忍气不足 50";
+        if (NinjaCombatState.Recently(NinjaActions.Bhavacakra, 1060)
+            || NinjaCombatState.Recently(36960, 1060)) return "最近 1.06 秒已使用六道轮回，避免重复";
+        if (NinjaCombatState.Recently(NinjaActions.MugCurrent, 1060)) return "刚使用夺取，处于 1.06 秒保护间隔";
+        if (ActionHelper.GetActionCooldown(NinjaActions.TrickAttackCurrent) < 1.26f
+            && PromeSettings.Instance.GetQt(NinjaQts.SmallTrick) && me.HasStatus(NinjaActions.ShadowWalkerStatus))
+            return "小背刺将在 1.26 秒内就绪且有水遁状态，六道轮回暂时让位";
+        return null;
     }
 
     public static bool ShouldForceSpend(Func<bool> comboIsFirst, Func<bool> raijuIsFirst)

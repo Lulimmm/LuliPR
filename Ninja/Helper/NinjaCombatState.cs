@@ -24,7 +24,6 @@ internal static class NinjaCombatState
     public static long LastObservedActionAt { get; private set; }
     private static uint LastConfirmedActionId { get; set; }
     private static long LastConfirmedActionAt { get; set; }
-    private static readonly Dictionary<uint, long> RestrictedGcdConfirmations = new();
     private static uint LastNinjutsuStartedActionId { get; set; }
     private static long LastNinjutsuStartedActionAt { get; set; }
     // AE's AfterSpell sets CurrGcdAbilityCount to 1 after a ninjutsu. Keep
@@ -41,7 +40,6 @@ internal static class NinjaCombatState
         !IsPostNinjutsuOffGcdLimited && NinjaEventHandler.CanQueueMultipleOffGcd
         && GcdOffGcdUsed + 2 <= MaxGcdOffGcd;
     private const int PendingTcjTimeoutMs = 2500;
-    private const int RestrictedGcdEventDedupMs = 2500;
 
     public static void Reset()
     {
@@ -56,7 +54,6 @@ internal static class NinjaCombatState
         LastObservedActionAt = 0;
         LastConfirmedActionId = 0;
         LastConfirmedActionAt = 0;
-        RestrictedGcdConfirmations.Clear();
         LastNinjutsuStartedActionId = 0;
         LastNinjutsuStartedActionAt = 0;
         PostNinjutsuOffGcdLimit = 0;
@@ -137,17 +134,6 @@ internal static class NinjaCombatState
         if (canonical == LastConfirmedActionId
             && now - LastConfirmedActionAt <= 250) return false;
 
-        // ActionEffectEntry may arrive after an intervening oGCD event. Keep
-        // a separate GCD dedup window so that late fragments cannot reopen a
-        // one-weave budget for Suiton or Hyosho Ranryu.
-        if (IsSingleWeaveLimitedGcd(id, canonical))
-        {
-            var restrictedAction = GetSingleWeaveLimitKey(id, canonical);
-            if (RestrictedGcdConfirmations.TryGetValue(restrictedAction, out var lastAt)
-                && now - lastAt <= RestrictedGcdEventDedupMs) return false;
-            RestrictedGcdConfirmations[restrictedAction] = now;
-        }
-
         LastConfirmedActionId = canonical;
         LastConfirmedActionAt = now;
         if (IsGcdAction(canonical))
@@ -173,15 +159,6 @@ internal static class NinjaCombatState
         }
         return true;
     }
-
-    private static bool IsSingleWeaveLimitedGcd(uint id, uint canonical) =>
-        id is NinjaActions.Suiton or NinjaActions.HyoshoRanryu
-        || canonical is NinjaActions.Suiton or NinjaActions.HyoshoRanryu or NinjaActions.TcjSuiton;
-
-    private static uint GetSingleWeaveLimitKey(uint id, uint canonical) =>
-        id == NinjaActions.HyoshoRanryu || canonical == NinjaActions.HyoshoRanryu
-            ? NinjaActions.HyoshoRanryu
-            : NinjaActions.Suiton;
 
     private static bool IsNinjutsuAction(uint id) => id is
         2260u or NinjaActions.FumaShuriken or 2266u or NinjaActions.Raiton
@@ -357,10 +334,9 @@ internal static class NinjaCombatState
     public static bool HasTcjBuff => Core.Me?.HasStatus(NinjaActions.TcjStatus) == true;
     public static bool IsTcjSequenceActive => HasTcjBuff;
 
-    // A ready Raiju proc only blocks other GCD decisions while the Raiju QT
-    // is enabled. Turning that QT off must return control to the normal GCD
-    // resolver instead of leaving the proc as a hidden global lock.
+    // Delay-burst mode must consume overflow Raiton's proc even when its normal
+    // QT is off. Otherwise, the ordinary Raiju QT owns combo preservation.
     public static bool HasRaijuReadyForRotation =>
-        PromeSettings.Instance.GetQt(NinjaQts.Raiju)
+        (NinjaBurstDelayPolicy.Enabled || PromeSettings.Instance.GetQt(NinjaQts.Raiju))
         && Core.Me?.HasStatus(NinjaActions.RaijuReady) == true;
 }

@@ -15,13 +15,19 @@ namespace Ninja.PR.Action.OffGcd;
 
 internal sealed class NinjaMugResolver : NinjaResolver
 {
-    public override CheckResult Check() => PromeSettings.Instance.GetQt(NinjaQts.BigTrick)
-        && Core.Target?.CanUseAttackActionOn() == true && InMeleeRange
+    public override CheckResult Check()
+    {
+        if (NinjaBurstDelayPolicy.Enabled) return Blocked(NinjaBurstDelayPolicy.BlockReason);
+        if (!PromeSettings.Instance.GetQt(NinjaQts.BigTrick)) return Blocked("夺取开关关闭");
+        if (Core.Target?.CanUseAttackActionOn() != true) return Blocked("没有可攻击目标");
+        if (!InMeleeRange) return Blocked("夺取需要近战目标，当前距离超出范围");
         // Dokumori is safe to weave with 400 ms left in the GCD. The host
         // scheduler is scoped by NinjaWeavePolicy while this rotation is
         // active so this resolver is not blocked by the default 600 ms gate.
-        && ActionHelper.GetGcdRemain() >= .4f && !NinjaCombatState.IsTcjSequenceActive
-        && Ready(NinjaActions.MugCurrent) ? Ok : No;
+        if (ActionHelper.GetGcdRemain() < .4f) return Blocked("GCD 剩余不足 0.40 秒，等待下一个插入窗口");
+        if (NinjaCombatState.IsTcjSequenceActive) return Blocked("天地人独占期间不使用夺取");
+        return Ready(NinjaActions.MugCurrent) ? Ok : Blocked("夺取尚未就绪或未解锁");
+    }
 
     public override PAction GetAction()
     {

@@ -37,7 +37,7 @@ internal static class NinjaNoLossOpenerRuntime
     private static string lastTransition = "未激活";
 
     public static bool ShouldHoldNormalDecisions => waiting;
-    public static string DebugStage => $"{FormatStage()} / 保持={waiting} / {lastTransition}";
+    public static string DebugStage => $"{FormatStage()} / 普通决策{(waiting ? "被拦截" : "未被拦截")} / {lastTransition}";
 
     public static void OnBattleStarted()
     {

@@ -14,7 +14,6 @@ namespace Ninja.PR.Action;
 
 internal abstract class NinjaResolver : IDecisionResolver
 {
-    protected static CheckResult No => new(false, "未满足使用条件");
     protected static CheckResult Ok => new(true, string.Empty);
     protected static CheckResult Blocked(string message) => new(false, message);
     protected static bool Ready(uint id) => ActionHelper.IsReady(id);

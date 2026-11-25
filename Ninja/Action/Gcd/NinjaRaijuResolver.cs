@@ -19,12 +19,15 @@ internal sealed class NinjaRaijuResolver : NinjaResolver
     {
         var me = Core.Me;
         var target = Core.Target;
-        if (!PromeSettings.Instance.GetQt(NinjaQts.Raiju) || me == null
-            || target?.CanUseAttackActionOn() != true || NinjaTarget.Distance > NinjaTarget.AttackRange
-            || NinjaCombatState.IsTcjSequenceActive) return No;
-        if (target.HasStatus(NinjaActions.KunaisBaneStatus)
-            && ActionHelper.GetActionCooldown(NinjaActions.Ten) < 2.5f) return No;
-        return me.HasStatus(NinjaActions.RaijuReady) ? Ok : No;
+        var delayBurst = NinjaBurstDelayPolicy.Enabled;
+        if (!delayBurst && !PromeSettings.Instance.GetQt(NinjaQts.Raiju)) return Blocked("月影雷兽牙开关关闭");
+        if (me == null) return Blocked("自身角色不可用");
+        if (target?.CanUseAttackActionOn() != true) return Blocked("没有可攻击目标");
+        if (NinjaTarget.Distance > NinjaTarget.AttackRange) return Blocked("目标超过近战范围，等待靠近");
+        if (NinjaCombatState.IsTcjSequenceActive) return Blocked("天地人独占期间不使用雷兽");
+        if (!delayBurst && target.HasStatus(NinjaActions.KunaisBaneStatus)
+            && ActionHelper.GetActionCooldown(NinjaActions.Ten) < 2.5f) return Blocked("爆发状态内结印冷却不足 2.5 秒，保留雷兽让位于忍术");
+        return me.HasStatus(NinjaActions.RaijuReady) ? Ok : Blocked("缺少雷兽可用状态（2690）");
     }
 
     // Raiju is a normal GCD action; only mudra/jutsu sequences need the
