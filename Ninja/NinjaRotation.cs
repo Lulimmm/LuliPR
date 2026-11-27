@@ -35,7 +35,7 @@ using Ninja.PR.UI;
 
 namespace Ninja.PR;
 
-[RotationMetadata(30u, "Luli Ninja PR", "Cino", "1.5.6", ContentScope = AcrContentScope.HighEnd)]
+[RotationMetadata(30u, "Luli Ninja PR", "Cino", "1.5.7", ContentScope = AcrContentScope.HighEnd)]
 public sealed class NinjaRotation : IRotation, IRotationLifecycle
 {
     private static readonly HashSet<string> DefaultHiddenQtKeys = new(StringComparer.Ordinal)
@@ -73,6 +73,7 @@ public sealed class NinjaRotation : IRotation, IRotationLifecycle
     {
         [NinjaQts.BigTrick] = true,
         [NinjaQts.DelayBurst] = false,
+        [NinjaQts.Potion] = false,
         [NinjaQts.SmallTrick] = true,
         [NinjaQts.TenChiJin] = true,
         ["生杀予夺"] = true,
@@ -127,10 +128,10 @@ public sealed class NinjaRotation : IRotation, IRotationLifecycle
             new NinjaRaijuResolver(), new NinjaRaitonResolver(), new NinjaComboResolver()
         };
         // luli order for the oGCD slots:
-        // _100B, Mug, Bunshin, Ten Chi Jin, Meisui, Tenri Jindo,
+        // Potion, _100B, Mug, Bunshin, Ten Chi Jin, Meisui, Tenri Jindo,
         // Assassinate, Bhavacakra, True North. Kassatsu and Trick Attack
         // remain in the Always list above.
-        ogcd = new() { priorityBhavacakra, new NinjaMugResolver(), new NinjaBunshinResolver(), new NinjaTenChiJinResolver(), new NinjaMeisuiResolver(), tenriJindo, new NinjaAssassinateResolver(), new NinjaOgcdResolver(IsComboResolverFirst, IsRaijuResolverFirst), new NinjaTrueNorthResolver(IsComboResolverFirst) };
+        ogcd = new() { new NinjaPotionResolver(), priorityBhavacakra, new NinjaMugResolver(), new NinjaBunshinResolver(), new NinjaTenChiJinResolver(), new NinjaMeisuiResolver(), tenriJindo, new NinjaAssassinateResolver(), new NinjaOgcdResolver(IsComboResolverFirst, IsRaijuResolverFirst), new NinjaTrueNorthResolver(IsComboResolverFirst) };
         MigrateLegacyPositionalQt();
         PromeSettings.Instance.QuickToggles.Remove(LegacyPrepareSuitonQt);
         MewUIFramework.Configure(

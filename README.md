@@ -51,6 +51,20 @@ Raiton, then wait for the next GCD. The shared confirmation deduplication stays
 in place; Suiton and Hyosho no longer have a separate 2.5-second deduplication
 window. The single-weave counter advances on confirmed action effects.
 
+## Ninja automatic potion
+
+The `爆发药` QT defaults to off. Normal oGCD decisions use Reaper's ordinary
+`0612` rule with Kunai's Bane (`36958`, `介毒之术`) replacing Arcane Circle:
+use a potion when its cooldown is strictly between 2.5 and 5 seconds, an item
+is available and off cooldown, and at least 0.6 seconds remain on the GCD.
+Automatic potions wait during mudra, Ten Chi Jin and `延后爆发`.
+The rule follows the live skill/item cooldowns rather than fixed timestamps.
+Fixed opener potions continue to use the separate `起手使用爆发药` setting.
+
+```powershell
+./tools/verify-ninja-delay-burst.ps1
+```
+
 ## Remote ACR manifest
 
 After publishing a GitHub Release, add this URL to PromeRotation's remote ACR list:

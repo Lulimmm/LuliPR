@@ -9,6 +9,7 @@ $files = @(
     'Ninja/Action/Gcd/NinjaJutsuResolver.cs', 'Ninja/Action/Gcd/NinjaRaitonResolver.cs',
     'Ninja/Action/Gcd/NinjaRaijuResolver.cs', 'Ninja/Action/Gcd/NinjaComboResolver.cs',
     'Ninja/Action/OffGcd/NinjaMugResolver.cs', 'Ninja/Action/OffGcd/NinjaTrickAttackResolver.cs',
+    'Ninja/Action/OffGcd/NinjaPotionResolver.cs',
     'Ninja/Action/OffGcd/NinjaTenChiJinResolver.cs', 'Ninja/Action/OffGcd/NinjaAssassinateResolver.cs',
     'Ninja/Action/OffGcd/NinjaBunshinResolver.cs', 'Ninja/Action/OffGcd/NinjaKassatsuResolver.cs'
 )
@@ -50,6 +51,7 @@ namespace IsolatedCompilation
     namespace PromeRotation.Core
     {
         public static class Core { public static IBattleChara? Me = new(); public static IBattleChara? Target = new(); }
+        public static class GameData { public static uint PotionId = 145995; public static uint GetBestPotionId() => PotionId; }
     }
     namespace PromeRotation.Data
     {
@@ -77,12 +79,14 @@ namespace IsolatedCompilation
         public static class ActionHelper
         {
             public static float Charges = 2, GcdRemain = 1.5f;
+            public static bool ItemOnCooldown;
             public static readonly Dictionary<uint, float> Cooldowns = new();
             public static readonly HashSet<uint> Locked = new();
             public static uint GetAdjustedActionId(uint id) => id;
             public static bool IsReady(uint id) => IsUnlocked(id) && GetActionCooldown(id) <= 0;
             public static bool IsUnlocked(uint id) => !Locked.Contains(id);
             public static float GetActionCooldown(uint id) => Cooldowns.TryGetValue(id, out var value) ? value : 0;
+            public static bool IsItemOnCooldown(uint id) => ItemOnCooldown;
             public static float GetActionCharges(uint id) => Charges;
             public static float GetGcdRemain() => GcdRemain;
             public static float GetGcdTotal() => 2.13f;
@@ -152,6 +156,7 @@ namespace IsolatedCompilation
             Core.Me = new(); Core.Target = new();
             NinjaSequencePolicy.IsActive = false; NinjaCombatState.Reset();
             ActionHelper.Charges = 2; ActionHelper.GcdRemain = 1.5f;
+            GameData.PotionId = 145995; ActionHelper.ItemOnCooldown = false;
             ActionHelper.Cooldowns.Clear(); ActionHelper.Locked.Clear();
             NinjaTarget.Distance = 3; ActionQueueManager.Groups.Clear();
             PromeSettings.Instance.Qts.Clear();
@@ -242,6 +247,55 @@ namespace IsolatedCompilation
             Core.Target.Statuses.Add(NinjaActions.MugDebuff);
             ActionHelper.Cooldowns[NinjaActions.Ten] = 5;
             Assert(new NinjaTenChiJinResolver().Check().Success, "QT off: Ten Chi Jin resumes");
+
+            var potion = new NinjaPotionResolver();
+            Reset(false);
+            ActionHelper.Cooldowns[NinjaActions.TrickAttackCurrent] = 3.5f;
+            Assert(!potion.Check().Success, "Automatic potion must require its own QT");
+            PromeSettings.Instance.Qts[NinjaQts.Potion] = true;
+            ActionHelper.Cooldowns[NinjaActions.MugCurrent] = 99f;
+            foreach (var cooldown in new[] { -1f, 0f, 2.499f, 2.5f, 2.501f, 3.5f, 4.999f, 5f, 5.001f, 60f })
+            {
+                ActionHelper.Cooldowns[NinjaActions.TrickAttackCurrent] = cooldown;
+                Assert(potion.Check().Success == (cooldown > 2.5f && cooldown < 5f),
+                    "0612 must follow Kunai's Bane cooldown, excluding endpoints: " + cooldown);
+            }
+            ActionHelper.Cooldowns[NinjaActions.TrickAttackCurrent] = 3.5f;
+            foreach (var remain in new[] { 0f, .4f, .599f, .6f, 1.5f })
+            {
+                ActionHelper.GcdRemain = remain;
+                Assert(potion.Check().Success == (remain >= .6f), "Potion weave boundary: " + remain);
+            }
+            foreach (var id in new uint[] { 45995, 1045995 })
+            {
+                GameData.PotionId = id;
+                var action = potion.GetAction();
+                Assert(action.ActionId == id && action.Type == ActionType.Item
+                    && action.Target == ActionTargetType.Self && action.RequiresVerification,
+                    "Potion must preserve the current NQ/HQ item ID, self target and verification");
+            }
+            GameData.PotionId = 0;
+            Assert(!potion.Check().Success, "Missing potion must block automatic use");
+            GameData.PotionId = 1045995; ActionHelper.ItemOnCooldown = true;
+            Assert(!potion.Check().Success, "Shared item cooldown must block automatic use");
+            ActionHelper.ItemOnCooldown = false;
+            Core.Target = null;
+            Assert(!potion.Check().Success, "Target disappearing must block automatic use");
+            Core.Target = new() { Attackable = false };
+            Assert(!potion.Check().Success, "Untargetable boss must block automatic use");
+            Core.Target.Attackable = true; Core.Me = null;
+            Assert(!potion.Check().Success, "Missing player must block automatic use");
+            Core.Me = new();
+            Core.Me.Statuses.Add(NinjaActions.MudraStatus);
+            Assert(!potion.Check().Success, "Manual mudra status must block automatic use");
+            Core.Me.Statuses.Clear(); NinjaSequencePolicy.IsActive = true;
+            Assert(!potion.Check().Success, "Queued mudra sequence must block automatic use");
+            NinjaSequencePolicy.IsActive = false; Core.Me.Statuses.Add(NinjaActions.TcjStatus);
+            Assert(!potion.Check().Success, "TCJ sequence must block automatic use");
+            Core.Me.Statuses.Clear(); PromeSettings.Instance.Qts[NinjaQts.DelayBurst] = true;
+            Assert(!potion.Check().Success, "Delay burst must also hold automatic potions");
+            PromeSettings.Instance.Qts[NinjaQts.DelayBurst] = false;
+            Assert(potion.Check().Success, "Potion must resume after all temporary blockers clear");
             return count;
         }
     }
@@ -249,4 +303,4 @@ namespace IsolatedCompilation
 '@
 Add-Type -TypeDefinition ("#nullable enable`nglobal using System;`n" + ($sources -join "`n") + "`n" + $fixture)
 $count = [IsolatedCompilation.BurstDelayChecks]::Run()
-Write-Output "Verified $count Ninja delay-burst decision and queue scenarios."
+Write-Output "Verified $count Ninja delay-burst, potion and queue scenarios."

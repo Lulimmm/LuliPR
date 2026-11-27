@@ -18,5 +18,6 @@ internal static class NinjaQts
     public const string Assassinate = "梦幻三段";
     public const string AutoTrueNorth = "自动真北";
     public const string DelayBurst = "延后爆发";
+    public const string Potion = "爆发药";
     public const string LongArm = "长臂猿";
 }

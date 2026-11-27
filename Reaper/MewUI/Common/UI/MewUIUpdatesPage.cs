@@ -10,6 +10,11 @@ internal static class MewUIUpdatesPage
     private static readonly Notice[] Notices =
     [
         new(
+            "1.5.7", "2026-11-28", "Ninja 爆发药与身位颜色刷新",
+            "新增 Ninja 自动爆发药 QT，默认关闭。沿用 Reaper 的 0612 普通判断，以介毒之术冷却大于 2.5 秒且小于 5 秒作为喝药窗口，并检查药品冷却与 GCD 插入窗口；结印、天地人和延后爆发期间暂停自动用药。\n\n" +
+            "Ninja 身位固定扇区参考 Reaper 持续刷新红绿颜色，与进度扇区同步随走位变色；仅调整颜色刷新。",
+            "#NIN #POTION #POSITIONAL #UI"),
+        new(
             "1.5.6", "2026-11-26", "Ninja 战斗诊断与爆发控制",
             "完善 Ninja 战斗 Debug，显示目标、队列、忍术与能力技额度及各技能等待原因，便于排查目标消失、转场和爆发衔接中断。\n\n" +
             "预备水遁改为手动 Hotkey，每次点击提交一组结印，移除原自动预备水遁 QT；起手倒数流程保持独立。\n\n" +

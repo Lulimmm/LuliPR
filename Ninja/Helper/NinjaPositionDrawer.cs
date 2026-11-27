@@ -130,6 +130,7 @@ internal static class NinjaPositionDrawer
             CreateStaticDrawings(drawManager, target, requiredPosition, radius);
         }
 
+        UpdateStaticStyle(drawManager, GetStaticStyle(requiredPosition));
         UpdateProgressDrawings(drawManager, target, requiredPosition, radius);
     }
 
@@ -200,6 +201,15 @@ internal static class NinjaPositionDrawer
         targetId = target.EntityId;
         drawnPosition = requiredPosition;
         drawnRadius = radius;
+    }
+
+    private static void UpdateStaticStyle(
+        PromeRotation.Spatial.Drawing.DrawManager drawManager,
+        DrawStyle style)
+    {
+        if (flankEast.IsValid) drawManager.Update(flankEast, style: style);
+        if (flankWest.IsValid) drawManager.Update(flankWest, style: style);
+        if (rear.IsValid) drawManager.Update(rear, style: style);
     }
 
     private static void UpdateProgressDrawings(
