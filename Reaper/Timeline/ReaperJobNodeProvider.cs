@@ -25,6 +25,7 @@ public sealed class ReaperJobNodeProvider : IJobNodeProvider
         ReaperHotkeyAction.Register(context);
         ReaperPotionSettingAction.Register(context);
         ReaperShadowOfDeathTargetAction.Register(context);
+        ReaperSpecialEnshroudCommunioAction.Register(context);
     }
 
     public IReadOnlyList<(string DisplayName, string Description, Func<ICondition> Create)> GetConditionDescriptors()
@@ -41,7 +42,7 @@ public sealed class ReaperJobNodeProvider : IJobNodeProvider
                 () => new ReaperPotionCondition()),
             ("Reaper/蓝量谱", "检测魂衣量谱达到指定下限", () => new ReaperLegacyShroudGaugeCondition()),
             ("Reaper/红量谱", "检测灵魂量谱达到指定下限", () => new ReaperLegacySoulGaugeCondition()),
-            ("Reaper/夜游魂量谱", "检测夜游魂量谱等于指定数值", () => new ReaperLemureShroudCondition()),
+            ("Reaper/夜游魂量谱", "支持比较运算符与普通／特殊附体筛选", () => new ReaperLemureShroudCondition()),
             ("Reaper/敌人数量检测（自身为中心5米）", "检测玩家周围5米内敌人数达到指定下限", () => new ReaperNearbyEnemyCountCondition()),
             ("检测目标条件", "筛选目标类型并组合目标条件", () => new GeneralTargetCondition()),
         };
@@ -53,6 +54,7 @@ public sealed class ReaperJobNodeProvider : IJobNodeProvider
             ("Reaper/QT", "三态选择多个 Reaper QT 并批量设置", () => new ReaperQtAction()),
             ("Reaper/HotKey", "执行 Reaper 热键面板中的指定动作", () => new ReaperHotkeyAction()),
             ("Reaper/PotionSetting", "设置 Reaper 爆发药时机方案", () => new ReaperPotionSettingAction()),
+            ("Reaper/设置特殊附体团契层数", "启用或关闭特殊附体的团契锁定，仅影响本场战斗", () => new ReaperSpecialEnshroudCommunioAction()),
             ("Reaper/\u6309DataID\u7981\u7528\u6b7b\u4ea1\u4e4b\u5f71", "\u6309\u76ee\u6807DataID\u7981\u7528\u6216\u6062\u590d\u6b7b\u4ea1\u4e4b\u5f71", () => new ReaperShadowOfDeathTargetAction()),
         };
 }

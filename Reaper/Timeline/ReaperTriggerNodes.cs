@@ -451,15 +451,6 @@ public sealed class ReaperLegacySoulGaugeCondition : ReaperTriggerThresholdCondi
     public static void Register(RotationNodeContext context) => RegisterType<ReaperLegacySoulGaugeCondition>(context, "luli_reaper_trigger_soul_gauge");
 }
 
-public sealed class ReaperLemureShroudCondition : ReaperTriggerThresholdCondition
-{
-    protected override string TypeKey => "luli_reaper_trigger_lemure_shroud";
-    protected override string ThresholdLabel => "附体量谱阈值";
-    public override string NodeDisplayName => "Reaper/夜游魂量谱";
-    protected override bool Evaluate(int threshold) => JobGaugeHelper.RPR.夜游魂 == threshold;
-    public static void Register(RotationNodeContext context) => RegisterType<ReaperLemureShroudCondition>(context, "luli_reaper_trigger_lemure_shroud");
-}
-
 public sealed class ReaperNearbyEnemyCountCondition : ReaperTriggerThresholdCondition
 {
     protected override string TypeKey => "luli_reaper_trigger_enemy_count";

@@ -85,6 +85,7 @@ public sealed partial class ReaperRotation
 
         ImGui.Spacing();
         ImGui.Separator();
+        DrawEnshroudSettings();
         ImGui.TextUnformatted("Hook 设置");
 
         var extraRange = openerConfig.ExtraRange;
@@ -103,6 +104,34 @@ public sealed partial class ReaperRotation
             openerConfig.MoveCasting = Math.Clamp(moveCasting, 0f, 0.5f);
             SaveOpenerConfig();
         }
+    }
+
+    private static void DrawEnshroudSettings()
+    {
+        if (!ImGui.CollapsingHeader("附体设置")) return;
+        SpecialEnshroudRuntime.Update();
+        var enabled = SpecialEnshroudRuntime.Enabled;
+        var layer = SpecialEnshroudRuntime.Layer;
+        if (ImGui.Checkbox("启用特殊附体团契控制", ref enabled))
+            SpecialEnshroudRuntime.ApplyCombatSettings(enabled, layer);
+        ImGui.SetNextItemWidth(180f);
+        if (ImGui.BeginCombo("团契释放层数", $"{layer} 层"))
+        {
+            for (var value = 1; value <= 5; value++)
+                if (ImGui.Selectable($"{value} 层", value == layer))
+                {
+                    layer = value;
+                    SpecialEnshroudRuntime.ApplyCombatSettings(enabled, layer);
+                }
+            ImGui.EndCombo();
+        }
+        ImGui.TextWrapped("特殊附体到达指定层数前正常输出，到达或低于该层数后仅释放团契，直到本次附体结束。关闭控制可立即解除锁定。");
+        ImGui.TextWrapped("修改后立即生效并自动保存；时间轴设置仅覆盖本场战斗。");
+        if (SpecialEnshroudRuntime.HasOverride) ImGui.TextWrapped("时间轴已修改本场设置，手动调整可覆盖。");
+        var type = !R.Has(2593u) ? "未附体" : SpecialEnshroudRuntime.IsSpecial ? "特殊附体" : "普通附体";
+        ImGui.Text($"当前附体：{type}（夜游魂：{JobGaugeHelper.RPR.夜游魂} 层）");
+        ImGui.Text(SpecialEnshroudRuntime.CommunioOnly ? "团契锁定：已锁定，仅释放团契" : "团契锁定：未锁定");
+        ImGui.Separator();
     }
 
 public void DrawSettings()

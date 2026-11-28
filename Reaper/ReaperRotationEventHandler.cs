@@ -61,12 +61,14 @@ internal sealed class ReaperEventHandler : IRotationEventHandler, IDisposable
 
     public void OnUpdate()
     {
+        SpecialEnshroudRuntime.Update();
         BundledTimelineSync.UpdateLoginSession();
         UsageStatistics.Update();
         ReaperHooks.Update();
     }
     public void OnOutOfBattleUpdate()
     {
+        SpecialEnshroudRuntime.Update();
         BundledTimelineSync.UpdateLoginSession();
         UsageStatistics.Update();
         MewFeintPlanManager.Update();
@@ -88,12 +90,14 @@ internal sealed class ReaperEventHandler : IRotationEventHandler, IDisposable
     }
     public void OnNoTarget()
     {
+        SpecialEnshroudRuntime.Update();
         ReaperPositionDrawer.Clear();
         ReaperHooks.Update();
         MewUIFramework.RestoreQtIfHostCleared();
     }
     public void OnBattleUpdate()
     {
+        SpecialEnshroudRuntime.Update();
         BundledTimelineSync.UpdateLoginSession();
         UsageStatistics.Update();
         MewFeintPlanManager.Update();
@@ -104,6 +108,7 @@ internal sealed class ReaperEventHandler : IRotationEventHandler, IDisposable
     }
     public void OnBattleEnded()
     {
+        SpecialEnshroudRuntime.Reset();
         MewFeintPlanManager.ResetRuntime();
         ShadowOfDeathBlocklist.Reset();
         InBattle = false;
@@ -115,6 +120,7 @@ internal sealed class ReaperEventHandler : IRotationEventHandler, IDisposable
     }
     public void OnTerritoryChanged(ushort territoryId)
     {
+        SpecialEnshroudRuntime.Reset();
         MewFeintPlanManager.ResetRuntime();
         ShadowOfDeathBlocklist.Reset();
         InBattle = false;

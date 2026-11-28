@@ -48,6 +48,8 @@ internal sealed class ReaperSettingsData
     public bool HideHotkeyPage { get; set; }
     public float ExtraRange { get; set; } = 3f;
     public float MoveCasting { get; set; } = 0.4f;
+    public bool SpecialEnshroudCommunioEnabled { get; set; }
+    public int SpecialEnshroudCommunioLayer { get; set; } = 1;
 }
 
 internal static class AcrSettingsStore

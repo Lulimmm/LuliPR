@@ -20,7 +20,7 @@ using PromeRotation.UI.HotKey;
 
 namespace Reaper.PR;
 
-[RotationMetadata(39u, "Luli Reaper PR", "Cino", "1.5.7", ContentScope = AcrContentScope.HighEnd)]
+[RotationMetadata(39u, "Luli Reaper PR", "Cino", "1.5.8", ContentScope = AcrContentScope.HighEnd)]
 public sealed partial class ReaperRotation : IRotation, IRotationLifecycle
 {
     public string AuthorName => "Cino";
@@ -116,8 +116,8 @@ public sealed partial class ReaperRotation : IRotation, IRotationLifecycle
     // exists in the reference tree but is intentionally not registered there.
     private readonly List<IDecisionResolver> gcd = new()
     {
-        new PerfectioGcd(),
         new EnshroudGcd(),
+        new PerfectioGcd(),
         new PlentifulHarvestGcd(),
         new GibbetGcd(),
         new SoulSliceGcd(),
@@ -158,11 +158,13 @@ public sealed partial class ReaperRotation : IRotation, IRotationLifecycle
             qtCascadeRules: new Dictionary<string, (string key, bool invert)[]>(),
             hotkeyNames: new[]
             {
+                "强制团契",
                 "\u7206\u53d1\u836f", "\u75be\u8dd1", "\u6781\u9650\u6280",
                 "\u7275\u5236", "\u64ad\u9b42\u79cd", "\u6d74\u8840", "\u5185\u4e39", "\u795e\u79d8\u7eb9", "\u4eb2\u758f\u81ea\u884c"
             },
             buildHotkeys: b =>
             {
+                b.Execute("强制团契", new ForcedCommunioHotkey(), iconActionID: R.Communio);
                 b.Execute("\u7206\u53d1\u836f", new DynamicActionLogic(() => GameData.GetBestPotionId(), ActionType.Item, ActionTargetType.Self),
                     dynamicIconActionId: GameData.GetBestPotionId, dynamicGameIcon: GetPotionGameIcon);
                 b.Fixed("\u75be\u8dd1", 3u, ActionType.OffGcd, ActionTargetType.Self);
@@ -227,7 +229,14 @@ public sealed partial class ReaperRotation : IRotation, IRotationLifecycle
             return R.A(R.Soulsow, ActionType.Gcd, ActionTargetType.Self);
         return null;
     }
-    public PAction? NextGcd() { EnforceHiddenPanels(); return Next(gcd); }
+    public PAction? NextGcd()
+    {
+        EnforceHiddenPanels();
+        SpecialEnshroudRuntime.Update();
+        // null 在这里表示等待团契，不再进入其他自动 GCD 解析器。
+        if (SpecialEnshroudRuntime.CommunioOnly) return SpecialEnshroudRuntime.GetCommunioAction();
+        return Next(gcd);
+    }
     public PAction? NextOffGcd() { EnforceHiddenPanels(); return Next(ogcd); }
     private static PAction? Next(IEnumerable<IDecisionResolver> resolvers)
     {
@@ -282,6 +291,7 @@ public sealed partial class ReaperRotation : IRotation, IRotationLifecycle
 
     public void OnExitAcr()
     {
+        SpecialEnshroudRuntime.Reset();
         BundledTimelineSync.Exit();
         UsageStatistics.Stop("Reaper");
         events.Dispose();

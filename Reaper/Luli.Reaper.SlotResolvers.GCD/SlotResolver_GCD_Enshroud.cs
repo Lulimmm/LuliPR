@@ -27,7 +27,7 @@ public sealed class EnshroudGcd : Gcd
         if (!R.Has(2593u)) return No;
         if (R.Has(2587u) || R.Has(3858u)) return No;
         if (R.Has(3860u)) return No;
-        if (JobGaugeHelper.RPR.夜游魂 < 2 && ActionHelper.IsUnlocked(R.Communio))
+        if (SpecialEnshroudRuntime.CanUseCommunio())
         {
             if (MoveManager.IsLocalPlayerMoving) return No;
             return Ok;
@@ -36,7 +36,7 @@ public sealed class EnshroudGcd : Gcd
     }
     public override PAction GetAction()
     {
-        if (JobGaugeHelper.RPR.夜游魂 < 2 && ActionHelper.IsUnlocked(R.Communio))
+        if (SpecialEnshroudRuntime.CanUseCommunio())
         {
             if (MoveManager.IsLocalPlayerMoving && !R.Qt("移动读条"))
             {
